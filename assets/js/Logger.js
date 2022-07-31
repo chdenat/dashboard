@@ -32,8 +32,8 @@ class Logger {
     }
 
     #delays = {
-        read: 800,
-        animate: 500 // Should be shorter than read
+        read: 1000,
+        animate:1100 // Should be shorter than read
     }
 
     #ID = 0
@@ -44,6 +44,7 @@ class Logger {
     #loop = 0
     #scroll_bottom = false
     #erase = true;
+    #anim_iter=0
 
     #parameters = {}
 
@@ -390,7 +391,7 @@ class Logger {
      */
     #clear_timers = (timers = ['all']) => {
         if (timers.includes('all') || timers.includes('animate')) {
-            clearTimeout(this.context.timers.animate)
+            clearInterval(this.context.timers.animate)
         }
         if (timers.includes('all') || timers.includes('read')) {
             clearTimeout(this.context.timers.read)
@@ -440,12 +441,40 @@ class Logger {
      * Add the dot animation when user is waiting for new information
      *
      * @param animation true, we run it else we abort it
-     *
-     * @returns trie if all is ok else false
+     * @param type      name of animation (cursor,dotshorts)
+     * @returns true if all is ok else false
      */
 
-    animate = (animation = true) => {
+    animate = (animation = true,type='dotshorts') => {
 
+        let anime={};
+
+        this.#anim_iter=0;
+
+        anime.cursor=()=> {
+            if (this.running) {
+                const P = ['\\', '|', '/', '-'];
+                this.#anim_iter = (this.#anim_iter > 3) ? 0 : this.#anim_iter
+                let target = this.#console.last
+                if (null !== target) {
+                    target.innerHTML = `${P[this.#anim_iter++]}`
+                }
+            }
+        }
+        anime.dotshorts=()=> {
+            if (this.running) {
+                this.#anim_iter = (this.#anim_iter > 80) ? 0 : this.#anim_iter
+                let target = this.#console.last
+                if (null !== target) {
+                    if (this.#anim_iter) {
+                        target.innerHTML = target?.innerHTML+'.'
+                    } else {
+                       target.innerHTML='.'
+                    }
+                    this.#anim_iter++
+                }
+            }
+        }
         /**
          * For some reason if we reach the end, we stop the current animation
          */
@@ -453,16 +482,14 @@ class Logger {
             this.stop()
         } else {
             if (this.running) {
-                let target = this.#console.last
-                if (null !== target) {
-                    target.innerHTML = target?.innerHTML + '.'
-                }
+
+                anime[type]()
 
                 // Should we continue or not ?
                 if (animation) {
-                    this.context.timers.animate = setTimeout(this.animate, this.#delays.animate)
+                    this.context.timers.animate = setInterval(anime[type], this.#delays.animate)
                 } else {
-                    clearTimeout(this.context.timers.animate)
+                    clearInterval(this.context.timers.animate)
                 }
             }
         }
