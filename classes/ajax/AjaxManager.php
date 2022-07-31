@@ -125,12 +125,15 @@
 				
 				
 				case 'load-template':
+					
 					if ( $template = Template::instance()->locate_template( $params['template'] ) ) {
 						ob_start();
 						Template::instance()->include_block( $params['template'], params: json_decode( $params['parameters'], true ) ?? [] );
 						// we return also the templte in case the template provided is a directory
 						// We do not use json, due to some errors caused sometimes by some bad formatted HTML ...
 						echo  $template.'###'. ob_get_clean();
+					} else {
+						self::send_error( code: 460, message: _( 'Template does not exist ...' ) );
 					}
 					break;
 				

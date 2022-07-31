@@ -191,9 +191,11 @@ class Template {
      * @param url
      */
     static page_404 = (template_id,url) => {
+        Animation.loading(template_id)
         let t = new Template(document.querySelector(`[data-template-id="${template_id}"]`))
         t.check_link('/pages/404')
         t.load(true,{url:url})
+        Animation.loaded(template_id)
     }
 
     /**
@@ -313,20 +315,29 @@ class Template {
             tab: this.tab,
             parameters: JSON.stringify(parameters)
         })).then((response) => {
-            return response.text();
+           if (response.ok) {
+                return response.text();     // <template>###<content>
+           }
+           return '###'                     // No valid template ...
+
         }).then((html) => {
             let [template, content] = html.split('###')
-            this.#maybe_we_need_to_change_template(template)
-            //load content.
-            self.container.innerHTML = content;
-            self.loaded = true
+             if ('' !== template) {
+                 this.#maybe_we_need_to_change_template(template)
+                 //load content.
+                 self.container.innerHTML = content;
 
-            // Step 4 : Check if we need to open some tab
-            if (null !== self.tab) {
-                dsb.ui.show_tab(self.tab)
-            }
+                 // Step 4 : Check if we need to open some tab
+                 if (null !== self.tab) {
+                     dsb.ui.show_tab(self.tab)
+                 }
+             } else {
+                 Template.page_404(self.container?.dataset?.templateId,this.file)
+             }
+             self.loaded = true
 
-            // Step 5 : Loading is finished, we dispatch the load-done events
+
+             // Step 5 : Loading is finished, we dispatch the load-done events
             self.dispatch_events('load-done')
 
             Template.add_template_to_list(self)
