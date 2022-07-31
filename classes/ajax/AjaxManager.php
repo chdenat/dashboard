@@ -125,7 +125,6 @@
 				
 				
 				case 'load-template':
-					Debug::print(Template::instance()->locate_template( $params['template'] ) );
 					if ( $template = Template::instance()->locate_template( $params['template'] ) ) {
 						ob_start();
 						Template::instance()->include_block( $params['template'], params: json_decode( $params['parameters'], true ) ?? [] );
