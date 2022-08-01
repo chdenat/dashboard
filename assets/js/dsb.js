@@ -659,17 +659,17 @@ var dsb = {
 
             // Main session timer
             timer: 0,
-            delay: 0,  // session dependant
+            delay: 900000,  // session dependant (15mn in ms)
             // Warning session timer
             timer2: 0,
-            delay2: 0, // session dependant
+            delay2: 895000, // session dependant (15mn -5s in ms)
             // Timer in the end_session_soon modal
             timer3: 0,
-            delay3: 1000,
+            delay3: 5000,
 
             /**
              * We launch 2 timers,
-             * one for the end of session and one that ends 2mn before, to warn the user the session will expire soon
+             * one for the end of session and one that ends before, to warn the user the session will expire soon
              *
              * @since 1.0
              *
