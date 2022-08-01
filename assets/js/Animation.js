@@ -25,7 +25,11 @@ class Animation {
 
         let template = (arg instanceof Event) ?arg.template.ID :arg
         if ('#content#' === template) {
-            document.querySelector(`[data-template-id="#content#"]`).classList.add('loading')
+            if ( document.querySelector(`[data-template-id="#content#"]`).classList.contains('loaded')) {
+                document.querySelector(`[data-template-id="#content#"]`).classList.replace('loadied','loading')
+            } else {
+                document.querySelector(`[data-template-id="#content#"]`).classList.add('loading')
+            }
             Animation.#loader?.classList.add('running')
         } else {
         }
