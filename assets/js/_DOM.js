@@ -61,13 +61,16 @@ class _DOM {
      * Get all templates in DOM
      *
      * @param parent
+     * @param no_empty : boolean empty templates with no value
+     *
      * @returns {NodeListOf<Element> | NodeListOf<SVGElementTagNameMap[keyof SVGElementTagNameMap]> | NodeListOf<HTMLElementTagNameMap[keyof HTMLElementTagNameMap]>}
      *
      * @since 1.0
      *
      */
-    static query_all_templates = (parent) => {
-        return parent.querySelectorAll('block[data-template]')
+    static query_all_templates = (parent,no_empty=false) => {
+        let query = 'block[data-template]'+(no_empty?':not([data-template=""])':'')
+        return parent.querySelectorAll(query)
     }
     //
     // /**
