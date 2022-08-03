@@ -331,8 +331,8 @@ var dsb = {
                 template.container.querySelectorAll('a[data-content-modal]').forEach(item => {
                     item.addEventListener('click', dsb.ui.show_intermediate_content)
                 });
-               Template.load_all_templates(template.container)
-               dsb.ui.init(template.container)
+                Template.load_all_templates(template.container)
+                dsb.ui.init(template.container)
             })
         }
 
@@ -973,12 +973,24 @@ var dsb = {
         /**
          * Logout process
          *
+         * @param event Event  (null)
+         * @param button clicked button (null)
+         * @param redirection (null)
+         *
          * @return {Promise<void>}
          *
          * @since 1.0
          *
          */
-        logout: async (redirection=null) => {
+        logout: async (event = null, button=null, redirection = null) => {
+
+            // if redirection is null, we try to get it from button, ie in data-logout-redirection
+            if (null === redirection) {
+                if (button) {
+                    redirection = button.dataset.logoutRedirection??null
+                }
+            }
+
             const form = document.getElementById('logout-confirm');
             let from_session_modal = null === form
 
@@ -1020,11 +1032,8 @@ var dsb = {
                             message: 'User <strong>' + dsb.user.session.context.user + '</strong> has been logged out.',
                             type: 'success'
                         })
-
                         document.dispatchEvent(dsb.user.events.dsb_logout);
-                        if (null !== redirection) {
-                            window.location.href = redirection
-                        }
+                            window.location.href = redirection??'/'
                     }
                 })
                 .catch(error => {
@@ -1790,7 +1799,6 @@ var dsb = {
                 document.body.classList.add(dsb.user.session.context.user);
             }
         }
-
 
 
         dsb.template.init();
