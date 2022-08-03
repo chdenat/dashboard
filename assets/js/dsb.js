@@ -1793,7 +1793,7 @@ var dsb = {
             document.addEventListener('dsb-login', dsb.user.events.login);
             document.addEventListener('dsb-logout', dsb.user.events.logout);
 
-            // Addsome body classes at loading if the user is already logged in.
+            // Add some body classes at loading if the user is already logged in.
             if (dsb.user.session.context.logged) {
                 document.body.classList.add("logged-in");
                 document.body.classList.add(dsb.user.session.context.user);
