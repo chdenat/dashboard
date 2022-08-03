@@ -35,7 +35,9 @@ class Template {
     #old = null
     #variable = null
     #reserved = ['menu', 'content']    // Special templates
-    animation=Animation
+    animation = Animation
+
+    static #use_404 = false
 
     static event = new EventEmitter()
 
@@ -106,7 +108,7 @@ class Template {
     }
 
     static ID_from_element(element) {
-        if (! element instanceof HTMLElement) {
+        if (!element instanceof HTMLElement) {
             element = document.querySelector(element)
         }
 
@@ -190,12 +192,26 @@ class Template {
      * @param template_id
      * @param url
      */
-    static page_404 = (template_id,url) => {
-        Animation.loading(template_id)
+    static page_404 = (template_id, url) => {
+
         let t = new Template(document.querySelector(`[data-template-id="${template_id}"]`))
-        t.check_link('/pages/404')
-        t.load(true,{url:url})
-        Animation.loaded(template_id)
+
+        let load = true
+        if (t.is_content && !Template.#use_404) {
+            load = false
+        }
+
+        if (load) {
+            Animation.loading(template_id)
+            t.check_link('/pages/404')
+            t.load(true, {url: url})
+            Animation.loaded(template_id)
+            Template.use_404();
+        }
+    }
+
+    static use_404= (use = true) => {
+        Template.#use_404  = use
     }
 
     /**
@@ -213,43 +229,43 @@ class Template {
                 // If it s the case, lets'go
                 let template = Template.get_template(`#${item}#`)
 
-                // save old...
-                template.historize = template
+                if (undefined !== template) {
 
-                // And now we work on the new content, we push the file and tab
-                template.check_link(event.currentTarget.getAttribute('href'))
+                    // save old...
+                    template.historize = template
 
-                let force = true
-                // Same file  : De we force a loading?
-                if (template.same_file) {
-                    force = event.target.dataset.forceReload ?? false
-                    // If reload not forced, we do nothing and say bye
-                    if (!force) {
-                        template.loaded = true;
+                    // And now we work on the new content, we push the file and tab
+                    template.check_link(event.currentTarget.getAttribute('href'))
+
+                    let force = true
+                    // Same file  : De we force a loading?
+                    if (template.same_file) {
+                        force = event.target.dataset.forceReload ?? false
+                        // If reload not forced, we do nothing and say bye
+                        if (!force) {
+                            template.loaded = true;
+                        }
                     }
+
+                    // It's in content, lets save in cookies
+                    if (template.is_content) {
+                        Cookies.set('last-menu', JSON.stringify(
+                            {
+                                file: template.#file,        // The template
+                                tab: template.#tab,          // The tab we'll open
+                                origin: event.target.id      // The menu item that launch this load template event
+                            }));
+
+                    }
+                    // The events com from the menu, so, add an animation if it's only a tab template.
+                    if (!template.is_content) {
+                        Animation.loading('#content#')
+                    }
+
+                    // Load the link content in the right template
+                    template.load(force);
                 }
 
-                // It's in content, lets save in cookies
-                if (template.is_content) {
-                    Cookies.set('last-menu', JSON.stringify(
-                        {
-                            file: template.#file,        // The template
-                            tab: template.#tab,          // The tab we'll open
-                            origin: event.target.id      // The menu item that launch this load template event
-                        }));
-
-                }
-                // The events com from the menu, so, add an animation if it's only a tab template.
-                if (!template.is_content) {
-                    Animation.loading('#content#')
-                }
-
-                // Load the link content in the right template
-                template.load(force);
-
-                /**
-                 * We launch template/updated/....  event to reflect the update of the page
-                 */
                 event.preventDefault(); // Cancel the native event
                 return false
             }
@@ -306,47 +322,48 @@ class Template {
         // Step 2 : run animation
         Animation.loading(this.ID)
 
-        let self = this
 
-        // Step 3 : Load the template using ajax and children if there are some
-         fetch(dsb_ajax.get + '?' + new URLSearchParams({
-            action: 'load-template',
-            template: this.file,
-            tab: this.tab,
-            parameters: JSON.stringify(parameters)
-        })).then((response) => {
-           if (response.ok) {
-                return response.text();     // <template>###<content>
-           }
-           return '###'                     // No valid template ...
+            let self = this
 
-        }).then((html) => {
-            let [template, content] = html.split('###')
-             if ('' !== template) {
-                 this.#maybe_we_need_to_change_template(template)
-                 //load content.
-                 self.container.innerHTML = content;
+            // Step 3 : Load the template using ajax and children if there are some
+            fetch(dsb_ajax.get + '?' + new URLSearchParams({
+                action: 'load-template',
+                template: this.file,
+                tab: this.tab,
+                parameters: JSON.stringify(parameters)
+            })).then((response) => {
+                if (response.ok) {
+                    return response.text();     // <template>###<content>
+                }
+                return '###'                     // No valid template ...
 
-                 // Step 4 : Check if we need to open some tab
-                 if (null !== self.tab) {
-                     dsb.ui.show_tab(self.tab)
-                 }
-             } else {
-                 Template.page_404(self.container?.dataset?.templateId,this.file)
-             }
-             self.loaded = true
+            }).then((html) => {
+                let [template, content] = html.split('###')
+                if (template !== '') {
+                    this.#maybe_we_need_to_change_template(template)
+                    //load content.
+                    self.container.innerHTML = content;
 
-
-             // Step 5 : Loading is finished, we dispatch the load-done events
-            self.dispatch_events('load-done')
-
-            Template.add_template_to_list(self)
+                    // Step 4 : Check if we need to open some tab
+                    if (null !== self.tab) {
+                        dsb.ui.show_tab(self.tab)
+                    }
+                } else {
+                    Template.page_404(self.container?.dataset?.templateId, this.file)
+                }
+                self.loaded = true
 
 
-            return true;
-        }).catch((error) => {
-            console.error('Error:', error);                     // Print or not print ?
-        })
+                // Step 5 : Loading is finished, we dispatch the load-done events
+                self.dispatch_events('load-done')
+
+                Template.add_template_to_list(self)
+
+
+                return true;
+            }).catch((error) => {
+                console.error('Error:', error);                     // Print or not print ?
+            })
     }
 
     /**
@@ -399,20 +416,20 @@ class Template {
         generic_event.template = this;
         document.dispatchEvent(generic_event)
 
-        Template.event.emit(type,this);
+        Template.event.emit(type, this);
 
         if (file === null) {
             return
         }
 
 
-        file=file.startsWith( '/') ?file.substring(1):file
+        file = file.startsWith('/') ? file.substring(1) : file
 
         // Specific event
         let load_event = new Event(`template/${type}/${file}`)
         load_event.template = this
         document.dispatchEvent(load_event)
-        Template.event.emit(`${type}/${file}`,this);
+        Template.event.emit(`${type}/${file}`, this);
 
 
         // // Specific directory event

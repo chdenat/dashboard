@@ -313,6 +313,7 @@ var dsb = {
      */
     template: {
         init: () => {
+            Template.use_404(false)
 
             Template.load_all_templates()
 
