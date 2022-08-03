@@ -55,7 +55,7 @@ var dsb = {
             let found_with_role = false
             let item = {}
 
-            // We try as is,then without has and finally without index.
+            // We try as is,then without hash and finally without index.
             for (let key of [' ', '#', 'index']) {
                 pathname = pathname.split(key)[0]
                 // Some entry in the menu ?
@@ -330,8 +330,8 @@ var dsb = {
                 template.container.querySelectorAll('a[data-content-modal]').forEach(item => {
                     item.addEventListener('click', dsb.ui.show_intermediate_content)
                 });
-             Template.load_all_templates(template.container)
-                dsb.ui.init(template.container)
+               Template.load_all_templates(template.container)
+               dsb.ui.init(template.container)
             })
         }
 
