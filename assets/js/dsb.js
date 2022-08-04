@@ -313,16 +313,14 @@ var dsb = {
      */
     template: {
         init: () => {
+            // During the init phase, we do not use teh 404 redirection
             Template.use_404(false)
 
+            // Update the page
             Template.load_all_templates()
 
-            /**
-             * When a template has been loaded, we register specific link actions and load all the children
-             */
-
+            // When a template has been loaded, we register specific link actions and load all the children
             Template.event.once('load-done', template => {
-
                 // Let open in content
                 template.container.querySelectorAll('a[data-content]').forEach(item => {
                     item.addEventListener('click', Template.load_from_event)
@@ -331,8 +329,13 @@ var dsb = {
                 template.container.querySelectorAll('a[data-content-modal]').forEach(item => {
                     item.addEventListener('click', dsb.ui.show_intermediate_content)
                 });
+
+                // Download the family
                 Template.load_all_templates(template.container)
+
+                // Init UI
                 dsb.ui.init(template.container)
+
             })
         }
 

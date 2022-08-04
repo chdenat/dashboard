@@ -54,34 +54,41 @@ class Template {
     constructor(element = document, variable = null) {
 
 
+        // If it is not a DOM element, we get it from the ID
         if (typeof element === 'string') {
             element = document.querySelector(`[data-template-id="${element}"]`)
         }
 
-        this.#ID = element.dataset.templateId ?? '#' + nanoid()
+        if (element) {
+            this.#ID = element.dataset.templateId ?? '#' + nanoid()
 
-        this.check_link(element.dataset.template)
+            this.check_link(element.dataset.template)
 
-        // Template file could be
-        //      'xxxx/yyyyy'                => we check this as template file
-        //      'xxxx/yyyyy[variable]       =>
+            // Template file could be
+            //      'xxxx/yyyyy'                => we check this as template file
+            //      'xxxx/yyyyy[variable]       =>
 
-        if (variable !== null) {
-            this.#variable = variable
-            this.file = this.file.replace(`[${this.#variable}]`, '')
+            if (variable !== null) {
+                this.#variable = variable
+                this.file = this.file.replace(`[${this.#variable}]`, '')
+            }
+
+            this.#dom = {
+                container: element,
+                forced: element.dataset.templateForced ?? false,        // data-template-forced
+                animate: element.dataset.loadAnimation ?? false,        // data-load-animation
+                animation_type: element.dataset.animationType ?? null,   // data-animation-type
+            }
+            this.#load = false
+            this.#parent = element.parentElement.closest('[data-template]')
+
+            this.children
+
+            // we push the next ID to the DOM element
+            element.setAttribute('data-template-id', this.#ID)
+        } else {
+            this.#ID = null
         }
-
-        this.#dom = {
-            container: element,
-            forced: element.dataset.templateForced ?? false
-        }
-        this.#load = false
-        this.#parent = element.parentElement.closest('[data-template]')
-
-        this.children
-
-        // we push the next ID to the DOM element
-        element.setAttribute('data-template-id', this.#ID)
     }
 
     /**
@@ -100,7 +107,7 @@ class Template {
     }
 
     get is_content() {
-        return '#content#' === this.#ID
+        return '#content#' === this.ID
     }
 
     get ID() {
@@ -202,10 +209,10 @@ class Template {
         }
 
         if (load) {
-            Animation.loading(template_id)
+            t.start_animation()
             t.check_link('/pages/404')
             t.load(true, {url: url})
-            Animation.loaded(template_id)
+            t.stop_animation()
             Template.use_404();
         }
     }
@@ -320,8 +327,7 @@ class Template {
         this.dispatch_events('loading')
 
         // Step 2 : run animation
-        Animation.loading(this.ID)
-
+        this.start_animation()
 
             let self = this
 
@@ -474,7 +480,46 @@ class Template {
     static get_template = (key) => {
         return templates_list[key]
     }
+    /**
+     * Check if there is an animation with this template
+     *
+     * @return  boolean
+     *
+     */
+    animate =  () => {
+        return  (this.is_content || this.#dom.animate)
+    }
 
+    /**
+     * Check if there is an animation with this template
+     *
+     * @return  boolean true if there is an animation or
+     *                  if it is the content template which have always an animation
+     *
+     */
+    animation_type =  () => {
+        return  ('loader' || this.#dom.animation_type)
+    }
+
+    /**
+     * Start the animation for this template (if there is one)
+     *
+     */
+    start_animation=()=> {
+        if (this.animate()) {
+            this.animation.loading(this.ID)
+        }
+    }
+
+    /**
+     * Stop the animation for this template  (if there is one)
+     *
+     */
+    stop_animation=()=> {
+        if (this.animate()) {
+            this.animation.loaded(this.ID)
+        }
+    }
 
 }
 
