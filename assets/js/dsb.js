@@ -51,8 +51,8 @@ var dsb = {
             let origin = pathname
             pathname = dsb.menu._clean_path(pathname)
 
-            let found = false
-            let found_with_role = false
+            let found = false               // found in the menu
+            let found_with_role = false     // found with a specific role if not in menu
             let item = {}
 
             // We try as is,then without hash and finally without index.
@@ -70,6 +70,10 @@ var dsb = {
                 } else if (!dsb.user.session.active()) {
                     // Nothing... May be the user need to be logged in to see this item in the menu ...
                     found_with_role = dsb.menu.find_items_with_roles(dsb.menu.json.menu, 'href', pathname, dsb.menu.all_roles(), true).length > 0
+
+                }
+                if (found || found_with_role) {
+                    break;
                 }
             }
 
@@ -151,6 +155,7 @@ var dsb = {
                 // search is enabled
                 if (search) {
                     // key and value match... OK we get'em
+
                     if (dsb.menu._clean_path(obj[key]) === dsb.menu._clean_path(value)) {
                         result.push({data: obj, roles: used_roles});
                     }
