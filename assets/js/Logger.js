@@ -259,8 +259,9 @@ class Logger {
         let lines = (this.#loop === 0 && !this.#history) ? 0 : this.context.lines
         let start = this.context.read_lines - (this.#loop === 0 && this.#history ? lines : 0)
 
-        this.animate()
-
+        if (!this.#once) {
+            this.animate()
+        }
         await fetch(ajax.get + '?' + new URLSearchParams({
             action: 'logger',
             file: this.context.file,
