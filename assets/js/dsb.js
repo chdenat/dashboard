@@ -897,7 +897,7 @@ var dsb = {
             },
 
             /**
-             * Return true if session is actibe, else false.
+             * Return true if session is active, else false.
              *
              *
              * @return {boolean}
