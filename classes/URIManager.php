@@ -96,7 +96,7 @@
 			
 			// Cleans the path (if it contains leading and/or ending /) and saves it as array
 			$data['path-decoded'] = null;
-			if ( str_contains( '/', $data['path'] && '/' === $data['path'] ) ) {
+			if ( str_contains( '/', $data['path']??null && '/' === $data['path'] ) ) {
 				$data['path-decoded'] = explode( '/', rtrim( ltrim( $data['path'], '/' ), '/' ) );
 			}
 			
