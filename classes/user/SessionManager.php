@@ -22,10 +22,8 @@
 	
 	namespace dashboard\user;
 	
-	use dashboard\Debug;
-	
 	class SessionManager {
-		const        LIFETIME_DEFAULT = 600;
+		const        LIFETIME_DEFAULT = 900;
 		
 		// THE only instance of the class
 		private static ?SessionManager $instance = null;
@@ -84,6 +82,8 @@
 					            'logged'    => true,
 					            'user'      => $user,
 					            'lifetime'  => $lifetime,
+					            'permanent' => false,
+					            'roles'     => [],
 				            ] );
 			}
 			
