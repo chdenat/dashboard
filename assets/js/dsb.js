@@ -891,14 +891,35 @@ var dsb = {
                     roles: [],
                     lifetime: '',
                     connection: 0,
-                    activity: 0
+                    activity: 0,
+                    permanent:false
                 }
 
             },
 
             /**
-             * Return true if session is active, else false.
+             * Set permanent (ie no session lifetime tracking) or not (default)
              *
+             * @param permanent  default to false
+             *
+             * @since 1.0
+             */
+            set_permanent:(permanent=false) =>{
+                dsb.user.session.context.permanent=permanent
+            },
+
+            /**
+             * Get permanent user context value
+             *
+             * @since 1.0
+             *
+             */
+            get_permanent:() =>{
+               return dsb.user.session.context.permanent
+            },
+
+            /**
+             * Return true if session is active, else false.
              *
              * @return {boolean}
              */
