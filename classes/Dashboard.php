@@ -409,7 +409,7 @@
 			return 'favicon';
 		}
 
-		if ( $info['params']['path-data'] && !empty($info['params']['path-data'][0]) ) {
+		if ( $info['params']['path-data']??null && !empty($info['params']['path-data'][0]) ) {
 			return $info['params']['path-data'][0];
 		}
 		
