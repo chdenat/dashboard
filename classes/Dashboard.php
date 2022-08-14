@@ -126,6 +126,8 @@
 			$url = URIManager::instance()->build_url( short: false, params: URIManager::instance()
 			                                                                          ->get_information() );
 
+			
+
 			if ( in_array( strtolower( $this->page_template ), [  'page', 'pages' ,'favicon','home'] ) ) {
 				$this->located_template = Template::instance()->locate_template( $this->page_template );
 				// If not found, we continue with 404.
@@ -407,7 +409,7 @@
 			return 'favicon';
 		}
 
-		if ( isset( $info['params']['path-data'] ) ) {
+		if ( $info['params']['path-data'] && !empty($info['params']['path-data'][0]) ) {
 			return $info['params']['path-data'][0];
 		}
 		
