@@ -686,6 +686,13 @@ var dsb = {
             check_expiration: () => {
 
                 /**
+                 * Bail early if we are in a permanent session
+                 */
+                if (dsb.user.session.get_permanent()) {
+                    return
+                }
+
+                /**
                  * Countdowns start...
                  */
 
