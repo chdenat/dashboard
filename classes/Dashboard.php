@@ -405,10 +405,18 @@
 			return $this->located_template;
 		}
 		$info = URIManager::instance()->get_information();
+		
+		// If there is no informatins, let's go on home
+		if ('/' === $info['path']) {
+			return 'home';
+		}
+		
+		// It's a favicon, just return the information
 		if (str_contains($info['path'],'favicon')) {
 			return 'favicon';
 		}
 
+		// We have some information, send them
 		if ( $info['params']['path-data']??null && !empty($info['params']['path-data'][0]) ) {
 			return $info['params']['path-data'][0];
 		}
