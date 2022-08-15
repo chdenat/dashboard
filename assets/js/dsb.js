@@ -341,6 +341,8 @@ var dsb = {
                 // Init UI
                 dsb.ui.init(template.container)
 
+                Template.use_404()
+
             })
         }
 
