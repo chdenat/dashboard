@@ -133,7 +133,7 @@
 						// We do not use json, due to some errors caused sometimes by some bad formatted HTML ...
 						echo  $template.'###'. ob_get_clean();
 					} else {
-						self::send_error( code: 460, message: _( 'Template does not exist ...' ) );
+						self::send_error( code: 404, message: _( 'Template does not exist ...' ) );
 					}
 					break;
 				
