@@ -19,6 +19,59 @@ const {Template} = await import ('./Template.js')
 
 var dsb = {
 
+    // app information
+    page: {
+        main_title: 'Dashboard',
+
+        /**
+         * Set page title
+         *
+         * @param title if set, page title is "MAIN : title" else (default) it is "MAIN"
+         *
+         * @since 1.0
+         */
+        set_title: (title=null) => {
+            if (title === null) {
+                document.title=dsb.page.main_title
+                return
+            }
+
+            document.title = `${dsb.page.main_title}: ${title}`
+        },
+
+        /**
+         * History management
+         *
+         * Add the page in browser history
+         *
+         * @param item
+         */
+        add_to_history: (item) => {
+            let href = item.getAttribute('href')
+            href = href.startsWith('/') ? href : '/' + href
+            history.pushState({
+                title: document.title,
+                url: href
+            }, item.querySelector('span').text, href)
+        },
+
+        /**
+         * History management
+         *
+         * Trap popstate event. If there's no state, redirct to home
+         *
+         * @param event
+         */
+        show_history_item: (event) => {
+            console.log(event)
+            if (event.state === null) {
+                location.href = '/home'
+            } else {
+                location.href = event.state.href??'/home'
+            }
+        },
+    },
+
     menu: {
 
         template_id: "#menu#",
@@ -184,38 +237,14 @@ var dsb = {
                 // Mark new menu item opened
                 document.querySelector(`.opened[href]`)?.classList.remove('opened')
                 item.classList.add('opened')
-                dsb.menu.add_to_history(item)
+                // change title
+                dsb.page.add_to_history(item)
             }
 
             item.click()
 
         },
 
-        /**
-         * History management
-         *
-         * Add the page in browser history
-         *
-         * @param item
-         */
-        add_to_history: (item) => {
-            let href = item.getAttribute('href')
-            href = href.startsWith('/') ? href : '/' + href
-            history.pushState({title:document.title}, item.querySelector('span').text, href)
-        },
-
-        /**
-         * History management
-         *
-         * Trap popstate event. If there's no state, redirct to home
-         *
-         * @param event
-         */
-        show_history_item:(event) => {
-            if (event.state === null) {
-                location.href='/home'
-            }
-        },
 
         /**
          * Suppress / at both first and end
@@ -329,9 +358,6 @@ var dsb = {
              * Call synchronize when menu has been loaded
              */
             dsb.menu.synchronize(event.template, dsb.menu.pathname)
-
-            // We need to manage some history retrieval
-            window.addEventListener('popstate',dsb.menu.show_history_item)
 
         },
     },
@@ -924,7 +950,7 @@ var dsb = {
                     lifetime: '',
                     connection: 0,
                     activity: 0,
-                    permanent:false
+                    permanent: false
                 }
 
             },
@@ -936,8 +962,8 @@ var dsb = {
              *
              * @since 1.0
              */
-            set_permanent:(permanent=false) =>{
-                dsb.user.session.context.permanent=permanent
+            set_permanent: (permanent = false) => {
+                dsb.user.session.context.permanent = permanent
             },
 
             /**
@@ -946,8 +972,8 @@ var dsb = {
              * @since 1.0
              *
              */
-            get_permanent:() =>{
-               return dsb.user.session.context.permanent
+            get_permanent: () => {
+                return dsb.user.session.context.permanent
             },
 
             /**
@@ -1043,12 +1069,12 @@ var dsb = {
          * @since 1.0
          *
          */
-        logout: async (event = null, button=null, redirection = null) => {
+        logout: async (event = null, button = null, redirection = null) => {
 
             // if redirection is null, we try to get it from button, ie in data-logout-redirection
             if (null === redirection) {
                 if (button) {
-                    redirection = button.dataset.logoutRedirection??null
+                    redirection = button.dataset.logoutRedirection ?? null
                 }
             }
 
@@ -1094,7 +1120,7 @@ var dsb = {
                             type: 'success'
                         })
                         document.dispatchEvent(dsb.user.events.dsb_logout);
-                            window.location.href = redirection??'/'
+                        window.location.href = redirection ?? '/'
                     }
                 })
                 .catch(error => {
@@ -1836,6 +1862,9 @@ var dsb = {
 
     init: async () => {
 
+        window.addEventListener('popstate', dsb.page.show_history_item)
+
+
         const {default: OverlaysScrollbars} = await import ('/dashboard/assets/vendor/overlay-scrollbars/OverlayScrollbars.js')
 
 
@@ -1876,6 +1905,8 @@ var dsb = {
         })
 
         dsb.ui.init();
+
+        // We need to manage some history retrieval
 
         dsb.initialized = true;
         console.info('Dashboard init done.')
