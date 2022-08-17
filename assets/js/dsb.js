@@ -191,10 +191,30 @@ var dsb = {
 
         },
 
+        /**
+         * History management
+         *
+         * Add the page in browser history
+         *
+         * @param item
+         */
         add_to_history: (item) => {
             let href = item.getAttribute('href')
             href = href.startsWith('/') ? href : '/' + href
-            history.pushState(null, item.querySelector('span').text, href)
+            history.pushState({title:document.title}, item.querySelector('span').text, href)
+        },
+
+        /**
+         * History management
+         *
+         * Trap popstate event. If there's no state, redirct to home
+         *
+         * @param event
+         */
+        show_history_item:(event) => {
+            if (event.state === null) {
+                location.href='/home'
+            }
         },
 
         /**
@@ -309,6 +329,9 @@ var dsb = {
              * Call synchronize when menu has been loaded
              */
             dsb.menu.synchronize(event.template, dsb.menu.pathname)
+
+            // We need to manage some history retrieval
+            window.addEventListener('popstate',dsb.menu.show_history_item)
 
         },
     },
@@ -1616,6 +1639,10 @@ var dsb = {
         },
 
         button_animate: (button, action) => {
+            if (button instanceof PointerEvent) {
+                button = button.target
+            }
+
             switch (action) {
                 case 'start':
                     button.querySelector('i.animation.start').classList.add('dsb-hide')
