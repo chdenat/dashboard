@@ -40,19 +40,42 @@ var dsb = {
         },
 
         /**
-         * History management
+         * History management from link on menu
          *
-         * Add the page in browser history
+         * Add the url in the browser history
          *
          * @param item
+         *
+         * @since 1.0
+         *
          */
-        add_to_history: (item) => {
+        add_to_history_from_menu: (item) => {
             let href = item.getAttribute('href')
             href = href.startsWith('/') ? href : '/' + href
             history.pushState({
                 title: document.title,
-                url: href
+                full: href
             }, item.querySelector('span').text, href)
+        },
+
+        /**
+         * Add  History management from a tab
+         *
+         * Add the url in the browser history
+         *
+         *
+         * @since 1.0
+         *
+         * @param page_title
+         * @param full
+         * @param url
+         */
+        add_to_history: (page_title, full,url) => {
+            let href = url.startsWith('/') ? url : '/' + url
+            history.pushState({
+                title: page_title,
+                full: full
+            }, page_title, href)
         },
 
         /**
@@ -63,7 +86,6 @@ var dsb = {
          * @param event
          */
         show_history_item: (event) => {
-            console.log(event)
             if (event.state === null) {
                 location.href = '/home'
             } else {
@@ -238,7 +260,7 @@ var dsb = {
                 document.querySelector(`.opened[href]`)?.classList.remove('opened')
                 item.classList.add('opened')
                 // change title
-                dsb.page.add_to_history(item)
+                dsb.page.add_to_history_from_menu(item)
             }
 
             item.click()
@@ -369,7 +391,6 @@ var dsb = {
         init: () => {
             // During the init phase, we do not use teh 404 redirection
             Template.use_404(false)
-
             // Update the page
             Template.load_all_templates()
 
@@ -386,6 +407,7 @@ var dsb = {
 
                 // Download the family
                 Template.load_all_templates(template.container)
+
 
                 // Init UI
                 dsb.ui.init(template.container)
@@ -1551,11 +1573,10 @@ var dsb = {
                         && event.target?.dataset?.bsToggle === 'tab'      // it should be a tab
                         && window.location.hash) {                      // and the URL should contain #
 
-                        // change the hash
-                        window.location.hash = event.target?.dataset?.bsTarget?.split('#tab-')[1]
-                        //change the history
-                        let pathname = window.location.href.split(window.location.origin)[1]
-                        history.pushState(null, '', pathname)
+                        // change the hash, the ural and put them in history
+                        let hash = event.target?.dataset?.bsTarget?.split('#tab-')[1]
+                        let url = window.location.href.replace(window.location.hash,'#'+hash)
+                        dsb.page.add_to_history(document.title,url,url.split(window.location.origin)[1])
                         // change menu info to corresponding item
                         document.querySelector(`.opened[href]`)?.classList.remove('opened')
                         document.querySelector(`[href="${pathname}"]`)?.classList.add('opened')
@@ -1862,8 +1883,11 @@ var dsb = {
 
     init: async () => {
 
-        window.addEventListener('popstate', dsb.page.show_history_item)
-
+        try {
+            window.addEventListener('popstate', dsb.page.show_history_item)
+        } catch (e) {
+            console.error(e)
+        }
 
         const {default: OverlaysScrollbars} = await import ('/dashboard/assets/vendor/overlay-scrollbars/OverlayScrollbars.js')
 
