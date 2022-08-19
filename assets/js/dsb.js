@@ -55,7 +55,7 @@ var dsb = {
             history.pushState({
                 title: document.title,
                 full: href
-            }, item.querySelector('span').text, href)
+            }, dsb.menu.item_text(item), href)
         },
 
         /**
@@ -86,12 +86,28 @@ var dsb = {
          * @param event
          */
         show_history_item: (event) => {
+            if (!event) {
+                location.href = '/home'
+            }
             if (event.state === null) {
                 location.href = '/home'
             } else {
                 location.href = event.state.href??'/home'
             }
         },
+
+        /**
+         * Try to retrieve the right page in the history and isplay it.
+         *
+         * @since 1.0
+         */
+        init:() => {
+            try {
+                window.onpopstate = () => setTimeout(dsb.page.show_history_item, 0);
+            } catch (e) {
+                console.error(e)
+            }
+        }
     },
 
     menu: {
@@ -252,21 +268,40 @@ var dsb = {
          * - display the url in the history
          *
          * @param item
+         * @param historize  indicates if we need historization (default false)
+         *
+         * @since 1.0
+         *
          */
-        click: (item) => {
+        click: (item, historize=false) => {
             // it's the link ?  Manage history (and add url in the browser bar)
             if (item?.dataset?.level) {
                 // Mark new menu item opened
                 document.querySelector(`.opened[href]`)?.classList.remove('opened')
                 item.classList.add('opened')
                 // change title
-                dsb.page.add_to_history_from_menu(item)
+                dsb.page.set_title(dsb.menu.item_text(item)) //TODO change
+                if (historize) {
+                    dsb.page.add_to_history_from_menu(item)
+                }
             }
 
             item.click()
-
+            return false
         },
 
+        /**
+         * Get the text from the menu item
+         *
+         * @param item
+         * @return {*}
+         *
+         * @since 1.0
+         *
+         */
+        item_text:(item) => {
+            return item?.innerText
+        },
 
         /**
          * Suppress / at both first and end
@@ -347,8 +382,9 @@ var dsb = {
              * Add an event to the menu item sto mark them as opened when clicked
              */
             menu_container.querySelectorAll('[data-content]').forEach(item => {
+                const HISTORIZE=true
                 item.addEventListener('click', event => {
-                    dsb.menu.click(item)
+                    dsb.menu.click(item,HISTORIZE)
                 })
             })
             /**
@@ -1883,26 +1919,24 @@ var dsb = {
 
     init: async () => {
 
-        try {
-            window.addEventListener('popstate', dsb.page.show_history_item)
-        } catch (e) {
-            console.error(e)
-        }
-
         const {default: OverlaysScrollbars} = await import ('/dashboard/assets/vendor/overlay-scrollbars/OverlayScrollbars.js')
 
+        /**
+         * First thing to do,manage history
+         */
+        dsb.page.init()
 
         /**
-         * First thing to do, get user and session information
+         * Then, get user and session information
          */
         dsb.user.init();
 
         /**
-         *  Initialisation of the dashboard elements
+         *  Finally, Initialise other dashboard elements
          */
-        dsb.modal.init();
-        dsb.error.init();
-        dsb.toast.init();
+        dsb.modal.init()
+        dsb.error.init()
+        dsb.toast.init()
 
         if (!dsb.initialized) {
             /**
