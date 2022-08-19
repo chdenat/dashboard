@@ -204,6 +204,7 @@ class Template {
         let t = new Template(document.querySelector(`[data-template-id="${template_id}"]`))
 
         let load = true
+        console.log(t.is_content,Template.#use_404)
         if (t.is_content && !Template.#use_404) {
             load = false
         }
@@ -217,13 +218,17 @@ class Template {
         }
     }
 
-    static use_404= (use = true) => {
-        Template.#use_404  = use
+    static use_404 = (use = true) => {
+        Template.#use_404 = use
+    }
+
+    static do_we_use_404= ()=> {
+        return Template.#use_404
     }
 
     /**
      * Manage template loading when it comes from an event.
-     * Links must be bound to sime managed template
+     * Links must be bound to same managed template
      *
      * This function should be launch using addEventListener
      * @param event
@@ -329,47 +334,48 @@ class Template {
         // Step 2 : run animation
         this.start_animation()
 
-            let self = this
+        let self = this
 
-            // Step 3 : Load the template using ajax and children if there are some
-            fetch(dsb_ajax.get + '?' + new URLSearchParams({
-                action: 'load-template',
-                template: this.file,
-                tab: this.tab,
-                parameters: JSON.stringify(parameters)
-            })).then((response) => {
-                if (response.ok) {
-                    return response.text();     // <template>###<content>
+        // Step 3 : Load the template using ajax and children if there are some
+        fetch(dsb_ajax.get + '?' + new URLSearchParams({
+            action: 'load-template',
+            template: this.file,
+            tab: this.tab,
+            parameters: JSON.stringify(parameters)
+        })).then((response) => {
+            if (response.ok) {
+                return response.text();     // <template>###<content>
+            }
+            return '###'                     // No valid template ...
+
+        }).then((html) => {
+            let [template, content] = html.split('###')
+            if (template) {
+                this.#maybe_we_need_to_change_template(template)
+                //load content.
+                self.container.innerHTML = content;
+
+                // Step 4 : Check if we need to open some tab
+                if (null !== self.tab) {
+                    dsb.ui.show_tab(self.tab)
                 }
-                return '###'                     // No valid template ...
-
-            }).then((html) => {
-                let [template, content] = html.split('###')
-                if (template !== '') {
-                    this.#maybe_we_need_to_change_template(template)
-                    //load content.
-                    self.container.innerHTML = content;
-
-                    // Step 4 : Check if we need to open some tab
-                    if (null !== self.tab) {
-                        dsb.ui.show_tab(self.tab)
-                    }
-                } else {
-                    Template.page_404(self.container?.dataset?.templateId, this.file)
-                }
-                self.loaded = true
+            } else {
+                Template.page_404(self.container?.dataset?.templateId, this.file)
+            }
+            self.loaded = true
 
 
-                // Step 5 : Loading is finished, we dispatch the load-done events
-                self.dispatch_events('load-done')
+            // Step 5 : Loading is finished, we dispatch the load-done events
+            self.dispatch_events('load-done')
 
-                Template.add_template_to_list(self)
+            Template.add_template_to_list(self)
 
 
-                return true;
-            }).catch((error) => {
-                console.error('Error:', error);                     // Print or not print ?
-            })
+            return true;
+        }).catch((error) => {
+            console.error('Error:', error);                     // Print or not print ?
+        })
+
     }
 
     /**
@@ -486,8 +492,8 @@ class Template {
      * @return  boolean
      *
      */
-    animate =  () => {
-        return  (this.is_content || this.#dom.animate)
+    animate = () => {
+        return (this.is_content || this.#dom.animate)
     }
 
     /**
@@ -497,15 +503,15 @@ class Template {
      *                  if it is the content template which have always an animation
      *
      */
-    animation_type =  () => {
-        return  ('loader' || this.#dom.animation_type)
+    animation_type = () => {
+        return ('loader' || this.#dom.animation_type)
     }
 
     /**
      * Start the animation for this template (if there is one)
      *
      */
-    start_animation=()=> {
+    start_animation = () => {
         if (this.animate()) {
             this.animation.loading(this.ID)
         }
@@ -515,7 +521,7 @@ class Template {
      * Stop the animation for this template  (if there is one)
      *
      */
-    stop_animation=()=> {
+    stop_animation = () => {
         if (this.animate()) {
             this.animation.loaded(this.ID)
         }
