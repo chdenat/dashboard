@@ -81,8 +81,6 @@ var dsb = {
         /**
          * History management
          *
-         * Trap popstate event. If there's no state, redirct to home
-         *
          * @param event
          */
         show_history_item: (event) => {
@@ -103,7 +101,7 @@ var dsb = {
          */
         init:() => {
             try {
-                window.onpopstate = () => setTimeout(dsb.page.show_history_item, 0);
+              window.onpopstate = () => setTimeout(dsb.page.show_history_item, 0);
             } catch (e) {
                 console.error(e)
             }
@@ -1918,7 +1916,6 @@ var dsb = {
      */
 
     init: async () => {
-
         const {default: OverlaysScrollbars} = await import ('/dashboard/assets/vendor/overlay-scrollbars/OverlayScrollbars.js')
 
         /**
