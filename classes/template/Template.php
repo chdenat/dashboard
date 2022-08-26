@@ -510,8 +510,9 @@
 		)
 		: string {
 			$w = $width - 14; // 7 for start comment, 5 for end comment + 2 spaces before and after comment
-			if ( strlen( $comment ) > $w ) {
-				$comment = '[...]' . substr( $comment, - 2 / 3 * $w );
+            $w1 = 2/3 * $w;
+			if ( strlen( $comment ) > $w1 ) {
+				$comment = '[...]' . substr( $comment, - 2 / 3 * $w1 );
 			}
 			$s = str_repeat( $char,intval(( $w - strlen( $comment ) ) / 2) );
 			ob_start(); ?>
