@@ -342,7 +342,7 @@ class Template {
             template: this.file,
             tab: this.tab,
             parameters: JSON.stringify(parameters)
-        })).then((response) => {
+        }),{cache: "no-cache"}).then((response) => {
             if (response.ok) {
                 return response.text();     // <template>###<content>
             }
