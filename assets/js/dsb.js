@@ -84,14 +84,17 @@ var dsb = {
          * @param event
          */
         show_history_item: (event) => {
+           let url =location.href
             if (!event) {
-                location.href = '/home'
+                url = '/home'
             }
             if (event.state === null) {
-                location.href = '/home'
+                url = '/home'
             } else {
-                location.href = event.state.href??'/home'
+                url= event.state.full??'/home'
             }
+
+            location.href = url;
         },
 
         /**
@@ -101,7 +104,7 @@ var dsb = {
          */
         init:() => {
             try {
-              window.onpopstate = () => setTimeout(dsb.page.show_history_item, 0);
+              window.onpopstate = (event) => setTimeout(dsb.page.show_history_item, 0,event);
             } catch (e) {
                 console.error(e)
             }
