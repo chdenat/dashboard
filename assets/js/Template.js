@@ -49,9 +49,13 @@ class Template {
      * @param variable add to template file.
      *                when the template file is 'xxxx/yyyyy'        ==> we check this as template file, no variable
      *                when the template file is 'xxxx/yyyyy[zzz]'   ==> we check 'xxxx/yyyyy' as template file, zzz as variable
+     * @param file      force a file instead the defind in data-template
+     *
+     * @since 1.0.0
+     *
      *
      */
-    constructor(element = document, variable = null) {
+    constructor(element = document, variable = null,file=null) {
 
 
         // If it is not a DOM element, we get it from the ID
@@ -62,8 +66,7 @@ class Template {
         if (element) {
             this.#ID = element.dataset.templateId ?? '#' + nanoid()
 
-            this.check_link(element.dataset.template)
-
+            this.check_link(file??element.dataset.template)
             // Template file could be
             //      'xxxx/yyyyy'                => we check this as template file
             //      'xxxx/yyyyy[variable]       =>
