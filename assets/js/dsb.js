@@ -1796,6 +1796,12 @@ var dsb = {
             }
         },
 
+        prevent_default: (event)=> {
+            if (event instanceof Event) {
+                event.preventDefault()
+            }
+        },
+
         /**
          * Scroll are only applied on children or element if no cascading
          * @param element
