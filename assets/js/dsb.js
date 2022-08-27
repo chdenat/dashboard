@@ -1520,6 +1520,7 @@ var dsb = {
                 element.classList.remove('dsb-show-inline-block')
                 element.classList.remove('dsb-show-inline-flex')
             }
+            return dsb.ui
         },
 
         show: (element, flex = true) => {
@@ -1531,6 +1532,7 @@ var dsb = {
                     element.classList.add('dsb-show')
                 }
             }
+            return dsb.ui
         },
 
         show_block: (element) => {
@@ -1794,6 +1796,10 @@ var dsb = {
             if (item) {
                 item.classList.remove('dsb-show', 'fa-spin')
             }
+        },
+
+        is_event:(event) => {
+            return event instanceof Event
         },
 
         prevent_default: (event)=> {
