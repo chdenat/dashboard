@@ -1900,6 +1900,7 @@ var dsb = {
                     itemSelectText: '',
                     silent: true,
                     allowHTML: true,
+                    shouldSort:false,
                     searchEnabled: search,
                     renderChoiceLimit: limit,
                 })
