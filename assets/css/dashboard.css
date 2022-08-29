@@ -87,6 +87,9 @@ body {
  */
 
 /** icons **/
+.alert {
+    gap: var(--dsb-gutter);
+}
 .alert p i, .dropdown-item i, #menu-container li i {
     margin-right: calc(var(--dsb-gutter) / 2);
 }
