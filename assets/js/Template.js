@@ -14,13 +14,12 @@
  **********************************************************************************************************************/
 
 import {nanoid} from '../vendor/nanoid.js'
-import {_DOM} from './_DOM.js'
 import {Animation} from "./Animation.js";
 import {EventEmitter} from "../vendor/EventEmitter/EventEmitter.js";
 
 
 let templates_list = [];
-let reserved_templates = ['menu', 'content']
+let reserved_templates = ['menu', 'content','pop-content']
 
 class Template {
 
@@ -49,13 +48,13 @@ class Template {
      * @param variable add to template file.
      *                when the template file is 'xxxx/yyyyy'        ==> we check this as template file, no variable
      *                when the template file is 'xxxx/yyyyy[zzz]'   ==> we check 'xxxx/yyyyy' as template file, zzz as variable
-     * @param file      force a file instead the defind in data-template
+     * @param file    force a file instead the defind in data-template
      *
      * @since 1.0.0
      *
      *
      */
-    constructor(element = document, variable = null,file=null) {
+    constructor(element = document, variable = null, file = null) {
 
 
         // If it is not a DOM element, we get it from the ID
@@ -66,7 +65,14 @@ class Template {
         if (element) {
             this.#ID = element.dataset.templateId ?? '#' + nanoid()
 
-            this.check_link(file??element.dataset.template)
+            // fil or data-template-info
+            this.check_link(file ?? element.dataset.template)
+
+            // Then save it in DOM
+            if (file) {
+                element.setAttribute('data-template', file)
+            }
+
             // Template file could be
             //      'xxxx/yyyyy'                => we check this as template file
             //      'xxxx/yyyyy[variable]       =>
@@ -80,7 +86,7 @@ class Template {
                 container: element,
                 forced: element.dataset.templateForced ?? false,        // data-template-forced
                 animate: element.dataset.loadAnimation ?? false,        // data-load-animation
-                animation_type: element.dataset.animationType ?? null,   // data-animation-type
+                animation_type: element.dataset.animationType ?? null,  // data-animation-type
             }
             this.#load = false
             this.#parent = element.parentElement.closest('[data-template]')
@@ -89,6 +95,8 @@ class Template {
 
             // we push the next ID to the DOM element
             element.setAttribute('data-template-id', this.#ID)
+
+
         } else {
             this.#ID = null
         }
@@ -102,7 +110,7 @@ class Template {
      */
     get children() {
         let parent = this.#dom.container ?? document
-        _DOM.query_all_templates(parent).forEach(child => {
+        Template.get_all_templates(parent).forEach(child => {
             let tmp = new Template(child)
             Template.add_template_to_list(tmp)
             this.#children.push(tmp);
@@ -130,7 +138,7 @@ class Template {
     }
 
     get file() {
-        return this.#file
+        return this.#file??false
     }
 
     get directory() {
@@ -148,7 +156,20 @@ class Template {
     has_tab = () => {
         return this.tab !== ''
     }
-
+    /**
+     * Get templates by name
+     *
+     * @param parent
+     * @param name
+     * @returns NodeList  {NodeListOf<Element> | NodeListOf<SVGElementTagNameMap[keyof SVGElementTagNameMap]> |
+     *                     NodeListOf<HTMLElementTagNameMap[keyof HTMLElementTagNameMap]>}
+     *
+     * @since 1.0
+     *
+     */
+    static get_templates_by_name = (parent, name) => {
+        return parent.querySelectorAll(`block[data-template="${name}"]`);
+    }
 
     set file(file) {
         this.#file = file
@@ -207,7 +228,6 @@ class Template {
         let t = new Template(document.querySelector(`[data-template-id="${template_id}"]`))
 
         let load = true
-        console.log(t.is_content,Template.#use_404)
         if (t.is_content && !Template.#use_404) {
             load = false
         }
@@ -225,7 +245,7 @@ class Template {
         Template.#use_404 = use
     }
 
-    static do_we_use_404= ()=> {
+    static do_we_use_404 = () => {
         return Template.#use_404
     }
 
@@ -279,6 +299,9 @@ class Template {
 
                     // Load the link content in the right template
                     template.load(force);
+
+                    // save file information
+                    template.#dom.container.setAttribute('data-template', template.file)
                 }
 
                 event.preventDefault(); // Cancel the native event
@@ -304,6 +327,12 @@ class Template {
 
     load = (force = false, parameters = []) => {
 
+        /*
+         * Bail early if we hav no file
+         */
+        if (this.file === '') {
+            return false
+        }
         /**
          * force template is false ...
          *
@@ -345,7 +374,7 @@ class Template {
             template: this.file,
             tab: this.tab,
             parameters: JSON.stringify(parameters)
-        }),{cache: "no-cache"}).then((response) => {
+        }), {cache: "no-cache"}).then((response) => {
             if (response.ok) {
                 return response.text();     // <template>###<content>
             }
@@ -353,8 +382,9 @@ class Template {
 
         }).then((html) => {
             let [template, content] = html.split('###')
+            console.log(template)
             if (template) {
-                this.#maybe_we_need_to_change_template(template)
+                this.#template_completion(template)
                 //load content.
                 self.container.innerHTML = content;
 
@@ -384,13 +414,13 @@ class Template {
     /**
      * If the template is a directory, we need to add /index at the end in order to keep the template event working
      *
-     * @param $template
+     * @param template
      */
-    #maybe_we_need_to_change_template($template) {
-        if ($template.includes('.php')) {
-            $template = $template.slice(0, $template.length - 4) // remove .php
+    #template_completion(template) {
+        if (template.includes('.php')) {
+            template = template.slice(0, template.length - 4) // remove .php
             let origin = dsb.utils.path_info(this.file).name
-            let from_php = dsb.utils.path_info($template).name
+            let from_php = dsb.utils.path_info(template).name
 
             // If the file name is not the same, the origin template was a directory
             // so we save it and change the template file
@@ -408,21 +438,40 @@ class Template {
      */
     static load_all_templates = (parent = document) => {
 
-        let templates = _DOM.query_all_templates(parent);
+        let templates = Template.get_all_templates(parent);
 
-        let local = []
+        let children = []
 
         for (const template of templates) {
             if (template.id !== 'pop-content') {
                 let item = new Template(template)
-                local.push(item)
+                children.push(item)
+            }
+        }
+        for (const template of children) {
+            if (template.file === '') {
+                template.file = '/home'
+            }
+            if (template.file !== null) {
+                template.load(true)
             }
         }
 
-        for (const template of local) {
-            template.load(true)
-        }
-
+    }
+    /**
+     * Get all templates in DOM
+     *
+     * @param parent
+     * @param no_empty : boolean empty templates with no value
+     *
+     * @returns {NodeListOf<Element> | NodeListOf<SVGElementTagNameMap[keyof SVGElementTagNameMap]> | NodeListOf<HTMLElementTagNameMap[keyof HTMLElementTagNameMap]>}
+     *
+     * @since 1.0
+     *
+     */
+    static get_all_templates = (parent,no_empty=false) => {
+        let query = 'block[data-template]'+(no_empty?':not([data-template=""])':'')
+        return parent.querySelectorAll(query)
     }
 
     dispatch_events = (type, file = this.file, directory = this.#directory) => {
