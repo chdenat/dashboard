@@ -382,7 +382,6 @@ class Template {
 
         }).then((html) => {
             let [template, content] = html.split('###')
-            console.log(template)
             if (template) {
                 this.#template_completion(template)
                 //load content.
