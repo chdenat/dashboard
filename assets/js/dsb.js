@@ -119,7 +119,7 @@ var dsb = {
         template_id: "#menu#",
         pathname: null,
         current_roles: [],
-        json:{},
+        json: null,
 
         change_id: (new_id) => {
             dsb.menu.template_id = new_id
@@ -136,81 +136,82 @@ var dsb = {
          * @param template
          * @param pathname
          */
-        synchronize: async (template, pathname = '') => {
+        synchronize: (template, pathname = '') => {
             dsb.menu.change_id(template.ID)
 
-
-            // If there is no pathname, we use the window location
-            if (pathname === '' || pathname === null) {
-                pathname = `${window.location.pathname}${window.location.hash}`
-            }
-            let origin = pathname
-            pathname = dsb.menu._clean_path(pathname)
-
-            let found = false               // found in the menu
-            let found_with_role = false     // found with a specific role if not in menu
-            let item = {}
-
-            // We try as is,then without hash and finally without index.
-            for (let key of [' ', '#', 'index']) {
-                pathname = pathname.split(key)[0]
-                // Some entry in the menu ?
-                item = document.querySelector(`[data-template-id="${template.ID}"] a[data-level*="menu-item-"][href*="${pathname}"]`);
-                if (null !== item) {
-                    // Yes, so we clean and check it
-                    if (pathname === dsb.menu._clean_path(item.getAttribute('href').split(key)[0])) {
-                        found = true;
-                        break
-                    }
-
-                } else if (!dsb.user.session.active()) {
-                    // Nothing... May be the user need to be logged in to see this item in the menu ...
-                    found_with_role = dsb.menu.find_items_with_roles(dsb.menu.json.menu, 'href', pathname, dsb.menu.all_roles(), true).length > 0
-
+            dsb.menu.read_json().then(data => {
+                // If there is no pathname, we use the window location
+                if (pathname === '' || pathname === null) {
+                    pathname = `${window.location.pathname}${window.location.hash}`
                 }
-                if (found || found_with_role) {
-                    break;
-                }
-            }
+                let origin = pathname
+                pathname = dsb.menu._clean_path(pathname)
 
-            if (!found) {
-                if (!found_with_role) {
-                    // Nothing with role
-                    //  we try to open the default if it is / | /home => pathname = null | home
-                    if (pathname === '' || pathname === 'home') {
-                        item = document.querySelector(`[data-template-id="${template.ID}"] a[data-level*="menu-item"][data-default-page]`);
-                        if (null !== item) {
+                let found = false               // found in the menu
+                let found_with_role = false     // found with a specific role if not in menu
+                let item = {}
+
+                // We try as is,then without hash and finally without index.
+                for (let key of [' ', '#', 'index']) {
+                    pathname = pathname.split(key)[0]
+                    // Some entry in the menu ?
+                    item = document.querySelector(`[data-template-id="${template.ID}"] a[data-level*="menu-item-"][href*="${pathname}"]`);
+                    if (null !== item) {
+                        // Yes, so we clean and check it
+                        if (pathname === dsb.menu._clean_path(item.getAttribute('href').split(key)[0])) {
                             found = true;
+                            break
                         }
+
+                    } else if (!dsb.user.session.active()) {
+                        // Nothing... May be the user need to be logged in to see this item in the menu ...
+                        found_with_role = dsb.menu.find_items_with_roles(dsb.menu.json.menu, 'href', pathname, dsb.menu.all_roles(), true).length > 0
+
                     }
-                } else {
-                    // We find an entry with the role : we load the modal and pass some parameters
-                    dsb.menu.pathname = pathname
-                    dsb.modal.load('login-form', {template: template, pathname: pathname});
-                    dsb.modal.show()
-                    return
+                    if (found || found_with_role) {
+                        break;
+                    }
                 }
-            }
-            // If we found something, we'll open the right menu
-            // else we redirect to 404.
-            if (found || found_with_role) {
-                let levels = item.dataset.level.split('-')
-                let id = 'menu-item-'
-                levels.slice(2).forEach(level => {  // remove the 2 first, 'menu' and 'item'
-                    id += level
-                    // try to click on item defined as href=#<level-x-x>
-                    let item = document.querySelector(`[href="#${id}"]`)
-                    // or id= <level-x-x>
-                    if (null === item) {
-                        item = document.querySelector(`[data-level=${id}]`)
+
+                if (!found) {
+                    if (!found_with_role) {
+                        // Nothing with role
+                        //  we try to open the default if it is / | /home => pathname = null | home
+                        if (pathname === '' || pathname === 'home') {
+                            item = document.querySelector(`[data-template-id="${template.ID}"] a[data-level*="menu-item"][data-default-page]`);
+                            if (null !== item) {
+                                found = true;
+                            }
+                        }
+                    } else {
+                        // We find an entry with the role : we load the modal and pass some parameters
+                        dsb.menu.pathname = pathname
+                        dsb.modal.load('login-form', {template: template, pathname: pathname});
+                        dsb.modal.show()
+                        return
                     }
-                    // we click on child to open it
-                    item.click()
-                    id += '-'
-                })
-            } else {
-                Template.page_404('#content#', origin)
-            }
+                }
+                // If we found something, we'll open the right menu
+                // else we redirect to 404.
+                if (found || found_with_role) {
+                    let levels = item.dataset.level.split('-')
+                    let id = 'menu-item-'
+                    levels.slice(2).forEach(level => {  // remove the 2 first, 'menu' and 'item'
+                        id += level
+                        // try to click on item defined as href=#<level-x-x>
+                        let item = document.querySelector(`[href="#${id}"]`)
+                        // or id= <level-x-x>
+                        if (null === item) {
+                            item = document.querySelector(`[data-level=${id}]`)
+                        }
+                        // we click on child to open it
+                        item.click()
+                        id += '-'
+                    })
+                } else {
+                    Template.page_404('#content#', origin)
+                }
+            })
         },
 
         /**
@@ -334,8 +335,8 @@ var dsb = {
             }
         },
 
-        read_json:async () => {
-            if(dsb.menu.json === {}) {
+        read_json: async () => {
+            if (dsb.menu.json === null) {
                 await fetch((dsb_ajax.get) + '?' + new URLSearchParams({
                     action: 'read-json-menu',
                 })).then(function (response) {
@@ -346,7 +347,7 @@ var dsb = {
                     console.error('Error:', error); // Print or not print ?
                 })
             }
-            return dsb.m
+            return dsb.menu.json
         },
 
         /**
@@ -364,22 +365,22 @@ var dsb = {
              *
              */
 
-           dsb.menu.read_json()
+            dsb.menu.read_json()
 
             let menu_container = document.getElementById('menu-container');
 
             // We trap a specifi event on menu items click to instantiate the collapse/uncollapse
             dsb.content_event.on('click', (item) => {
-                dsb.menu.click(item,true)
+                dsb.menu.click(item, true)
             })
 
             /**
              * Close/open all 1st level menu
              */
             let all_open = false;
-            menu_container.querySelector('#menu-container .dsb-vertical').addEventListener('click', (event) => {
+            menu_container.querySelector('#menu-container .dsb-vertical')?.addEventListener('click', (event) => {
                 all_open = !all_open
-                menu_container.querySelectorAll(`#menu-container  #menu-wrapper a[data-bs-toggle="collapse"][aria-expanded="${!all_open}"]`).forEach((element) => {
+                menu_container?.querySelectorAll(`#menu-container  #menu-wrapper a[data-bs-toggle="collapse"][aria-expanded="${!all_open}"]`).forEach((element) => {
                     let item = bootstrap.Collapse.getOrCreateInstance(menu_container.querySelector(element.getAttribute("href")))
                     if (all_open) {
                         item?.show()
@@ -392,7 +393,7 @@ var dsb = {
             /**
              * Adds a specific class when horizontal collapse down
              */
-            menu_container.querySelector('.dsb-horizontal').addEventListener('click', (event) => {
+            menu_container?.querySelector('.dsb-horizontal')?.addEventListener('click', (event) => {
                 menu_container.classList.toggle('collapsed')
             });
             dsb.menu.update();
@@ -401,7 +402,7 @@ var dsb = {
             /**
              * Call synchronize when menu has been loaded
              */
-            dsb.menu.synchronize(event.template, dsb.menu.pathname)
+            dsb.menu.synchronize(event?.template, dsb.menu.pathname)
 
         },
     },
