@@ -19,11 +19,12 @@ import {EventEmitter} from "../vendor/EventEmitter/EventEmitter.js";
 
 
 let templates_list = [];
-let reserved_templates = ['menu', 'content','pop-content']
+let reserved_templates = ['menu', 'content', 'pop-content']
 
 class Template {
 
     #ID = null
+    static #HOME = ''
     #file = ''
     #directory = ''
     #tab = ''
@@ -138,7 +139,7 @@ class Template {
     }
 
     get file() {
-        return this.#file??false
+        return this.#file ?? false
     }
 
     get directory() {
@@ -203,6 +204,13 @@ class Template {
         return this.#dom.container
     }
 
+    static set_home(home) {
+        Template.#HOME = home
+    }
+    static get_home() {
+        return Template.#HOME
+    }
+
     /**
      * Checks the href refers to a tab
      *
@@ -227,18 +235,16 @@ class Template {
 
         let t = new Template(document.querySelector(`[data-template-id="${template_id}"]`))
 
-        let load = true
         if (t.is_content && !Template.#use_404) {
-            load = false
+            return
         }
 
-        if (load) {
-            t.start_animation()
-            t.check_link('/pages/404')
-            t.load(true, {url: url})
-            t.stop_animation()
-            Template.use_404();
-        }
+        t.start_animation()
+        t.check_link('/pages/404')
+        t.load(true, {url: url})
+        t.stop_animation()
+        Template.use_404();
+
     }
 
     static use_404 = (use = true) => {
@@ -328,11 +334,18 @@ class Template {
     load = (force = false, parameters = []) => {
 
         /*
-         * Bail early if we hav no file
+         * Bail early if we have no file in any template except content
          */
-        if (this.file === '') {
+        if (this.file === '' && !this.is_content) {
             return false
         }
+
+        /**
+         * May be we need to redirect on home...
+         */
+
+        this.#fix_template()
+
         /**
          * force template is false ...
          *
@@ -431,11 +444,30 @@ class Template {
     }
 
     /**
+     * Fix template file (ie tab and file) when we try to laod nothing to #content#
+     *
+     * @return {*}
+     *
+     */
+    #fix_template = () => {
+        if (this.is_content) {
+            console.log('avant',this.file,this.tab)
+
+        }
+        if (this.is_content && this.file === '') {
+            this.check_link(Template.get_home())
+            console.log('apres',this.file,this.tab)
+
+        }
+        return {file: this.file,tab:this.tab}
+    }
+
+    /**
      * Load all tremplates
      *
      * @param parent root (document by default)
      */
-    static load_all_templates = (parent = document) => {
+    static load_all_templates = function (parent = document) {
 
         let templates = Template.get_all_templates(parent);
 
@@ -448,9 +480,6 @@ class Template {
             }
         }
         for (const template of children) {
-            if (template.file === '') {
-                template.file = '/home'
-            }
             if (template.file !== null) {
                 template.load(true)
             }
@@ -468,8 +497,8 @@ class Template {
      * @since 1.0
      *
      */
-    static get_all_templates = (parent,no_empty=false) => {
-        let query = 'block[data-template]'+(no_empty?':not([data-template=""])':'')
+    static get_all_templates = (parent, no_empty = false) => {
+        let query = 'block[data-template]' + (no_empty ? ':not([data-template=""])' : '')
         return parent.querySelectorAll(query)
     }
 
