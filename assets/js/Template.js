@@ -232,7 +232,6 @@ class Template {
      * @param url
      */
     static page_404 = (template_id, url) => {
-
         let t = new Template(document.querySelector(`[data-template-id="${template_id}"]`))
 
         if (t.is_content && !Template.#use_404) {
@@ -380,7 +379,6 @@ class Template {
         this.start_animation()
 
         let self = this
-
         // Step 3 : Load the template using ajax and children if there are some
         fetch(dsb_ajax.get + '?' + new URLSearchParams({
             action: 'load-template',
@@ -450,14 +448,19 @@ class Template {
      *
      */
     #fix_template = () => {
-        if (this.is_content) {
-            console.log('avant',this.file,this.tab)
-
-        }
         if (this.is_content && this.file === '') {
-            this.check_link(Template.get_home())
-            console.log('apres',this.file,this.tab)
+            // 2 possibilities : app home page or dedicated pages ('/pages/....')
+            const pathname = location.pathname
 
+            if (pathname.includes('/pages/')) {
+                // Redirection to /pages/xxxx
+                this.check_link(pathname)
+            } else if (pathname.includes('/home')) {
+                this.check_link(Template.get_home())
+            } else {
+                // Redirection to home
+                this.check_link(Template.get_home())
+            }
         }
         return {file: this.file,tab:this.tab}
     }
