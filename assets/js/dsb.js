@@ -13,11 +13,14 @@
  *
  **********************************************************************************************************************/
 import {customAlphabet} from '../vendor/nanoid.js'
+import {EventEmitter} from "../vendor/EventEmitter/EventEmitter.js";
 
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvw', 10)
 const {Template} = await import ('./Template.js')
 
 var dsb = {
+
+    content_event: new EventEmitter(),
 
     // app information
     page: {
@@ -30,9 +33,9 @@ var dsb = {
          *
          * @since 1.0
          */
-        set_title: (title=null) => {
+        set_title: (title = null) => {
             if (title === null) {
-                document.title=dsb.page.main_title
+                document.title = dsb.page.main_title
                 return
             }
 
@@ -70,7 +73,7 @@ var dsb = {
          * @param full
          * @param url
          */
-        add_to_history: (page_title, full,url) => {
+        add_to_history: (page_title, full, url) => {
             let href = url.startsWith('/') ? url : '/' + url
             history.pushState({
                 title: page_title,
@@ -84,14 +87,14 @@ var dsb = {
          * @param event
          */
         show_history_item: (event) => {
-           let url =location.href
+            let url = location.href
             if (!event) {
                 url = '/home'
             }
             if (event.state === null) {
                 url = '/home'
             } else {
-                url= event.state.full??'/home'
+                url = event.state.full ?? '/home'
             }
 
             location.href = url;
@@ -102,9 +105,9 @@ var dsb = {
          *
          * @since 1.0
          */
-        init:() => {
+        init: () => {
             try {
-              window.onpopstate = (event) => setTimeout(dsb.page.show_history_item, 0,event);
+                window.onpopstate = (event) => setTimeout(dsb.page.show_history_item, 0, event);
             } catch (e) {
                 console.error(e)
             }
@@ -116,6 +119,7 @@ var dsb = {
         template_id: "#menu#",
         pathname: null,
         current_roles: [],
+        json:{},
 
         change_id: (new_id) => {
             dsb.menu.template_id = new_id
@@ -200,7 +204,8 @@ var dsb = {
                     if (null === item) {
                         item = document.querySelector(`[data-level=${id}]`)
                     }
-                    dsb.menu.click(item)
+                    // we click on child to open it
+                    item.click()
                     id += '-'
                 })
             } else {
@@ -274,7 +279,7 @@ var dsb = {
          * @since 1.0
          *
          */
-        click: (item, historize=false) => {
+        click: (item, historize = false) => {
             // it's the link ?  Manage history (and add url in the browser bar)
             if (item?.dataset?.level) {
                 // Mark new menu item opened
@@ -286,8 +291,6 @@ var dsb = {
                     dsb.page.add_to_history_from_menu(item)
                 }
             }
-
-            item.click()
             return false
         },
 
@@ -300,7 +303,7 @@ var dsb = {
          * @since 1.0
          *
          */
-        item_text:(item) => {
+        item_text: (item) => {
             return item?.innerText
         },
 
@@ -324,23 +327,26 @@ var dsb = {
             return path
         },
 
-        /**
-         * Saves the last menu click in order to open it after a reload
-         *
-         * @param id
-         *
-         * @since 1.0
-         *
-         */
-        historize: (id) => {
-            dsb.user.session.context.referrer = id
-        },
-
         update: () => {
             let id = dsb.user.session.context?.referrer;
             if (id) {
                 let item = id.split(/(level-[0-9]+)/gm);
             }
+        },
+
+        read_json:async () => {
+            if(dsb.menu.json === {}) {
+                await fetch((dsb_ajax.get) + '?' + new URLSearchParams({
+                    action: 'read-json-menu',
+                })).then(function (response) {
+                    return response.json()
+                }).then(function (data) {
+                    dsb.menu.json = data
+                }).catch((error) => {
+                    console.error('Error:', error); // Print or not print ?
+                })
+            }
+            return dsb.m
         },
 
         /**
@@ -350,7 +356,6 @@ var dsb = {
          *
          */
         init: async (event) => {
-
             /**
              *
              * Read JSON menu
@@ -358,36 +363,16 @@ var dsb = {
              * @since 1.0
              *
              */
-            await fetch((dsb_ajax.get) + '?' + new URLSearchParams({
-                action: 'read-json-menu',
-            })).then(function (response) {
-                return response.json()
-            }).then(function (data) {
-                dsb.menu.json = data
-            }).catch((error) => {
-                console.error('Error:', error); // Print or not print ?
-            })
+
+           dsb.menu.read_json()
 
             let menu_container = document.getElementById('menu-container');
 
-            /**
-             * catch click on menu items that contains data-content and load the content into the right div.
-             *
-             * @since 1.0
-             */
-            menu_container.querySelectorAll('ul[id*="menu-item-"] a[data-content]').forEach(item => {
-                item.addEventListener('click', Template.load_from_event)
-            });
-
-            /**
-             * Add an event to the menu item sto mark them as opened when clicked
-             */
-            menu_container.querySelectorAll('[data-content]').forEach(item => {
-                const HISTORIZE=true
-                item.addEventListener('click', event => {
-                    dsb.menu.click(item,HISTORIZE)
-                })
+            // We trap a specifi event on menu items click to instantiate the collapse/uncollapse
+            dsb.content_event.on('click', (item) => {
+                dsb.menu.click(item,true)
             })
+
             /**
              * Close/open all 1st level menu
              */
@@ -425,17 +410,23 @@ var dsb = {
      * template management
      */
     template: {
+
         init: () => {
             // During the init phase, we do not use teh 404 redirection
             Template.use_404(false)
-            // Update the page
-            Template.load_all_templates()
+
 
             // When a template has been loaded, we register specific link actions and load all the children
             Template.event.once('load-done', template => {
-                // Let open in content
+                // Let open links in content if required
                 template.container.querySelectorAll('a[data-content]').forEach(item => {
-                    item.addEventListener('click', Template.load_from_event)
+
+                    item.addEventListener('click', event => {
+                        Template.load_from_event(event)
+                        event.preventDefault()
+                        dsb.content_event.emit('click', item)
+                    })
+
                 });
                 // Here is the case we need to open in content pseudo-modal
                 template.container.querySelectorAll('a[data-content-modal]').forEach(item => {
@@ -452,6 +443,9 @@ var dsb = {
                 Template.use_404()
 
             })
+
+            // Update the page
+            Template.load_all_templates()
         }
 
     }
@@ -1614,8 +1608,8 @@ var dsb = {
 
                         // change the hash, the ural and put them in history
                         let hash = event.target?.dataset?.bsTarget?.split('#tab-')[1]
-                        let url = window.location.href.replace(window.location.hash,'#'+hash)
-                        dsb.page.add_to_history(document.title,url,url.split(window.location.origin)[1])
+                        let url = window.location.href.replace(window.location.hash, '#' + hash)
+                        dsb.page.add_to_history(document.title, url, url.split(window.location.origin)[1])
                         // change menu info to corresponding item
                         document.querySelector(`.opened[href]`)?.classList.remove('opened')
                         document.querySelector(`[href="${pathname}"]`)?.classList.add('opened')
@@ -1704,7 +1698,7 @@ var dsb = {
                 if (return_dom) {
                     return tab
                 }
-                let t = tab.dataset.bsTarget
+                let t = tab?.dataset.bsTarget
                 if (t) {
                     let l = t.split('#tab-')
                     return l[l[0] === '' ? 1 : 0]
@@ -1798,11 +1792,11 @@ var dsb = {
             }
         },
 
-        is_event:(event) => {
+        is_event: (event) => {
             return event instanceof Event
         },
 
-        prevent_default: (event)=> {
+        prevent_default: (event) => {
             if (event instanceof Event) {
                 event.preventDefault()
             }
@@ -1912,7 +1906,7 @@ var dsb = {
                     itemSelectText: '',
                     silent: true,
                     allowHTML: true,
-                    shouldSort:false,
+                    shouldSort: false,
                     searchEnabled: search,
                     renderChoiceLimit: limit,
                 })
@@ -1932,6 +1926,11 @@ var dsb = {
      */
 
     init: async () => {
+
+        // Sometimes, init is called twice, so... //TODO Check this
+        if (dsb.initialized) {
+            return
+        }
         const {default: OverlaysScrollbars} = await import ('/dashboard/assets/vendor/overlay-scrollbars/OverlayScrollbars.js')
 
         /**
@@ -1951,22 +1950,19 @@ var dsb = {
         dsb.error.init()
         dsb.toast.init()
 
-        if (!dsb.initialized) {
-            /**
-             *  Add login-logout events
-             */
-            document.addEventListener('dsb-login', dsb.user.events.login);
-            document.addEventListener('dsb-logout', dsb.user.events.logout);
+        /**
+         *  Add login-logout events
+         */
+        document.addEventListener('dsb-login', dsb.user.events.login);
+        document.addEventListener('dsb-logout', dsb.user.events.logout);
 
-            // Add some body classes at loading if the user is already logged in.
-            if (dsb.user.session.context.logged) {
-                document.body.classList.add("logged-in");
-                document.body.classList.add(dsb.user.session.context.user);
-            }
+        // Add some body classes at loading if the user is already logged in.
+        if (dsb.user.session.context.logged) {
+            document.body.classList.add("logged-in");
+            document.body.classList.add(dsb.user.session.context.user);
         }
 
-
-        dsb.template.init();
+        dsb.template.init()
 
         /**
          * Once menu has been loaded, we initialise some functionalities
