@@ -25,6 +25,8 @@ class Template {
 
     #ID = null
     static #HOME = ''
+    static #EXCEPTIONS = []
+
     #file = ''
     #directory = ''
     #tab = ''
@@ -207,8 +209,35 @@ class Template {
     static set_home(home) {
         Template.#HOME = home
     }
+
     static get_home() {
         return Template.#HOME
+    }
+
+    static set_exceptions(list) {
+        Template.#EXCEPTIONS = list
+    }
+
+    static get_exceptions() {
+        return Template.#EXCEPTIONS
+    }
+
+    /**
+     * Check if a string is an exception
+     *
+     *
+     * @return {boolean}
+     * @param text
+     */
+    #check_exception = (text) => {
+        let is_exception = false;
+        for (let exception in Template.get_exceptions()) {
+            if (text.includes(exception)) {
+                is_exception = true
+                break
+            }
+        }
+        return is_exception
     }
 
     /**
@@ -403,6 +432,7 @@ class Template {
                     dsb.ui.show_tab(self.tab)
                 }
             } else {
+                console.log(template)
                 Template.page_404(self.container?.dataset?.templateId, this.file)
             }
             self.loaded = true
@@ -452,18 +482,23 @@ class Template {
             // 2 possibilities : app home page or dedicated pages ('/pages/....')
             const pathname = location.pathname
 
-            if (pathname.includes('/pages/')) {
-                // Redirection to /pages/xxxx
-                this.check_link(pathname)
-            } else if (pathname.includes('/home')) {
-                this.check_link(Template.get_home())
-            } else {
-                // Redirection to home
-                this.check_link(Template.get_home())
+            if (!this.#check_exception(pathname)) {
+
+                if (pathname.includes('/pages/')) {
+                    // Redirection to /pages/xxxx
+                    this.check_link(pathname)
+                } else if (pathname.includes('/home')) {
+                    this.check_link(Template.get_home())
+                } else {
+                    // Redirection to home
+                    this.check_link(Template.get_home())
+                }
+
             }
+            return {file: this.file, tab: this.tab}
         }
-        return {file: this.file,tab:this.tab}
     }
+
 
     /**
      * Load all tremplates
