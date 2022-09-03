@@ -31,6 +31,8 @@
             <strong class="me-auto"><span></span></strong>
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body"></div>
+        <div class="toast-body">
+            <div class="toast-message"></div><a class="dsb-hide btn"></a>
+        </div>
     </div>
 </div>

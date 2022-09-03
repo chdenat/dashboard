@@ -967,6 +967,10 @@ footer {
     margin-right: var(--dsb-md-gutter);
 }
 
+.toast-body {
+    display: flex;
+    gap: var(--dsb-gutter)
+}
 
 /*****************************************************************************************************************************************************
  * Utils used by JS to show/hide element accordingly

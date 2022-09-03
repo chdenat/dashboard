@@ -462,14 +462,16 @@ var dsb = {
          *
          * @param title        of the toast
          * @param message      content of the toast
+         * @param button
          * @param type         any bootstrap type. Depending on the type, different icons are shown.
          * @param delay        Default to 3 seconds, To set it to permanent use 0
+         * @param hide          autohide = true, permanent = false
          *
          * @return void
          * @since 1.0
          *
          */
-        message: function ({title = '', message = '', type = 'primary', delay = 3000, hide = true}) {
+        message: function ({title = '', message = '', button=null, type = 'primary', delay = 3000, hide = true}) {
 
             let text, icon;
             switch (type) {
@@ -486,13 +488,28 @@ var dsb = {
                     icon = 'fas fa-fa-bell'
             }
 // Let's use the right toast
+
             let toast = dsb.toast.autohide
             if (false === hide) {
                 toast = dsb.toast.permanent
             }
-            toast._element.querySelector('.toast-header span').innerHTML = '<i class="' + icon + '"></i>' + title;
-            toast._element.querySelector('.toast-body').innerHTML = message;
-            toast._element.classList.add('bg-' + type);
+            let element = toast._element
+
+            element.querySelector('.toast-header span').innerHTML = '<i class="' + icon + '"></i>' + title
+            element.querySelector('.toast-body .toast-message').innerHTML = message
+            let btn =  element.querySelector('.toast-body .btn')
+
+            if (button !==null) {
+                console.log(button)
+                btn.innerHTML=button.text
+                btn.href = button.href
+                btn.id = button.id
+                btn.classList.add('btn-' + type)
+                dsb.ui.show(btn)
+            } else {
+                dsb.ui.hide(btn)
+            }
+            element.classList.add('bg-' + type)
 
             toast._instance.show()
         }
@@ -1508,10 +1525,11 @@ var dsb = {
         backdrop: document.getElementById('dsb-backdrop'),
 
         hide: (element) => {
-            if (!(element instanceof HTMLElement) && element.includes('#')) {
-                element = document.querySelector(element)
-            }
             if (element !== null) {
+                if (!(element instanceof HTMLElement) && element.includes('#')) {
+                    element = document.querySelector(element)
+                }
+
                 element.classList.add('dsb-hide')
                 element.classList.remove('dsb-show')
                 element.classList.remove('dsb-show-flex')
@@ -1522,10 +1540,11 @@ var dsb = {
         },
 
         show: (element, flex = true) => {
-            if (!(element instanceof HTMLElement) && element.includes('#')) {
-                element = document.querySelector(element)
-            }
             if (element !== null) {
+                if (!(element instanceof HTMLElement) && element.includes('#')) {
+                    element = document.querySelector(element)
+                }
+
                 element.classList.remove('dsb-hide');
                 if (flex) {
                     element.classList.add('dsb-show-flex')
