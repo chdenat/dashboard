@@ -1508,6 +1508,9 @@ var dsb = {
         backdrop: document.getElementById('dsb-backdrop'),
 
         hide: (element) => {
+            if (!(element instanceof HTMLElement) && element.includes('#')) {
+                element = document.querySelector(element)
+            }
             if (element !== null) {
                 element.classList.add('dsb-hide')
                 element.classList.remove('dsb-show')
@@ -1519,6 +1522,9 @@ var dsb = {
         },
 
         show: (element, flex = true) => {
+            if (!(element instanceof HTMLElement) && element.includes('#')) {
+                element = document.querySelector(element)
+            }
             if (element !== null) {
                 element.classList.remove('dsb-hide');
                 if (flex) {
