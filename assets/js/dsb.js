@@ -1635,7 +1635,8 @@ var dsb = {
                         // change the hash, the ural and put them in history
                         let hash = event.target?.dataset?.bsTarget?.split('#tab-')[1]
                         let url = window.location.href.replace(window.location.hash, '#' + hash)
-                        dsb.page.add_to_history(document.title, url, url.split(window.location.origin)[1])
+                        let pathname = url.split(window.location.origin)[1]
+                        dsb.page.add_to_history(document.title, url,pathname )
                         // change menu info to corresponding item
                         document.querySelector(`.opened[href]`)?.classList.remove('opened')
                         document.querySelector(`[href="${pathname}"]`)?.classList.add('opened')
