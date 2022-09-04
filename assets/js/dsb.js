@@ -500,7 +500,6 @@ var dsb = {
             let btn =  element.querySelector('.toast-body .btn')
 
             if (button !==null) {
-                console.log(button)
                 btn.innerHTML=button.text
                 btn.href = button.href
                 btn.id = button.id
