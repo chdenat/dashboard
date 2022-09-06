@@ -132,8 +132,12 @@ body.logged-in [data-action="logout-confirm"], body.logged-in [data-action="chan
 
 .btn {
     font-size: var(--dsb-main-font-size);
+    display: flex;
+    align-items: center;
 }
-
+.btn span{
+    align-items: center;
+}
 .btn i, a i {
     margin-right: var(--dsb-md-gutter);
 }
@@ -285,7 +289,19 @@ legend {
     justify-content: space-between;
     width: 100%;
 }
+/*******************************************************************************
+ * Button animation
+ */
 
+.btn .animation.start {
+    display: flex;
+}
+.btn .animation.doing {
+    display: none;
+}
+.btn .animation.reset {
+    display: none;
+}
 /**************************************************************************************************************************************************
  * Accordions
  */

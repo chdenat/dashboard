@@ -1751,16 +1751,11 @@ var dsb = {
 
             switch (action) {
                 case 'start':
-                    button.querySelector('i.animation.start').classList.add('dsb-hide')
-                    button.querySelector('i.animation.doing').classList.remove('dsb-hide')
+                    dsb.ui.hide(button.querySelector('.animation.start')).show(button.querySelector('.animation.doing'))
                     break;
                 case 'stop':
-                    button.querySelector('i.animation.start').classList.remove('dsb-hide')
-                    button.querySelector('i.animation.doing').classList.add('dsb-hide')
-                    break;
                 case 'reset':
-                    button.querySelector('i.animation.start').classList.remove('dsb-hide')
-                    button.querySelector('i.animation.doing').classList.add('dsb-hide')
+                    dsb.ui.show(button.querySelector('.animation.start')).hide(button.querySelector('.animation.doing'))
                     break;
 
             }
