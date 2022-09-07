@@ -336,7 +336,7 @@ legend {
     width: 100%;
 }
 
-accordion-button:before {
+.accordion-button:before {
     font: var(--fa-font-regular);
     content: "\f106";
     background: none !important;
@@ -761,6 +761,10 @@ body:not(.logged-in) #user-dropdown:hover {
     transform: translateX(100%);
 }
 
+.tools {
+    display: flex;
+    justify-content: flex-end;
+}
 
 /*****************************************************************************************************************************************************
  * Loader
