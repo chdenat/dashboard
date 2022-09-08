@@ -766,7 +766,7 @@ body:not(.logged-in) #user-dropdown:hover {
     justify-content: flex-end;
 }
 
-.nav-pills {
+.nav-pills,.nav-pills .nav-link {
     display: flex;
 }
 
