@@ -380,6 +380,7 @@ var dsb = {
             let all_open = false;
             menu_container.querySelector('#menu-container .dsb-vertical')?.addEventListener('click', (event) => {
                 all_open = !all_open
+                event.preventDefault()
                 menu_container?.querySelectorAll(`#menu-container  #menu-wrapper a[data-bs-toggle="collapse"][aria-expanded="${!all_open}"]`).forEach((element) => {
                     let item = bootstrap.Collapse.getOrCreateInstance(menu_container.querySelector(element.getAttribute("href")))
                     if (all_open) {
