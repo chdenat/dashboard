@@ -1915,7 +1915,7 @@ var dsb = {
 
         init: (parent = document) => {
             dsb.ui.lists = []
-            document.querySelectorAll('select').forEach(select => {
+            document.querySelectorAll('select:not(.not-auto-choices)').forEach(select => {
                 let id = nanoid()
                 if (!select.hasAttribute('id')) {
                     select.id = id
