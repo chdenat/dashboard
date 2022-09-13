@@ -18,6 +18,7 @@
 	namespace dashboard\ajax;
 	
 	use dashboard\Debug;
+	use dashboard\Utils;
 	use shelteradmin\box\Box;
 	use dashboard\DSBException;
 	use dashboard\template\Template;
@@ -33,6 +34,9 @@
 		 */
 		public static function post( $params ) {
 			header( 'Content-Type: application/json; charset=utf-8' );
+			
+			self::extract_parameters($params);
+			
 			switch ( $params['action'] ) {
 				
 				case 'login' :
@@ -100,6 +104,8 @@
 		 */
 		public static function get( $params ) {
 			
+			self::extract_parameters($params);
+			
 			switch ( $params['action'] ?? false ) {
 				case 'login-form':
 					if ( $template = Template::instance()->locate_template( 'modals/user/login' ) ) {
@@ -156,6 +162,21 @@
 					break;
 			}
 			
+		}
+		
+		/**
+		 * If we data-json-parameters has been defined, we extract it, and add parameters to the list
+		 *
+		 * @param $json
+		 *
+		 * @return array
+		 */
+		protected static function extract_parameters(&$params):void {
+			
+			if ($params['params']??null) {
+				$tmp    = json_decode( $params['params'], true );
+				$params = Utils::parse_args( json_decode($tmp['jsonParameters']??'{}',true), $params );
+			}
 		}
 		
 	}
