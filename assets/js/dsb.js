@@ -1746,6 +1746,10 @@ var dsb = {
         },
 
         button_animate: (button, action) => {
+            // Bail early
+            if (button === null) {
+                return
+            }
             if (button instanceof PointerEvent) {
                 button = button.target
             }
