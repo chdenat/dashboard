@@ -18,6 +18,15 @@ import {EventEmitter} from "../vendor/EventEmitter/EventEmitter.js";
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvw', 10)
 const {Template} = await import ('./Template.js')
 
+
+const SECOND = 1000
+const MINUTE = 60 * SECOND
+const HOUR = 60 * MINUTE
+const DAY = 24 * HOUR
+
+export {SECOND, MINUTE, HOUR, DAY}
+
+
 var dsb = {
 
     content_event: new EventEmitter(),
@@ -206,7 +215,7 @@ var dsb = {
                         }
 
                         // Click on
-                        let link =item.getAttribute('href')
+                        let link = item.getAttribute('href')
                         if (link.startsWith('#menu')) {
                             // Menu section : we click to open it.
                             item.click()
@@ -751,6 +760,7 @@ var dsb = {
 
                 dsb.user.session.init()
 
+                // As some parts depends on user session, we relead all the page content
                 Template.load_all_templates()
 
                 dsb.user.events.loaded();
@@ -798,13 +808,13 @@ var dsb = {
 
             // Main session timer
             timer: 0,
-            delay: 900000,  // session dependant (15mn in ms)
+            delay: 15 * MINUTE,  // session dependant (15mn in ms)
             // Warning session timer
             timer2: 0,
-            delay2: 895000, // session dependant (15mn -5s in ms)
+            delay2: 15*MINUTE - 5*SECOND , // session dependant (15mn -5s in ms)
             // Timer in the end_session_soon modal
             timer3: 0,
-            delay3: 5000,
+            delay3: 5 * SECOND,
 
             /**
              * We launch 2 timers,
