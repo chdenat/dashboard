@@ -772,8 +772,6 @@ var dsb = {
 
                 dsb.user.session.clear_timers()
                 dsb.user.session.remove_modals()
-
-                Template.load_all_templates();
                 dsb.user.session.clear_context();
 
                 event.preventDefault();
