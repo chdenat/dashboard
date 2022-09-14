@@ -193,7 +193,7 @@ var dsb = {
                 }
                 // If we found something, we'll open the right menu
                 // else we redirect to 404.
-                if (found || found_with_role) {
+                if (found || found_with_role && item) {
                     let levels = item.dataset.level.split('-')
                     let id = 'menu-item-'
                     levels.slice(2).forEach(level => {  // remove the 2 first, 'menu' and 'item'
@@ -204,9 +204,19 @@ var dsb = {
                         if (null === item) {
                             item = document.querySelector(`[data-level=${id}]`)
                         }
-                        // we click on child to open it
-                        item.click()
+
+                        // Click on
+                        let link =item.getAttribute('href')
+                        if (link.startsWith('#menu')) {
+                            // Menu section : we click to open it.
+                            item.click()
+                        } else {
+                            // Menu item : we do not click but simulate
+                            dsb.menu.click(item, true);
+                            dsb.ui.show_tab(Template._check_link(link).tab)
+                        }
                         id += '-'
+
                     })
                 } else {
                     Template.page_404('#content#', origin)
@@ -417,7 +427,6 @@ var dsb = {
             // During the init phase, we do not use teh 404 redirection
             Template.use_404(false)
 
-
             // When a template has been loaded, we register specific link actions and load all the children
             Template.event.once('load-done', template => {
                 // Let open links in content if required
@@ -447,6 +456,7 @@ var dsb = {
             })
 
             // Update the page
+
             Template.load_all_templates()
         }
 
@@ -472,7 +482,7 @@ var dsb = {
          * @since 1.0
          *
          */
-        message: function ({title = '', message = '', button=null, type = 'primary', delay = 3000, hide = true}) {
+        message: function ({title = '', message = '', button = null, type = 'primary', delay = 3000, hide = true}) {
 
             let text, icon;
             switch (type) {
@@ -498,10 +508,10 @@ var dsb = {
 
             element.querySelector('.toast-header span').innerHTML = '<i class="' + icon + '"></i>' + title
             element.querySelector('.toast-body .toast-message').innerHTML = message
-            let btn =  element.querySelector('.toast-body .btn')
+            let btn = element.querySelector('.toast-body .btn')
 
-            if (button !==null) {
-                btn.innerHTML=button.text
+            if (button !== null) {
+                btn.innerHTML = button.text
                 btn.href = button.href
                 btn.id = button.id
                 btn.classList.add('btn-' + type)
@@ -1636,7 +1646,7 @@ var dsb = {
                         let hash = event.target?.dataset?.bsTarget?.split('#tab-')[1]
                         let url = window.location.href.replace(window.location.hash, '#' + hash)
                         let pathname = url.split(window.location.origin)[1]
-                        dsb.page.add_to_history(document.title, url,pathname )
+                        dsb.page.add_to_history(document.title, url, pathname)
                         // change menu info to corresponding item
                         document.querySelector(`.opened[href]`)?.classList.remove('opened')
                         document.querySelector(`[href="${pathname}"]`)?.classList.add('opened')
