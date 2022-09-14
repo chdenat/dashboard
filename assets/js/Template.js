@@ -128,6 +128,7 @@ class Template {
         return this.#ID
     }
 
+
     static ID_from_element(element) {
         if (!element instanceof HTMLElement) {
             element = document.querySelector(element)
@@ -255,6 +256,11 @@ class Template {
         this.#tab = tmp[1] ?? '';
     }
 
+    static _check_link=(link)=> {
+        let tmp = link.split('#');
+        return {file:tmp[0],tab: tmp[1] ?? ''};
+    }
+
     /**
      *
      * @param template_id
@@ -342,7 +348,7 @@ class Template {
                 return false
             }
         }
-        Animation.loaded('#content#')
+        //Animation.loaded('#content#')
     }
 
     /**
@@ -432,7 +438,6 @@ class Template {
                     dsb.ui.show_tab(self.tab)
                 }
             } else {
-                console.log(template)
                 Template.page_404(self.container?.dataset?.templateId, this.file)
             }
             self.loaded = true
@@ -517,6 +522,7 @@ class Template {
                 children.push(item)
             }
         }
+
         for (const template of children) {
             if (template.file !== null) {
                 template.load(true)
