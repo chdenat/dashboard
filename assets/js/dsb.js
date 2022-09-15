@@ -811,12 +811,12 @@ var dsb = {
 
             //Final countdown
             final_timer: 0,
-            FINAL_TIMER: 2*MINUTE,
-            
+            FINAL_TIMER: 2 * MINUTE,
+
             // Timer before the final countdown
             soon_timer: 0,
             SOON_TIMER: 0, //later
-            
+
             /**
              * We launch 2 timers,
              * one for the end of session and one that ends before, to warn the user the session will expire soon
@@ -833,10 +833,10 @@ var dsb = {
                     return
                 }
 
-                dsb.user.session.SOON_TIMER=dsb.user.session.END_TIMER-dsb.user.session.FINAL_TIMER
+                dsb.user.session.SOON_TIMER = dsb.user.session.END_TIMER - dsb.user.session.FINAL_TIMER
 
 
-                    /**
+                /**
                  * Countdowns start...
                  */
 
@@ -874,7 +874,6 @@ var dsb = {
                 dsb.modal.show()
 
                 //  (new Modal ({action:'end-session'})).show()
-
 
 
             },
@@ -942,7 +941,7 @@ var dsb = {
                 let show_time = document.getElementById('end-session-timer')
                 if (show_time !== null) {
                     if (show_time.innerHTML === '') {
-                        show_time.innerHTML = dsb.user.session.end_timer - dsb.user.session.SOON_TIMER*1000
+                        show_time.innerHTML = dsb.user.session.end_timer - dsb.user.session.SOON_TIMER * 1000
                     } else {
                         show_time.innerHTML = show_time.innerHTML - 1
                     }
@@ -1171,7 +1170,7 @@ var dsb = {
                 }
             }
             const form = document.getElementById('logout-confirm')
-            const from_session_modal=  (null === form) // if false, we don not use a modal
+            const from_session_modal = (null === form) // if false, we don not use a modal
             let form_data = {}
 
             if (from_session_modal) {
@@ -1204,7 +1203,7 @@ var dsb = {
                         if (!from_session_modal) {
                             dsb.modal.hide();
                         }
-                       // dsb.user.session.manage_events(false)
+                        // dsb.user.session.manage_events(false)
 
                         dsb.toast.message({
                             title: 'Log out',
@@ -1548,7 +1547,7 @@ var dsb = {
 
         hide: (element) => {
             if (element !== null) {
-                if (!(element instanceof HTMLElement) && element.includes('#')) {
+                if (!(element instanceof HTMLElement) && element.startsWith('#')) {
                     element = document.querySelector(element)
                 }
 
@@ -1838,6 +1837,33 @@ var dsb = {
             if (item) {
                 item.classList.remove('dsb-show', 'fa-spin')
             }
+        },
+
+        /**
+         * Hide several elements
+         *
+         * If an element start with . or # it is taken as class or id, otherwise as a bloc
+         *
+         * @param elements
+         *
+         * @since 1.0.0
+         *
+         */
+        hide_elements: (elements) => {
+            elements.forEach(element => {
+                 if (element.startsWith('#')) {
+                     // Id
+                     dsb.ui.hide(element)
+                 } else if (element.startsWith('.')) {
+                     // Class
+                     document.querySelectorAll(element).forEach(element => {
+                         dsb.ui.hide(element)
+                     })
+                 } else {
+                     // Block
+                     dsb.ui.hide(document.querySelector(`[data-template="${element}"]`))
+                 }
+            })
         },
 
         is_event: (event) => {
