@@ -143,14 +143,17 @@
 		
 		private function show_level( $item, $level = 1, $id = 'menu-item', $roles = [ 'logged' ] ) {
 			ob_start();
-			$sublevel = 0;
+			$sub_level = 0;
+            
+            $hidden= ($item['hidden'])?'class="dsb-hide"':'';
+            
 			if ( $this->can_use_item( $item, $roles ) ) {
 				
 				if ( isset( $item['children'] ) ) {
 					// Any children ? it is a new level, we print head
 					$id = sprintf( '%s-%d', $id, $level++ );
 					?>
-                    <li>
+                    <li <?=$hidden?>>
                         <a href="#<?= $id ?>" data-bs-toggle="collapse" aria-expanded="false">
 							<?= $item['icon'] ?? '' ?>
                             <span><?= _( $item['text'] ?? 'no text' ) ?></span>
@@ -159,7 +162,7 @@
                         <ul class="collapse multi-collapse" id="<?= $id ?>">
 							<?php
 								foreach ( $item['children'] as $child ) { ?>
-									<?= $this->show_level( $child, ++ $sublevel, $id, $roles ); ?>
+									<?= $this->show_level( $child, ++ $sub_level, $id, $roles ); ?>
 								<?php } ?>
                         </ul>
                     </li>
@@ -182,7 +185,7 @@
 						$dataset[] = sprintf( 'data-%s="%s" ', $key, $value );
 					}
 					?>
-                    <li>
+                    <li <?=$hidden?>>
                         <a <?= $data_content ?> <?= $href ?> <?= $default ?> <?= implode( ' ', $dataset )
 						?>>
 							<?= $item['icon'] ?? '' ?>
