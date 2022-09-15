@@ -120,6 +120,10 @@ class Template {
         })
     }
 
+    get is_reserved() {
+        return  this.#reserved.includes(this.ID.replace(/#/g,'',))
+    }
+
     get is_content() {
         return '#content#' === this.ID
     }
@@ -551,13 +555,16 @@ class Template {
         let generic_event = new Event(`template/${type}`)
         generic_event.template = this;
         document.dispatchEvent(generic_event)
-
         Template.event.emit(type, this);
+
+        // template event if reserved
+        if (this.is_reserved) {
+            Template.event.emit(`${type}/${this.ID}`, this);
+        }
 
         if (file === null) {
             return
         }
-
 
         file = file.startsWith('/') ? file.substring(1) : file
 
