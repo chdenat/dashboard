@@ -803,19 +803,20 @@ var dsb = {
              *
              * @since 1.0
              */
-            context: {}
-            ,
+            context: {},
 
             // Main session timer
-            timer: 0,
-            delay: 15 * MINUTE,  // session dependant (15mn in ms)
-            // Warning session timer
-            timer2: 0,
-            delay2: 15*MINUTE - 5*SECOND , // session dependant (15mn -5s in ms)
-            // Timer in the end_session_soon modal
-            timer3: 0,
-            delay3: 5 * SECOND,
+            end_timer: 0,
+            END_TIMER: 15 * MINUTE,
 
+            //Final countdown
+            final_timer: 0,
+            FINAL_TIMER: 2*MINUTE,
+            
+            // Timer before the final countdown
+            soon_timer: 0,
+            SOON_TIMER: 0, //later
+            
             /**
              * We launch 2 timers,
              * one for the end of session and one that ends before, to warn the user the session will expire soon
@@ -832,25 +833,28 @@ var dsb = {
                     return
                 }
 
-                /**
+                dsb.user.session.SOON_TIMER=dsb.user.session.END_TIMER-dsb.user.session.FINAL_TIMER
+
+
+                    /**
                  * Countdowns start...
                  */
 
                 // The master one, used for session end
-                dsb.user.session.timer = setTimeout(() => {
+                dsb.user.session.end_timer = setTimeout(() => {
                         let session_event = new Event('session-exit')
                         session_event.session = dsb.user.session.name;
                         document.dispatchEvent(session_event)
                     },
-                    dsb.user.session.delay
+                    dsb.user.session.END_TIMER
                 )
                 // Another one, used to warn that the session will end soon
-                dsb.user.session.timer2 = setTimeout(() => {
+                dsb.user.session.soon_timer = setTimeout(() => {
                         let session_event = new Event('session-soon-exit')
                         session_event.session = dsb.user.session.name;
                         document.dispatchEvent(session_event)
                     },
-                    dsb.user.session.delay2
+                    dsb.user.session.SOON_TIMER
                 )
             },
 
@@ -864,14 +868,14 @@ var dsb = {
             close: () => {
                 dsb.user.session.pause_activity()
 
-                clearTimeout(dsb.user.session.timer2)
-                clearInterval(dsb.user.session.timer3)
-
-                dsb.user.logout()
+                clearTimeout(dsb.user.session.soon_timer)
+                clearInterval(dsb.user.session.final_timer)
                 dsb.modal.load('end-session')
+                dsb.modal.show()
+
                 //  (new Modal ({action:'end-session'})).show()
 
-                dsb.modal.show()
+
 
             },
 
@@ -887,8 +891,8 @@ var dsb = {
 
                 dsb.modal.load('end-session-soon')
 
-                clearInterval(dsb.user.session.timer3)
-                dsb.user.session.timer3 = setInterval(dsb.user.session.countdown_before_session_end, dsb.user.session.delay3)
+                clearInterval(dsb.user.session.final_timer)
+                dsb.user.session.final_timer = setInterval(dsb.user.session.countdown_before_session_end, dsb.user.session.FINAL_TIMER)
                 dsb.modal.show()
             },
 
@@ -923,9 +927,9 @@ var dsb = {
              *
              */
             clear_timers: () => {
-                clearTimeout(dsb.user.session.timer)
-                clearTimeout(dsb.user.session.timer2)
-                clearInterval(dsb.user.session.timer3)
+                clearTimeout(dsb.user.session.end_timer)
+                clearTimeout(dsb.user.session.soon_timer)
+                clearInterval(dsb.user.session.final_timer)
             },
 
             /**
@@ -938,7 +942,7 @@ var dsb = {
                 let show_time = document.getElementById('end-session-timer')
                 if (show_time !== null) {
                     if (show_time.innerHTML === '') {
-                        show_time.innerHTML = dsb.user.session.delay - dsb.user.session.delay2
+                        show_time.innerHTML = dsb.user.session.end_timer - dsb.user.session.SOON_TIMER*1000
                     } else {
                         show_time.innerHTML = show_time.innerHTML - 1
                     }
@@ -1088,8 +1092,8 @@ var dsb = {
                 await dsb.user.session.set_context()
 
                 if (dsb.user.session.context.logged) {
-                    dsb.user.session.delay = dsb.user.session.context.lifetime * 1000
-                    dsb.user.session.delay2 = dsb.user.session.delay - dsb.user.session.delay3
+                    dsb.user.session.end_timer = dsb.user.session.context.lifetime * 1000
+                    dsb.user.session.SOON_TIMER = dsb.user.session.end_timer - dsb.user.session.FINAL_TIMER
                     dsb.user.session.prepare_modals()
                     dsb.user.session.continues()
                     dsb.user.session.trap_activity()
@@ -1166,11 +1170,10 @@ var dsb = {
                     redirection = button.dataset.logoutRedirection ?? null
                 }
             }
-
-            const form = document.getElementById('logout-confirm');
-            let from_session_modal = null === form
-
+            const form = document.getElementById('logout-confirm')
+            const from_session_modal=  (null === form) // if false, we don not use a modal
             let form_data = {}
+
             if (from_session_modal) {
                 // call from the exit session soon modal
                 form_data = {
@@ -1201,7 +1204,7 @@ var dsb = {
                         if (!from_session_modal) {
                             dsb.modal.hide();
                         }
-                        // dsb.user.session.manage_events(false)
+                       // dsb.user.session.manage_events(false)
 
                         dsb.toast.message({
                             title: 'Log out',
@@ -1209,6 +1212,7 @@ var dsb = {
                             type: 'success'
                         })
                         document.dispatchEvent(dsb.user.events.dsb_logout);
+                        Template.load_all_templates()
                         window.location.href = redirection ?? '/'
                     }
                 })
