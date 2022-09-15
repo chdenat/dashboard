@@ -27,7 +27,7 @@
         <label class="form-label"><?= _( 'Do you you want to log in again ?' ) ?></label>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        <button type="button" class="btn btn-outline-primary" data-action="dsb.user.logout" data-bs-dismiss="modal">
 			<?= _( 'No' ) ?>
         </button>
         <button type="button" data-action="dsb.user.session.relog"  class="btn btn-primary">
