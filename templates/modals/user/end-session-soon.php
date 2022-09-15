@@ -35,7 +35,7 @@
     </div>
     
     <div class="modal-footer">
-        <button type="button" data-bs-dismiss="modal"  data-action="dsb.user.logout" class="btn btn-primary">
+        <button type="button" data-bs-dismiss="modal"  data-action="dsb.user.logout" class="btn btn-outline-primary">
             <?= _( 'Log out' ) ?>
         </button>
         <button type="button" data-bs-dismiss="modal" data-action = "dsb.user.session.trap_activity" class="btn
