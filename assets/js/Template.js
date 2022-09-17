@@ -80,6 +80,13 @@ class Template {
             //      'xxxx/yyyyy'                => we check this as template file
             //      'xxxx/yyyyy[variable]       =>
 
+            if (variable === null) {
+                // Try to extract it from file
+                let match = this.file.match(/\[(.*)]/)
+                if (match) {
+                    variable = match[1]
+                }
+            }
             if (variable !== null) {
                 this.#variable = variable
                 this.file = this.file.replace(`[${this.#variable}]`, '')
