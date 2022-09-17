@@ -145,7 +145,7 @@
 			ob_start();
 			$sub_level = 0;
             
-            $hidden= ($item['hidden'])?'class="dsb-hide"':'';
+            $hidden= ($item['hidden']??false)?'class="dsb-hide"':'';
             
 			if ( $this->can_use_item( $item, $roles ) ) {
 				
