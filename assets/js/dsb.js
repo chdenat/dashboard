@@ -1592,6 +1592,30 @@ var dsb = {
                 }
             }
         },
+
+
+        disable: (element)=> {
+            if (element !== null) {
+                if (!(element instanceof HTMLElement) && element.includes('#')) {
+                    element = document.querySelector(element)
+                }
+
+                element.setAttribute('disabled','')
+            }
+            return dsb.ui
+        },
+
+        enable: (element)=> {
+            if (element !== null) {
+                if (!(element instanceof HTMLElement) && element.includes('#')) {
+                    element = document.querySelector(element)
+                }
+
+                element.removeAttribute('disabled')
+            }
+            return dsb.ui
+        },
+
         manage_password: () => {
             document.querySelectorAll(".input-group.password .toggle-password").forEach(item => {
                 item.addEventListener("click", dsb.ui.toggle_password)
@@ -1962,8 +1986,8 @@ var dsb = {
                     columnDelimiter: ','
                 });
             },
-        }
-        ,
+        },
+
 
         init: (parent = document) => {
             dsb.ui.lists = []
