@@ -1988,6 +1988,18 @@ var dsb = {
             },
         },
 
+        add_alert_close:alert => {
+            if (alert !== null ) {
+                if (!(alert instanceof HTMLElement) && alert.startsWith('#')) {
+                    alert = document.querySelector(alert)
+                }
+                alert.querySelector('.btn-close').addEventListener('click',event=>{
+                    dsb.ui.hide(alert)
+                })
+            }
+
+        },
+
 
         init: (parent = document) => {
             dsb.ui.lists = []
