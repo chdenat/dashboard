@@ -1801,11 +1801,14 @@ var dsb = {
 
             switch (action) {
                 case 'start':
+                    button.classList.add('animation','doing')
                     dsb.ui.hide(button.querySelector('.animation.start')).show(button.querySelector('.animation.doing'))
                     break;
                 case 'stop':
                 case 'reset':
                     dsb.ui.show(button.querySelector('.animation.start')).hide(button.querySelector('.animation.doing'))
+                    button.classList.remove('animation','start')
+
                     break;
 
             }
