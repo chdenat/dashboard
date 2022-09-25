@@ -296,9 +296,17 @@ legend {
 .btn .animation.start {
     display: flex;
 }
+
 .btn .animation.doing {
     display: none;
 }
+
+.btn.animation.doing {
+    background:var(--bs-warning);
+    color: var(--bs-white);
+    border-color:var(--bs-warning) ;
+}
+
 .btn .animation.reset {
     display: none;
 }
