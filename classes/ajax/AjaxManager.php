@@ -105,7 +105,7 @@
 		public static function get( $params ) {
 			
 			self::extract_parameters($params);
-			
+			Debug::print($params);
 			switch ( $params['action'] ?? false ) {
 				case 'login-form':
 					if ( $template = Template::instance()->locate_template( 'modals/user/login' ) ) {
