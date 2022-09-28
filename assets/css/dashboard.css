@@ -980,6 +980,10 @@ footer {
     color: var(--bs-warning);
 }
 
+.modal .modal-footer,.modal .modal-footer > div {
+    display: flex;
+    gap: var(--dsb-gutter);
+}
 /*****************************************************************************************************************************************************
  * Toast
  */
