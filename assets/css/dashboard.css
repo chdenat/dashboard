@@ -965,7 +965,7 @@ footer {
 
 .modal .notice i {
     font-size: var(--dsb-middle-font-size);
-    margin-right: var(--espace);
+    margin-right: var(--dsb-md-gutter);
 }
 
 .modal .notice.warning {
@@ -983,7 +983,7 @@ footer {
 /*****************************************************************************************************************************************************
  * Toast
  */
-#dsb-toast, dbb-permanent-toast {
+#dsb-toast, #dsb-permanent-toast {
 
 }
 
@@ -1299,4 +1299,14 @@ console.pause console-menu button:hover {
 .page-404 #error {
     font-size: var(--dsb-main-font-size);
     color: var(--bs-danger);
+}
+
+/*******************************************************************************
+ * Misc
+ */
+
+
+pre {
+    margin: 0;
+    font-size: var(--dsb-form-font-size);
 }
