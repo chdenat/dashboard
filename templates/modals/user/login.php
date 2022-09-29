@@ -34,7 +34,7 @@
 
         <fieldset disabled class="no-border">
             <label for="user" class="form-label"><?= _( 'User name' ) ?></label>
-            <input name="user" class="form-control" type="input" id="user"
+            <input name="user" class="form-control" type="text" id="user"
                    value="<?= $username = 'admin' ?>"/>
         </fieldset>
         

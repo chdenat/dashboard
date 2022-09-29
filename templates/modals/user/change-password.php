@@ -30,11 +30,11 @@
         <div class="alert alert-danger dsb-hide" role="alert">
             <p class="mb-0"><i class="me-2 fas fa-exclamation-triangle"></i><span></span></p>
         </div>
-        <label class="form-label" for="new-password-1"><?= _( "New password" ) ?></label>
+        <label class="form-label" for="new-password"><?= _( "New password" ) ?></label>
         <div class="input-group password">
             <input class="form-control" id="new-password" name="new-password"
                    type="password" autocomplete="new-password" aria-autocomplete="inline">
-            <span class="input-group-text toggle-password" data-password="new-password-1">
+            <span class="input-group-text toggle-password" data-password="new-password">
                 <i class="fa-regular fa-eye show-password" title="<?= _( 'Show password' ) ?>"></i>
                 <i class="fa-regular fa-eye-slash hide-password dsb-hide" title="<?= _( 'Hide password' ) ?>"></i>
              </span>
