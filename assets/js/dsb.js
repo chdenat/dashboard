@@ -1310,7 +1310,7 @@ var dsb = {
          */
         message: function (error, _element = 'p span') {
             this._element.querySelector(_element).innerHTML = error;
-            this._element.classList.toggle('hidden');
+            this._element.classList.toggle('dsb-hide');
             return this;
         }
     }

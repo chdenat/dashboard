@@ -27,7 +27,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
-        <div class="alert alert-danger hidden" role="alert">
+        <div class="alert alert-danger dsb-hide" role="alert">
             <p class="mb-0"><i class="me-2 fas fa-exclamation-triangle"></i><span></span></p>
         </div>
         <label class="form-label" for="new-password-1"><?= _( "New password" ) ?></label>
