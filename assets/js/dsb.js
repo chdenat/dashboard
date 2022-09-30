@@ -1203,16 +1203,20 @@ var dsb = {
                         if (!from_session_modal) {
                             dsb.modal.hide();
                         }
-                        // dsb.user.session.manage_events(false)
-
                         dsb.toast.message({
                             title: 'Log out',
                             message: 'User <strong>' + dsb.user.session.context.user + '</strong> has been logged out.',
                             type: 'success'
                         })
                         document.dispatchEvent(dsb.user.events.dsb_logout);
-                        Template.load_all_templates()
-                        window.location.href = redirection ?? '/'
+                        if (redirection) {
+                            let t = new Template('#content#',null,redirection)
+                            t.load(true)
+                            Template.load_all_templates()
+                        } else {
+                            window.location.href = '/'
+                        }
+
                     }
                 })
                 .catch(error => {
