@@ -1209,6 +1209,7 @@ var dsb = {
                             type: 'success'
                         })
                         document.dispatchEvent(dsb.user.events.dsb_logout);
+
                         if (redirection) {
                             let t = new Template('#content#',null,redirection)
                             t.load(true)
@@ -1538,6 +1539,21 @@ var dsb = {
             }
             return false
 
+        },
+
+        /**
+         * Check if a file exists
+         *
+         * @param url
+         * @return boolean
+         *
+         */
+        file_exists:(url) => {
+            fetch(url,
+                { method: "HEAD" }
+            ).then((response) => {
+                return response.ok
+            });
         },
     },
     /**
