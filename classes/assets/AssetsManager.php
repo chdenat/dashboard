@@ -19,6 +19,7 @@
 	use dashboard\Debug;
 	use dashboard\hooks\Hooks;
 	use dashboard\template\Template;
+	use phpseclib3\Net\SFTP;
 	
 	
 	class AssetsManager {
@@ -423,19 +424,23 @@
 		 * @param  array  $var  PHP array passed to JS objects
 		 *
 		 *                     Array must be in the form ['<object_name>' = [...],...]
+		 * @param  bool   $add_tag if true,, add script tag
 		 *
 		 * @return string
-		 * @access private
+		 * @access public
 		 *
 		 * @since  1.0
 		 */
-		private function php2js( array $var )
+		public function php2js( array $var, bool $add_tag=false )
 		: string {
 			$text = '';
 			ob_start();
 			
 			if ( ! empty( $var ) ) {
 				echo '// ---------------------- data passed from PHP -------' . PHP_EOL;
+                if ($add_tag) {
+                    echo '<script>';
+                }
 				foreach ( $var as $name => $value ) {
 					try {
 						echo 'var ' . $name . '=' . json_encode( $value, JSON_THROW_ON_ERROR ) . ';' . PHP_EOL;
@@ -735,5 +740,22 @@
 			
 		}
 		
+        public static function add_exported_js($data)
+        : void {
+        
+			            ob_start();
+			            if ( ! empty( $data ) ) { ?>
+                           <!-- passed from PHP -->
+                           <script>
+                               <?php foreach ( $data as $name => $value ) { ?>
+		                              const php_get_<?= $name ?> = ()=>{return JSON.parse('<?=json_encode( $value )?>')}
+                                   <?php } ?>
+                           </script>
+			           <?php }
+              
+	        echo ob_get_clean();
+        }
 		
 	}
+ 
+ 

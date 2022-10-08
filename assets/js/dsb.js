@@ -15,7 +15,7 @@
 import {customAlphabet} from '../vendor/nanoid.js'
 import {EventEmitter} from "../vendor/EventEmitter/EventEmitter.js";
 
-const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvw', 10)
+const nanoid = customAlphabet('1234567890', 6)
 const {Template} = await import ('./Template.js')
 
 
@@ -1269,7 +1269,6 @@ var dsb = {
             dsb.user.session.init()
             document.addEventListener('modal/loaded/login-form', dsb.ui.manage_password)
             document.addEventListener('modal/loaded/change-password', dsb.ui.manage_password)
-
         }
 
     },
@@ -1548,8 +1547,8 @@ var dsb = {
          * @return boolean
          *
          */
-        file_exists:(url) => {
-            fetch(url,
+        file_exists:async (url) => {
+            await fetch(url,
                 { method: "HEAD" }
             ).then((response) => {
                 return response.ok
