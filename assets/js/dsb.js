@@ -507,7 +507,8 @@ var dsb = {
                 default:
                     icon = 'fas fa-fa-bell'
             }
-// Let's use the right toast
+
+            // Let's use the right toast
 
             let toast = dsb.toast.autohide
             if (false === hide) {
