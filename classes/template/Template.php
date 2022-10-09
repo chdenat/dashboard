@@ -512,8 +512,8 @@
    
 			$w = (float) $width - 14; // 7 for start comment, 5 for end comment + 2 spaces before and after comment
             $w1 = 2/3 * $w;
-			if ( (float) strlen( $comment ) > (float) $w1 ) {
-				$comment = '[...]' . substr( $comment, $w1 );
+			if (  strlen( $comment ) > $w1 ) {
+				$comment = '[...]' . substr( $comment,(int) $w1 );
 			}
 			$s = str_repeat( $char,intval(( $w - strlen( $comment ) ) / 2) );
 			ob_start(); ?>
