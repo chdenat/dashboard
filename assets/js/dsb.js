@@ -528,6 +528,15 @@ var dsb = {
             } else {
                 dsb.ui.hide(btn)
             }
+
+            // remove existing type information in case it has not been hidden yet.
+            let classes = element.classList
+            classes.forEach(item=>{
+                if (item.startsWith('bg-')) {
+                    element.classList.remove(item)
+                }
+            })
+            element.classList.remove('bg-success','bg-danger','bg-warning')
             element.classList.add('bg-' + type)
 
             toast._instance.show()
