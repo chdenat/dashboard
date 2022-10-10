@@ -15,6 +15,7 @@
 import {LogContext} from './LogContext.js'
 import {DSBConsole} from './DSBConsole.js'
 import {dsb} from "./dsb.js";
+import {EventEmitter} from "../vendor/EventEmitter/EventEmitter.js";
 
 
 class Logger {
@@ -33,7 +34,7 @@ class Logger {
 
     #delays = {
         read: 1000,
-        animate:1100 // Should be shorter than read
+        animate: 100 // Should be shorter than read
     }
 
     #ID = 0
@@ -44,9 +45,11 @@ class Logger {
     #loop = 0
     #scroll_bottom = false
     #erase = true;
-    #anim_iter=0
+    #anim_iter = 0
 
     #parameters = {}
+
+    #event = new EventEmitter()
 
     /**
      *
@@ -111,6 +114,8 @@ class Logger {
 
         this.#scroll_bottom = parameters.scroll_to_bottom ?? false
 
+
+
     }
 
     /**
@@ -123,19 +128,16 @@ class Logger {
         this.context.read_lines = await this.get_lines_number()
 
         // We need to manage some future standard events
-        this.dom_console.addEventListener('log/start', this.start_log);
-        this.dom_console.addEventListener('log/running', this.update_log);
-        this.dom_console.addEventListener('log/stop', this.end_log);
-        this.dom_console.addEventListener('log/error', this.error_log);
+        this.event.once('log/start', this.start_log);
+        this.event.on('log/running', this.update_log);
+        this.event.once('log/stop', this.end_log);
+        this.event.once('log/error', this.error_log);
 
         // Dispatch generic starting event
-        let generic = new Event('log/start')
-        this.dom_console.dispatchEvent(generic)
+        this.event.emit('log/start')
 
         // Dispatch specific starting event
-        let specific = new Event(`log/start/${this.#ID}`)
-        specific.logger = this
-        this.dom_console.dispatchEvent(specific)
+        this.event.emit(`log/start/${this.#ID}`,this)
 
         if (show_console) {
             this.#console.show()
@@ -143,6 +145,10 @@ class Logger {
         dsb.ui.add_scrolling(this.#console, {cascade: false});
 
         return this
+    }
+
+    get event() {
+        return this.#event
     }
 
     /**
@@ -243,10 +249,9 @@ class Logger {
         /**
          * Bail early  if we're in pause
          */
-
         if (!this.running) {
             // We'll try later
-            this.context.timers.read = setTimeout(this.read, this.#delays.read)
+            this.context.timers.read = setInterval(this.read, this.#delays.read)
             return
         }
 
@@ -260,7 +265,7 @@ class Logger {
         let start = this.context.read_lines - (this.#loop === 0 && this.#history ? lines : 0)
 
         if (!this.#once) {
-            this.animate()
+        //    this.animate()
         }
         await fetch(ajax.get + '?' + new URLSearchParams({
             action: 'logger',
@@ -279,31 +284,29 @@ class Logger {
                  * If we read something,we try to detect the end marker and add the corresponding result ie ok, error or warning
                  * and update some context data
                  */
-                let found_marker = true
+                let found_marker = false
                 if (json.content?.length > 0) {
 
                     json.content = json.content.map(item => item.replace('\n', ''))
 
-                    // Try to detect an end marker as last line
-
-                    switch (json.content[json.content.length - 1]) {
-                        case this.#markers.OK:
-                            break
-                        case this.#markers.ABORT:
-                        case this.#markers.KO :
-                            this.context.error = this.#errors.KO
-                            break
-                        case this.#markers.STOP:
-                            this.context.error = this.#errors.STOP
-                            break
-                        default :
-                            found_marker = false;
-
+                    // Detect end of reading
+                    if (json.content.includes(this.#markers.OK)) {
+                        found_marker = true
+                    } else if (json.content.includes(this.#markers.ABORT)) {
+                        found_marker = true
+                        this.context.error = this.#errors.KO
+                    } else if (json.content.includes(this.#markers.KO)) {
+                        found_marker = true
+                        this.context.error = this.#errors.KO
+                    } else if (json.content.includes(this.#markers.STOP)) {
+                        found_marker = true
+                        this.context.error = this.#errors.STOP
                     }
 
                     if (found_marker) {
                         this.stop()
                     }
+
                     this.context.read_lines = json.total
 
                     // If we only read once, we need to force end now.
@@ -318,19 +321,14 @@ class Logger {
                      * We continue to read the file
                      *
                      */
-                        // Throw a new generic running event
-                    let generic = new Event('log/running')
-                    generic.json = json
-                    this.dom_console.dispatchEvent(generic)
+                    // Throw a new generic running event
+                    this.#event.emit('log/running',json)
 
                     // and a new specific running event
-                    let specific = new Event(`log/running/${this.#ID}`)
-                    specific.json = json
-                    specific.logger = this
-                    this.dom_console.dispatchEvent(specific)
+                    this.#event.emit(`log/running/${this.#ID}`,json)
 
                     // Relaunch the reading in few seconds
-                    this.context.timers.read = setTimeout(this.read, this.#delays.read)
+                    this.context.timers.read = setInterval(this.read, this.#delays.read)
 
                 } else {
                     /**
@@ -343,15 +341,10 @@ class Logger {
                     }
 
                     // Throw a new generic end event
-                    let generic = new Event('log/stop')
-                    generic.json = json
-                    this.dom_console.dispatchEvent(generic)
+                    this.#event.emit('log/stop',json)
 
                     // and a new specific end event
-                    let specific = new Event(`log/stop/${this.#ID}`)
-                    specific.json = json
-                    specific.logger = this
-                    this.dom_console.dispatchEvent(specific)
+                    this.#event.emit(`log/stop/${this.#ID}`,json)
                 }
             })
             .catch(error => {
@@ -360,14 +353,10 @@ class Logger {
                  */
 
                     // Throw a new generic error event
-                let generic = new Event('log/error')
-                generic.context = this.context
-                this.dom_console.dispatchEvent(generic)
+                this.#event.emit('log/error',this.context)
 
                 // and a new specific error event
-                let specific = new Event(`log/error/${this.#ID}`)
-                specific.context = this.context
-                this.dom_console.dispatchEvent(specific)
+                this.#event.emit(`log/error/${this.#ID}`,this.context)
 
                 this.#clear_timers()
 
@@ -392,13 +381,13 @@ class Logger {
      */
     #clear_timers = (timers = ['all']) => {
         if (timers.includes('all') || timers.includes('animate')) {
-            clearInterval(this.context.timers.animate)
+            clearTimeout(this.context.timers.animate)
         }
         if (timers.includes('all') || timers.includes('read')) {
-            clearTimeout(this.context.timers.read)
+            clearInterval(this.context.timers.read)
         }
         if (timers.includes('all') || timers.includes('wait')) {
-            clearTimeout(this.context.timers.wait)
+            clearInterval(this.context.timers.wait)
         }
     }
 
@@ -417,8 +406,8 @@ class Logger {
             this.#console.clear()
         }
 
-        // Message is empty, quitting
-        if ('' === message) {
+        // Message is empty or only a br, quitting
+        if (['', '<br>'].includes(message)) {
             return
         }
 
@@ -446,13 +435,14 @@ class Logger {
      * @returns true if all is ok else false
      */
 
-    animate = (animation = true,type='dotshorts') => {
+    animate = (animation = true, type = 'dotshorts') => {
 
-        let anime={};
+        let anime = {};
 
-        this.#anim_iter=0;
+        this.#anim_iter = 0;
+        const max=80; //()=>{return Math.round(20 + Math.random() * 60)}
 
-        anime.cursor=()=> {
+        anime.cursor = () => {
             if (this.running) {
                 const P = ['\\', '|', '/', '-'];
                 this.#anim_iter = (this.#anim_iter > 3) ? 0 : this.#anim_iter
@@ -462,16 +452,16 @@ class Logger {
                 }
             }
         }
-        anime.dotshorts=()=> {
+        anime.dotshorts = () => {
             if (this.running) {
-                const max = Math.round(20 + Math.random() * 60)
+
                 this.#anim_iter = (this.#anim_iter > max) ? 0 : this.#anim_iter
                 let target = this.#console.last
                 if (null !== target) {
                     if (this.#anim_iter) {
-                        target.innerHTML = target?.innerHTML+'.'
+                        target.innerHTML = target?.innerHTML + '.'
                     } else {
-                       target.innerHTML='.'
+                        target.innerHTML = '.'
                     }
                     this.#anim_iter++
                 }
@@ -489,9 +479,9 @@ class Logger {
 
                 // Should we continue or not ?
                 if (animation) {
-                    this.context.timers.animate = setInterval(anime[type], this.#delays.animate)
+                    this.context.timers.animate = setTimeout(anime[type], this.#delays.animate)
                 } else {
-                    clearInterval(this.context.timers.animate)
+                    clearTimeout(this.context.timers.animate)
                 }
             }
         }
@@ -500,10 +490,8 @@ class Logger {
     /**
      * Event launched before reading
      *
-     * @param event
-     *
      */
-    start_log = async (event) => {
+    start_log = async () => {
         // Keep the user focused on
         this.animate(true)
     }
@@ -511,14 +499,14 @@ class Logger {
     /**
      * Event launched each time we read something
      *
-     * @param event
-     *
+     * @param data
      */
-    update_log = async (event) => {
-        if (event.json?.read > 0) {
+    update_log = async (data) => {
+
+        if (data?.read > 0) {
             // We print only if we have to
             await this.update({
-                    message: event.json.content.join('<br>')
+                    message: data.content.join('<br>')
                 }
             )
         }
@@ -534,19 +522,20 @@ class Logger {
      * @param event
      *
      */
-    end_log = async (event) => {
+    end_log = async (data) => {
+
         // We update with the last data from file
-        await this.update_log(event)
+        await this.update_log(data)
 
     }
 
     /**
      * Event launched if an error occurs
      *
-     * @param event
      *
      */
-    error_log = async (event) => {
+    error_log = async (data) => {
+
         await this.update(this.context, {
                 message: '---<br>' + new Date().toLocaleTimeString() + ': A problem occurred.',
                 animation: false
