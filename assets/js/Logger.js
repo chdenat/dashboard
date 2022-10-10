@@ -33,8 +33,8 @@ class Logger {
     }
 
     #delays = {
-        read: 1000,
-        animate: 100 // Should be shorter than read
+        read: 2000,
+        animate: 1000 // Should be shorter than read
     }
 
     #ID = 0
@@ -115,7 +115,6 @@ class Logger {
         this.#scroll_bottom = parameters.scroll_to_bottom ?? false
 
 
-
     }
 
     /**
@@ -128,16 +127,16 @@ class Logger {
         this.context.read_lines = await this.get_lines_number()
 
         // We need to manage some future standard events
-        this.event.once('log/start', this.start_log);
+        this.event.on('log/start', this.start_log);
         this.event.on('log/running', this.update_log);
-        this.event.once('log/stop', this.end_log);
-        this.event.once('log/error', this.error_log);
+        this.event.on('log/stop', this.end_log);
+        this.event.on('log/error', this.error_log);
 
         // Dispatch generic starting event
         this.event.emit('log/start')
 
         // Dispatch specific starting event
-        this.event.emit(`log/start/${this.#ID}`,this)
+        this.event.emit(`log/start/${this.#ID}`, {logger: this})
 
         if (show_console) {
             this.#console.show()
@@ -243,15 +242,14 @@ class Logger {
      *
      */
 
-    read = async () => {
-
+    read =  async () => {
 
         /**
          * Bail early  if we're in pause
          */
         if (!this.running) {
             // We'll try later
-            this.context.timers.read = setInterval(this.read, this.#delays.read)
+            this.context.timers.read = setTimeout(this.read, this.#delays.read)
             return
         }
 
@@ -265,9 +263,9 @@ class Logger {
         let start = this.context.read_lines - (this.#loop === 0 && this.#history ? lines : 0)
 
         if (!this.#once) {
-        //    this.animate()
+            this.animate()
         }
-        await fetch(ajax.get + '?' + new URLSearchParams({
+        fetch(ajax.get + '?' + new URLSearchParams({
             action: 'logger',
             file: this.context.file,
             lines: lines,
@@ -303,6 +301,7 @@ class Logger {
                         this.context.error = this.#errors.STOP
                     }
 
+                    // A marker has been found, let's stop
                     if (found_marker) {
                         this.stop()
                     }
@@ -314,7 +313,6 @@ class Logger {
                         this.stop()
                     }
                 }
-
                 if (this.context.status !== this.context.end) {
                     /**
                      * Step 4 :
@@ -322,13 +320,16 @@ class Logger {
                      *
                      */
                     // Throw a new generic running event
-                    this.#event.emit('log/running',json)
+                    this.#event.emit('log/running', {logger: this, json: json})
 
                     // and a new specific running event
-                    this.#event.emit(`log/running/${this.#ID}`,json)
+                    this.#event.emit(`log/running/${this.#ID}`, {logger: this, json: json})
 
                     // Relaunch the reading in few seconds
-                    this.context.timers.read = setInterval(this.read, this.#delays.read)
+                    if (!this.#once) {
+                        this.#clear_timers()
+                        this.context.timers.read = setTimeout(this.read, this.#delays.read)
+                    }
 
                 } else {
                     /**
@@ -341,10 +342,12 @@ class Logger {
                     }
 
                     // Throw a new generic end event
-                    this.#event.emit('log/stop',json)
+                    this.#event.emit('log/stop', {logger: this, json: json})
 
                     // and a new specific end event
-                    this.#event.emit(`log/stop/${this.#ID}`,json)
+                    this.#event.emit(`log/stop/${this.#ID}`, {logger: this, json: json})
+
+                    this.stop()
                 }
             })
             .catch(error => {
@@ -352,13 +355,13 @@ class Logger {
                  * We encounter an error... We need to stop
                  */
 
-                    // Throw a new generic error event
-                this.#event.emit('log/error',this.context)
+                // Throw a new generic error event
+                this.#event.emit('log/error', this.context)
 
                 // and a new specific error event
-                this.#event.emit(`log/error/${this.#ID}`,this.context)
+                this.#event.emit(`log/error/${this.#ID}`, this.context)
 
-                this.#clear_timers()
+                this.stop()
 
             })
 
@@ -372,6 +375,14 @@ class Logger {
     stop = () => {
         this.context.status = 'end'
         this.#clear_timers()
+
+        this.#event.off([
+            'log/running',
+            `log/running/${this.#ID}`,
+            'log/error',
+            `log/error/${this.#ID}`]
+        )
+
     }
 
     /**
@@ -384,7 +395,7 @@ class Logger {
             clearTimeout(this.context.timers.animate)
         }
         if (timers.includes('all') || timers.includes('read')) {
-            clearInterval(this.context.timers.read)
+            clearTimeout(this.context.timers.read)
         }
         if (timers.includes('all') || timers.includes('wait')) {
             clearInterval(this.context.timers.wait)
@@ -438,9 +449,7 @@ class Logger {
     animate = (animation = true, type = 'dotshorts') => {
 
         let anime = {};
-
-        this.#anim_iter = 0;
-        const max=80; //()=>{return Math.round(20 + Math.random() * 60)}
+        const max = 80; //()=>{return Math.round(20 + Math.random() * 60)}
 
         anime.cursor = () => {
             if (this.running) {
@@ -454,7 +463,6 @@ class Logger {
         }
         anime.dotshorts = () => {
             if (this.running) {
-
                 this.#anim_iter = (this.#anim_iter > max) ? 0 : this.#anim_iter
                 let target = this.#console.last
                 if (null !== target) {
@@ -474,14 +482,13 @@ class Logger {
             this.stop()
         } else {
             if (this.running) {
-
+                // we run the dedicated animation
                 anime[type]()
-
                 // Should we continue or not ?
                 if (animation) {
                     this.context.timers.animate = setTimeout(anime[type], this.#delays.animate)
                 } else {
-                    clearTimeout(this.context.timers.animate)
+                    this.#clear_timers('animate')
                 }
             }
         }
@@ -503,10 +510,10 @@ class Logger {
      */
     update_log = async (data) => {
 
-        if (data?.read > 0) {
+        if (data?.json?.read > 0) {
             // We print only if we have to
             await this.update({
-                    message: data.content.join('<br>')
+                    message: data.json.content.join('<br>')
                 }
             )
         }
@@ -519,8 +526,7 @@ class Logger {
     /**
      * Event launched after reading
      *
-     * @param event
-     *
+     * @param data
      */
     end_log = async (data) => {
 
