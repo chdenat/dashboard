@@ -13,8 +13,8 @@
  *
  **********************************************************************************************************************/
 
-const CTX_END = true
-const CTX_READ = false;
+const CTX_END = 'end'
+const CTX_READ = 'read';
 
 class LogContext {
 
@@ -47,7 +47,7 @@ class LogContext {
     /**
      * Get reading status
      *
-     * @returns {boolean}
+     * @returns {string}
      */
     get status() {
         return this.#status
@@ -61,8 +61,8 @@ class LogContext {
      */
     set status(status) {
         if (typeof status === 'string') {
-            if (status === 'end') this.#status = this.end
-            else if (status === 'read') this.#status = this.read
+            if (status === CTX_END) this.#status = this.end
+            else if (status === CTX_READ) this.#status = this.read
         }
     }
 
