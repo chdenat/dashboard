@@ -218,7 +218,7 @@ class DSBConsole {
      */
     #append = (text='', classes = '') => {
         if ('' !== text) {
-            this.#last.innerHTML = text
+            this.#last.innerHTML = text.replace(/(<br>*)+/g,'<br>')
         }
         if (classes !== '') {
             this.#last.classList.add(classes)
