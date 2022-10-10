@@ -464,7 +464,8 @@ class Logger {
         }
         anime.dotshorts=()=> {
             if (this.running) {
-                this.#anim_iter = (this.#anim_iter > 80) ? 0 : this.#anim_iter
+                const max = Math.round(20 + Math.random() * 60)
+                this.#anim_iter = (this.#anim_iter > max) ? 0 : this.#anim_iter
                 let target = this.#console.last
                 if (null !== target) {
                     if (this.#anim_iter) {
