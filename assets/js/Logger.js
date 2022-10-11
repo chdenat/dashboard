@@ -34,7 +34,7 @@ class Logger {
 
     #delays = {
         read: 2000,
-        animate: 1000 // Should be shorter than read
+        animate: 600 // Should be shorter than read
     }
 
     #ID = 0
