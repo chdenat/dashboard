@@ -31,6 +31,9 @@
 			AssetsManager::instance()->add_to_css_list( 'bootstrap', BOOTSTRAP_CSS . 'bootstrap.min.css', [] );
 			AssetsManager::instance()->add_to_css_list( 'scrollbar', SCROLLBAR_CSS, [] );
 			AssetsManager::instance()->add_to_css_list( 'fa', FAWESOME_CSS . 'all.css', [] );
+			/** @since 1.1.0 */
+			AssetsManager::instance()->add_to_css_list( 'flags', FLAGS_CSS . 'flag-icons.min.css', [] );
+			
 		} );
 		
 		    Hooks::instance()->add_action( 'assets/register-js', function () {
