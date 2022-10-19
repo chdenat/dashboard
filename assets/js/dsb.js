@@ -532,12 +532,12 @@ var dsb = {
 
             // remove existing type information in case it has not been hidden yet.
             let classes = element.classList
-            classes.forEach(item=>{
+            classes.forEach(item => {
                 if (item.startsWith('bg-')) {
                     element.classList.remove(item)
                 }
             })
-            element.classList.remove('bg-success','bg-danger','bg-warning')
+            element.classList.remove('bg-success', 'bg-danger', 'bg-warning')
             element.classList.add('bg-' + type)
 
             toast._instance.show()
@@ -1221,7 +1221,7 @@ var dsb = {
                         document.dispatchEvent(dsb.user.events.dsb_logout);
 
                         if (redirection) {
-                            let t = new Template('#content#',null,redirection)
+                            let t = new Template('#content#', null, redirection)
                             t.load(true)
                             Template.load_all_templates()
                         } else {
@@ -1557,9 +1557,9 @@ var dsb = {
          * @return boolean
          *
          */
-        file_exists:async (url) => {
+        file_exists: async (url) => {
             await fetch(url,
-                { method: "HEAD" }
+                {method: "HEAD"}
             ).then((response) => {
                 return response.ok
             });
@@ -1623,18 +1623,18 @@ var dsb = {
         },
 
 
-        disable: (element)=> {
+        disable: (element) => {
             if (element !== null) {
                 if (!(element instanceof HTMLElement) && element.includes('#')) {
                     element = document.querySelector(element)
                 }
 
-                element.setAttribute('disabled','')
+                element.setAttribute('disabled', '')
             }
             return dsb.ui
         },
 
-        enable: (element)=> {
+        enable: (element) => {
             if (element !== null) {
                 if (!(element instanceof HTMLElement) && element.includes('#')) {
                     element = document.querySelector(element)
@@ -1830,13 +1830,13 @@ var dsb = {
 
             switch (action) {
                 case 'start':
-                    button.classList.add('animation','doing')
+                    button.classList.add('animation', 'doing')
                     dsb.ui.hide(button.querySelector('.animation.start')).show(button.querySelector('.animation.doing'))
                     break;
                 case 'stop':
                 case 'reset':
                     dsb.ui.show(button.querySelector('.animation.start')).hide(button.querySelector('.animation.doing'))
-                    button.classList.remove('animation','start')
+                    button.classList.remove('animation', 'start')
 
                     break;
 
@@ -1907,18 +1907,18 @@ var dsb = {
          */
         hide_elements: (elements) => {
             elements.forEach(element => {
-                 if (element.startsWith('#')) {
-                     // Id
-                     dsb.ui.hide(element)
-                 } else if (element.startsWith('.')) {
-                     // Class
-                     document.querySelectorAll(element).forEach(element => {
-                         dsb.ui.hide(element)
-                     })
-                 } else {
-                     // Block
-                     dsb.ui.hide(document.querySelector(`[data-template="${element}"]`))
-                 }
+                if (element.startsWith('#')) {
+                    // Id
+                    dsb.ui.hide(element)
+                } else if (element.startsWith('.')) {
+                    // Class
+                    document.querySelectorAll(element).forEach(element => {
+                        dsb.ui.hide(element)
+                    })
+                } else {
+                    // Block
+                    dsb.ui.hide(document.querySelector(`[data-template="${element}"]`))
+                }
             })
         },
 
@@ -2020,21 +2020,45 @@ var dsb = {
             },
         },
 
-        add_alert_close:alert => {
-            if (alert !== null ) {
+        add_alert_close: alert => {
+            if (alert !== null) {
                 if (!(alert instanceof HTMLElement) && alert.startsWith('#')) {
                     alert = document.querySelector(alert)
                 }
-                alert.querySelector('.btn-close').addEventListener('click',event=>{
+                alert.querySelector('.btn-close').addEventListener('click', event => {
                     dsb.ui.hide(alert)
                 })
             }
 
         },
 
+        /**
+         *
+         * @param event
+         * @param switcher
+         *
+         * @since 1.1.0
+         *
+         */
+        lang_switcher: (event, switcher) => {
+            let current = switcher.getAttribute('lang')
+            let target = event.target
+            if (target.nodeName === 'I') {            // case =  lang button
+                switcher.querySelector('.current-lang').innerHTML = target.cloneNode(true).outerHTML
+                dsb.ui.hide(switcher.querySelector('.lang-list'))
+            } else {                                  // case = show menu
+                dsb.ui.show(switcher.querySelector('.lang-list'))
+
+            }
+
+
+        },
+
 
         init: (parent = document) => {
             dsb.ui.lists = []
+
+            // Create all selection lists (except thos who use not-auto-chices)
             document.querySelectorAll('select:not(.not-auto-choices)').forEach(select => {
                 let id = nanoid()
                 if (!select.hasAttribute('id')) {
@@ -2053,12 +2077,51 @@ var dsb = {
                     renderChoiceLimit: limit,
                 })
             })
-            dsb.ui.add_scrolling(parent)
 
+            // Lang switcher
+            document.querySelectorAll('select.lang-list').forEach(select => {
+                let id = nanoid()
+                if (!select.hasAttribute('id')) {
+                    select.id = id
+                }
+
+                let limit = select.dataset.limit ?? -1
+                let search = select.dataset.search ?? false
+
+                const show_lang = ({classNames}, data) => {
+                    const CC = data.value.split('_')[1].toLowerCase()
+                    return(`          <div class="${classNames.item} ${classNames.itemChoice} ${
+                        data.disabled ? classNames.itemDisabled : classNames.itemSelectable
+                    }" data-choice ${
+                        data.disabled
+                            ? 'data-choice-disabled aria-disabled="true"'
+                            : 'data-choice-selectable'
+                    } data-id="${data.id}" data-value="${data.value}" ${
+                        data.groupId > 0 ? 'role="treeitem"' : 'role="option"'
+                    } title="${data.label}"><i lang="${data.value}" class="fi fis fi-${CC}"></i></div>`)
+                }
+
+                dsb.ui.lists[select.id] = new Choices(select, {
+                    searchEnabled: false,
+                    allowHTML: true,
+
+                    callbackOnCreateTemplates: function (template) {
+                        return {
+                            item: ({classNames}, data) => {
+                                return template(show_lang({classNames}, data))
+                            },
+                            choice: ({classNames}, data) => {
+                                return template(show_lang({classNames}, data))
+                            },
+                        }
+                    }
+
+                })
+                dsb.ui.add_scrolling(parent)
+
+            })
         }
-
-    }
-    ,
+    },
 
 
     /**

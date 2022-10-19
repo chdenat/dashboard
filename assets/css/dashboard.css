@@ -42,6 +42,7 @@
     --dsb-xs-gutter: calc(var(--bs-gutter-x) / 3);
     --dsb-md-gutter: calc(var(--bs-gutter-x) / 2);
 
+    --dsb-xxs-rounded: calc(var(--dsb-gutter) / 6);
     --dsb-xs-rounded: calc(var(--dsb-gutter) / 4);
     --dsb-rounded: calc(var(--dsb-gutter) / 3);
     --dsb-md-rounded: calc(var(--dsb-gutter) / 2);
@@ -1195,9 +1196,6 @@ console.pause console-menu button:hover {
 }
 
 .choices__list--dropdown .choices__item--selectable {
-    margin-left: -4px;
-    margin-right: -4px;
-    width: calc(100% + 8px);
     border-radius: var(--dsb-xs-rounded);
 }
 
@@ -1307,6 +1305,28 @@ console.pause console-menu button:hover {
     font-size: var(--dsb-main-font-size);
     color: var(--bs-danger);
 }
+
+/*******************************************************************************
+ * Lang switcher
+ */
+[data-template="blocks/languages"] .choices__inner {
+    padding: var(--dsb-xs-gutter);
+}
+[data-template="blocks/languages"] i {
+    font-size: calc(1.2 * var(--dsb-main-font-size) )!important;
+    line-height: 1;
+}
+
+[data-template="blocks/languages"] .choices__item.choices__item--choice.choices__item--selectable {
+    padding-right: var(--dsb-md-gutter);
+}
+[data-template="blocks/languages"] .choice-list .choices__item.choices__item--choice.choices__item--selectable {
+    width: auto;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    text-align: center;
+}
+
 
 /*******************************************************************************
  * Misc
