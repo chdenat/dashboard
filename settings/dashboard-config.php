@@ -81,6 +81,9 @@
 	/** JS_Cookie JS path */
 	const JSCOOKIE_JS = D_VDR_URL . 'js-cookie/';
 	
+	/** FLAGS CSS */
+	/** @since 1.1.0 */
+	const FLAGS_CSS = D_VDR_URL . 'flag-icons/css/';
 	
 	/** Templates locations */
 	

@@ -1,13 +1,10 @@
 <?php global $template ?>
 
 <!DOCTYPE html>
-<html <?= $template->html_classes() ?>>
+<html <?= $template->html_classes() ?> lang="en">
 
 <head>
     <title>Idefix</title>
-    <meta name="author" lang="fr" content="O. Cart.">
-    <meta name="keywords" content="">
-    <meta name="description" content="Changer Mot de passe">
 	<?= $template->head_end() ?>
 </head>
 
