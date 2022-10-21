@@ -2032,95 +2032,106 @@ var dsb = {
 
         },
 
-        /**
-         *
-         * @param event
-         * @param switcher
-         *
-         * @since 1.1.0
-         *
-         */
-        lang_switcher: (event, switcher) => {
-            let current = switcher.getAttribute('lang')
-            let target = event.target
-            if (target.nodeName === 'I') {            // case =  lang button
-                switcher.querySelector('.current-lang').innerHTML = target.cloneNode(true).outerHTML
-                dsb.ui.hide(switcher.querySelector('.lang-list'))
-            } else {                                  // case = show menu
-                dsb.ui.show(switcher.querySelector('.lang-list'))
-
-            }
-
-
-        },
-
-
         init: (parent = document) => {
             dsb.ui.lists = []
 
-            // Create all selection lists (except thos who use not-auto-chices)
-            document.querySelectorAll('select:not(.not-auto-choices)').forEach(select => {
-                let id = nanoid()
+            // Create all selection lists (except thos who use not-auto-choices)
+            parent.querySelectorAll('select:not(.not-auto-choices)').forEach(select => {
+
                 if (!select.hasAttribute('id')) {
-                    select.id = id
+                    select.id = nanoid()
                 }
 
-                let limit = select.dataset.limit ?? -1
-                let search = select.dataset.search ?? false
+                if (!(dsb.ui.lists[select.id] instanceof Choices)) {
+                    let limit = select.dataset.limit ?? -1
+                    let search = select.dataset.search ?? false
 
-                dsb.ui.lists[select.id] = new Choices(select, {
-                    itemSelectText: '',
-                    silent: true,
-                    allowHTML: true,
-                    shouldSort: false,
-                    searchEnabled: search,
-                    renderChoiceLimit: limit,
-                })
+                    dsb.ui.lists[select.id] = new Choices(select, {
+                        itemSelectText: '',
+                        silent: true,
+                        allowHTML: true,
+                        shouldSort: false,
+                        searchEnabled: search,
+                        renderChoiceLimit: limit,
+                    })
+                }
             })
 
             // Lang switcher
-            document.querySelectorAll('select.lang-list').forEach(select => {
-                let id = nanoid()
+            parent.querySelectorAll('select.lang-list').forEach(select => {
+
                 if (!select.hasAttribute('id')) {
-                    select.id = id
+                    select.id = nanoid()
                 }
-
-                let limit = select.dataset.limit ?? -1
-                let search = select.dataset.search ?? false
-
-                const show_lang = ({classNames}, data) => {
-                    const CC = data.value.split('_')[1].toLowerCase()
-                    return(`          <div class="${classNames.item} ${classNames.itemChoice} ${
-                        data.disabled ? classNames.itemDisabled : classNames.itemSelectable
-                    }" data-choice ${
-                        data.disabled
-                            ? 'data-choice-disabled aria-disabled="true"'
-                            : 'data-choice-selectable'
-                    } data-id="${data.id}" data-value="${data.value}" ${
-                        data.groupId > 0 ? 'role="treeitem"' : 'role="option"'
-                    } title="${data.label}"><i lang="${data.value}" class="fi fis fi-${CC}"></i></div>`)
-                }
-
-                dsb.ui.lists[select.id] = new Choices(select, {
-                    searchEnabled: false,
-                    allowHTML: true,
-
-                    callbackOnCreateTemplates: function (template) {
-                        return {
-                            item: ({classNames}, data) => {
-                                return template(show_lang({classNames}, data))
-                            },
-                            choice: ({classNames}, data) => {
-                                return template(show_lang({classNames}, data))
-                            },
-                        }
+                if (!(dsb.ui.lists[select.id] instanceof Choices)) {
+                    const select_lang = ({classNames}, data) => {
+                        const CC = data.value.split('_')[1].toLowerCase()
+                        return (`          <div class="${classNames.item} ${classNames.itemChoice} ${
+                            data.disabled ? classNames.itemDisabled : classNames.itemSelectable
+                        }" data-choice ${
+                            data.disabled
+                                ? 'data-choice-disabled aria-disabled="true"'
+                                : 'data-choice-selectable'
+                        } data-id="${data.id}" data-value="${data.value}" ${
+                            data.groupId > 0 ? 'role="treeitem"' : 'role="option"'
+                        } title="${data.label}"><i lang="${data.value}" class="fi fis fi-${CC}"></i></div>`)
                     }
 
-                })
-                dsb.ui.add_scrolling(parent)
+                    dsb.ui.lists[select.id] = new Choices(select, {
+                            searchEnabled: false,
+                            allowHTML: true,
+
+                            callbackOnCreateTemplates: function (template) {
+                                return {
+                                    item: ({classNames}, data) => {
+                                        return template(select_lang({classNames}, data))
+                                    },
+                                    choice: ({classNames}, data) => {
+                                        return template(select_lang({classNames}, data))
+                                    },
+                                }
+                            }
+                        }
+                    );
+
+                    dsb.ui.lists[select.id].passedElement.element.addEventListener(
+                        'addItem',
+                        async function (event) {
+
+                            let form_data = {
+                                headers: {'Content-Type': 'multipart/form-data'},
+                                lang: event.detail.value,
+                                action: 'set-lang'
+                            }
+
+
+                            await fetch(dsb_ajax.post, {
+                                method: 'POST',
+                                body: JSON.stringify(form_data)
+                            }).then(response => {
+                                if (!response.ok) {
+                                    throw Error(response.statusText);
+                                }
+                                return response;
+                            })
+                                .then(response => response.json())
+                                .then(data => location.reload())
+                                .catch(error => {
+                                        console.error(error);
+                                    }
+                                )
+                        },
+                        false,
+                    );
+
+                }
 
             })
+
+            // Add scrolling
+            dsb.ui.add_scrolling(parent)
         }
+
     },
 
 
@@ -2177,6 +2188,7 @@ var dsb = {
         })
 
         dsb.ui.init();
+
 
         // We need to manage some history retrieval
 

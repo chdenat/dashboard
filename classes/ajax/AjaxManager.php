@@ -18,6 +18,7 @@
 	namespace dashboard\ajax;
 	
 	use dashboard\Debug;
+	use dashboard\I18n;
 	use dashboard\Utils;
 	use shelteradmin\box\Box;
 	use dashboard\DSBException;
@@ -69,6 +70,11 @@
 					}
 					break;
 				
+				case 'set-lang' :
+					I18n::set_lang($params['lang']);
+					self::done();
+					
+					break;
 			}
 			
 		}
