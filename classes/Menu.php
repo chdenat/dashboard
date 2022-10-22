@@ -141,6 +141,19 @@
 			return true;
 		}
 		
+		/**
+         * Localisation of menu text, base on text or lang[CURRENT_LANG]
+		 * @param $item
+		 *
+		 * @return string
+         *
+         * @since 1.1.0
+         *
+		 */
+        private function localize_item($item) : string {
+            return  $item['lang'][CURRENT_LANG]??($item['text'] ?? 'no text' );
+        }
+        
 		private function show_level( $item, $level = 1, $id = 'menu-item', $roles = [ 'logged' ] ) {
 			ob_start();
 			$sub_level = 0;
@@ -156,7 +169,7 @@
                     <li <?=$hidden?>>
                         <a href="#<?= $id ?>" data-bs-toggle="collapse" aria-expanded="false">
 							<?= $item['icon'] ?? '' ?>
-                            <span><?= _( $item['text'] ?? 'no text' ) ?></span>
+                            <span><?=  $this->localize_item($item) ?></span>
                         </a>
 
                         <ul class="collapse multi-collapse" id="<?= $id ?>">
@@ -189,7 +202,7 @@
                         <a <?= $data_content ?> <?= $href ?> <?= $default ?> <?= implode( ' ', $dataset )
 						?>>
 							<?= $item['icon'] ?? '' ?>
-                            <span><?= _( $item['text'] ?? 'no text' ) ?></span>
+                            <span><?= $this->localize_item($item) ?></span>
                         </a>
                     </li>
 				<?php }
