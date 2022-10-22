@@ -1,7 +1,10 @@
-<?php global $template ?>
+<?php
+    global $template;
+	use dashboard\I18n;
+    ?>
 
 <!DOCTYPE html>
-<html <?= $template->html_classes() ?> lang="en">
+<html <?= $template->html_classes() ?> lang="<?=	CURRENT_LANG?>">
 
 <head>
     <title>Idefix</title>
