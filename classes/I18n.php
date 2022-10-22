@@ -65,7 +65,7 @@
 		public static function set_lang(
 			$locale = null
 		)
-		: void {
+		: string {
 			$cookie = C_NAME. '-lang';
 			// If we do not have entry, we get locale from cookie or from browser
 			if ($locale === null) {
@@ -82,6 +82,8 @@
 			setlocale( LC_CTYPE, $locale );
 			// set cookie set one year
 			setcookie( $cookie, $locale, time() + 60 * 60 * 24 * 365, '/' );
+			
+			return $locale;
 		}
 		
 		public static function get_lang()
