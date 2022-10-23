@@ -372,6 +372,8 @@ class Template {
      * @param force         Force template to load
 
      * @param parameters
+     *
+     *
      * @since 1.0
      *
      */
@@ -384,6 +386,11 @@ class Template {
         if (this.file === '' && !this.is_content) {
             return false
         }
+
+        /**
+         *  @since 1.1.0
+         */
+        this.parameters = parameters
 
         /**
          * May be we need to redirect on home...
