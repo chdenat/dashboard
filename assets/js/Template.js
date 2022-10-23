@@ -333,16 +333,6 @@ class Template {
                         }
                     }
 
-                    // It's in content, lets save in cookies
-                    if (template.is_content) {
-                        Cookies.set('last-menu', JSON.stringify(
-                            {
-                                file: template.#file,        // The template
-                                tab: template.#tab,          // The tab we'll open
-                                origin: event.target.id      // The menu item that launch this load template event
-                            }));
-
-                    }
                     // The events com from the menu, so, add an animation if it's only a tab template.
                     if (!template.is_content) {
                         Animation.loading('#content#')
