@@ -71,7 +71,7 @@
 					break;
 				
 				case 'set-lang' :
-					I18n::set_lang($params['lang']);
+					I18n::set_lang($params['lang'],$params['old']);
 					self::done();
 					
 					break;
