@@ -14,7 +14,7 @@
  **********************************************************************************************************************/
 import {customAlphabet} from '../vendor/nanoid.js'
 import {EventEmitter} from "../vendor/EventEmitter/EventEmitter.js";
-
+//import {Cookies}  from '../vendor/js-cookie/js.cookie.min.js';
 const nanoid = customAlphabet('1234567890', 6)
 const {Template} = await import ('./Template.js')
 
@@ -467,6 +467,7 @@ var dsb = {
             // Update the page
 
             Template.load_all_templates()
+
         }
 
     }
@@ -1573,6 +1574,9 @@ var dsb = {
      */
     ui: {
         backdrop: document.getElementById('dsb-backdrop'),
+        check_lang: false,
+        current_lang: null,
+        new_lang : false,
 
         hide: (element) => {
             if (element !== null) {
@@ -2032,6 +2036,27 @@ var dsb = {
 
         },
 
+        /**
+         * Get the <appli>_lang cookie content
+         *
+         *
+         * @return {null|any}
+         */
+        get_lang_cookie: () => {
+            // we do not know the right name, but it's ended with -lang
+            for (const cookie in Cookies.get()) {
+                if (cookie.endsWith('-lang')) {
+                    return {name:cookie, value:Cookies.get(cookie)}
+                }
+            }
+            return null
+        },
+
+        get_lang: () => {
+            return document.querySelector('html').getAttribute('lang')
+        },
+
+
         init: (parent = document) => {
             dsb.ui.lists = []
 
@@ -2058,6 +2083,7 @@ var dsb = {
             })
 
             // Lang switcher
+            dsb.ui.current_lang=dsb.ui.get_lang()
             parent.querySelectorAll('select.lang-list').forEach(select => {
 
                 if (!select.hasAttribute('id')) {
@@ -2093,17 +2119,29 @@ var dsb = {
                             }
                         }
                     );
+                    /**
+                     * Add a toast if  there is a new lang
+                     *
+                     */
+                     if (dsb.ui.new_lang) {
+                         dsb.toast.message({
+                             title: select.dataset.toastTitle,
+                             message: select.dataset.toastText,
+                             type: 'success'
+                         })
+                         console.log('ok')
+                     }
 
                     dsb.ui.lists[select.id].passedElement.element.addEventListener(
-                        'addItem',
+                        'change',
                         async function (event) {
 
-                            let form_data = {
+                           let form_data = {
                                 headers: {'Content-Type': 'multipart/form-data'},
                                 lang: event.detail.value,
+                                old : dsb.ui.current_lang,
                                 action: 'set-lang'
                             }
-
 
                             await fetch(dsb_ajax.post, {
                                 method: 'POST',
@@ -2127,6 +2165,20 @@ var dsb = {
                 }
 
             })
+
+            // Check if lang as changed
+            if (!dsb.ui.check_lang) {
+                const cookie = dsb.ui.get_lang_cookie()
+                const content = JSON.parse(cookie.value)
+                if (cookie && content.change) {
+                    // it's a new lang, ok we sync the cookie content
+                    content.old = null
+                    content.change = false;
+                    Cookies.set(cookie.name,JSON.stringify(content))
+                    dsb.ui.new_lang = true
+                }
+                dsb.ui.check_lang = true
+            }
 
             // Add scrolling
             dsb.ui.add_scrolling(parent)

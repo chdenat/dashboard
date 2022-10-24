@@ -29,66 +29,106 @@
 			bind_textdomain_codeset( $domain, 'UTF-8' );
 		}
 		
-		public static function get_available_languages( $directory )
+		/**
+		 * Get all languages by scanning languages directory
+		 *
+		 * @param  string  $directory  to scan
+		 *
+		 * @return array List of languages
+		 *
+		 * @since 1.1.0
+		 *
+		 */
+		public static function get_available_languages( string $directory )
 		: array {
-			$langs = [LANG_DEFAULT];
+			$languages = [ LANG_DEFAULT ];
 			foreach ( glob( $directory . '*' ) as $trad ) {
 				if ( preg_match( '/([a-z]{2}_[A-Z]{2})/', $trad, $lang ) ) {
-					$langs[] = $lang[1];
+					$languages[] = $lang[1];
 				}
 			}
-			return $langs;
+			
+			return $languages;
 			
 		}
 		
+		/**
+		 * Get browser language  and check if its settings are defined
+		 *
+		 * for a language xx_YY we return xx_YY if it exists
+		 * for xx or YY we return xx_YY ir xx_YY exists
+		 *
+		 * else LANG_DEFAULT if nothing found.
+		 *
+		 * @return bool|string
+		 *
+		 * @since 1.1.0
+		 *
+		 */
 		public static function validate_browser_language()
 		: bool|string {
-			$locale = Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+			$locale = Locale::acceptFromHttp( $_SERVER['HTTP_ACCEPT_LANGUAGE'] );
 			
-			// local existe in the language list
-			if ( in_array( $locale, LANG_LIST )) {
+			// locale exists in the language list
+			if ( in_array( $locale, LANG_LIST ) ) {
 				return $locale;
 			}
 			
 			// let's try if it's part of some existing keys. We return the full locale if it is ok (FIFO)
+			// ie, we're looking fr or FR subdirectory if language is fr_FR
+			
 			foreach ( LANG_LIST as $lang ) {
-				if ( in_array($locale,explode('_',$lang))) {
+				if ( in_array( $locale, explode( '_', $lang ) ) ) {
 					return $lang;
 				}
 			}
 			
 			// Not found, we return Default language
 			return LANG_DEFAULT;
-		
+			
 		}
 		
 		public static function set_lang(
-			$locale = null
+			$locale = null, $old = null
 		)
 		: string {
-			$cookie = C_NAME. '-lang';
-			// If we do not have entry, we get locale from cookie or from browser
-			if ($locale === null) {
-				$locale = $_COOKIE[ $cookie ] ??self::validate_browser_language();
+			$name   = C_NAME . '-lang';
+			$cookie = null;
+			
+			$cookie = json_decode( $_COOKIE[ $name ] ?? '{}', true );
+			
+			if ( $locale === null ) {
+				// If we do not have entry, we get locale from cookie or from browser
+				$locale = $cookie['lang'] ?? self::validate_browser_language();
+			}
+			
+			if ($old === null) {
+				// Get old
+				$old = $cookie['old'];
 			}
 			
 			// If the local is not in the list of available languages, we set it to default
-			$locale = in_array( $locale, LANG_LIST )?$locale:LANG_DEFAULT;
-			$current_lang = I18n::get_lang();
+			$locale = in_array( $locale, LANG_LIST ) ? $locale : LANG_DEFAULT;
 			
 			// We set the locale
 			setlocale( LC_ALL, $locale );
 			setlocale( LC_MESSAGES, $locale );
 			setlocale( LC_CTYPE, $locale );
-			// set cookie set one year
-			setcookie( $cookie, $locale, time() + 60 * 60 * 24 * 365, '/' );
+			// set cookie set one year if it's not a get equiv ($old === null)
+			setcookie( $name, json_encode( [
+				                               'lang'   => $locale,
+				                               'old'    => $old,
+				                               'change' => $old !== null && $locale !== $old,
+			                               ] ),
+			           time() + 60 * 60 * 24 * 365, '/' );
 			
 			return $locale;
 		}
 		
 		public static function get_lang()
 		: bool|string {
-			return setlocale( LC_ALL, 0 );
+			$cookie = json_decode( $_COOKIE[ C_NAME . '-lang' ] ?? '{}', true );
+			return $cookie['lang'];
 		}
 		
 		public static function get_country_codes( $code = null )
@@ -345,7 +385,7 @@
 		}
 		
 		
-		public static function get_locales( $locale = null )
+		public static function get_locales( $locale = null, $long = true )
 		: array {
 			// @formatter => off
 			$langs = [
@@ -511,7 +551,7 @@
 				'fr_SN'       => 'French (Senegal)',
 				'fr_CH'       => 'French (Switzerland)',
 				'fr_TG'       => 'French (Togo)',
-				'fr'          => 'French',
+				'fr'          => 'Français',
 				'ff_SN'       => 'Fulah (Senegal)',
 				'ff'          => 'Fulah',
 				'gl_ES'       => 'Galician (Spain)',
@@ -788,7 +828,10 @@
 			];
 			
 			// @formatter => on
-			return ( $locale === null ) ? $langs :  [ $locale => $langs[ $locale ]??null ];
+			if ($locale !== null && !$long) {
+				$locale = explode('_',$locale)[0];
+			}
+			return ( $locale === null ) ? $langs : [ $locale => $langs[ $locale ] ?? null ];
 			
 		}
 		
