@@ -556,12 +556,14 @@ class Template {
 
     dispatch_events = (type, file = this.file, directory = this.#directory) => {
 
+
         let generic_event = new Event(`template/${type}`)
         generic_event.template = this;
         document.dispatchEvent(generic_event)
+
         Template.event.emit(type, this);
 
-        // template event if reserved
+        // template event if it is a reserved template
         if (this.is_reserved) {
             Template.event.emit(`${type}/${this.ID}`, this);
         }
@@ -577,7 +579,6 @@ class Template {
         load_event.template = this
         document.dispatchEvent(load_event)
         Template.event.emit(`${type}/${file}`, this);
-
 
         // // Specific directory event
         // if (this.#directory !== '') {
