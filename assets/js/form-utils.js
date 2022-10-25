@@ -51,7 +51,7 @@ let prepare_to_post = (form) => {
     array.forEach(element => {
         if (element.name.includes('--')) {
             if ((element.type === 'radio' && element.checked) || element.type !== 'radio') {
-                data[element.name] = element.value;
+                data[element.name] = element.value.trim();
             }
         }
     })
