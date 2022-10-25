@@ -438,6 +438,10 @@ var dsb = {
 
             // When a template has been loaded, we register specific link actions and load all the children
             Template.event.once('load-done', template => {
+
+                // Download the family
+                Template.load_all_templates(template.container)
+
                 // Let open links in content if required
                 template.container.querySelectorAll('a[data-content]').forEach(item => {
 
@@ -452,9 +456,6 @@ var dsb = {
                 template.container.querySelectorAll('a[data-content-modal]').forEach(item => {
                     item.addEventListener('click', dsb.ui.show_intermediate_content)
                 });
-
-                // Download the family
-                Template.load_all_templates(template.container)
 
 
                 // Init UI
@@ -2057,7 +2058,8 @@ var dsb = {
         },
 
 
-        init: (parent = document) => {
+        init: async (parent = document) => {
+
             dsb.ui.lists = []
 
             // Create all selection lists (except thos who use not-auto-choices)
@@ -2121,6 +2123,7 @@ var dsb = {
                     );
                     /**
                      * Add a toast if  there is a new lang
+                     * @since 1.1.0
                      *
                      */
                      if (dsb.ui.new_lang) {
@@ -2129,13 +2132,16 @@ var dsb = {
                              message: select.dataset.toastText,
                              type: 'success'
                          })
-                         console.log('ok')
+                         dsb.ui.new_lang=false
                      }
 
+                    /**
+                     * Change event
+                     * @since 1.1.0
+                     */
                     dsb.ui.lists[select.id].passedElement.element.addEventListener(
                         'change',
                         async function (event) {
-
                            let form_data = {
                                 headers: {'Content-Type': 'multipart/form-data'},
                                 lang: event.detail.value,
@@ -2166,10 +2172,16 @@ var dsb = {
 
             })
 
-            // Check if lang as changed
+            /**
+             * Check if lang as changed
+             * @since 1.1.0
+             *
+             */
+
             if (!dsb.ui.check_lang) {
                 const cookie = dsb.ui.get_lang_cookie()
                 const content = JSON.parse(cookie.value)
+
                 if (cookie && content.change) {
                     // it's a new lang, ok we sync the cookie content
                     content.old = null
