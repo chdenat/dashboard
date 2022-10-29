@@ -94,6 +94,7 @@ body {
     align-items: center;
     margin: 0;
 }
+
 .alert p i, .dropdown-item i, #menu-container li i {
     margin-right: calc(var(--dsb-gutter) / 2);
 }
@@ -139,9 +140,11 @@ body.logged-in [data-action="logout-confirm"], body.logged-in [data-action="chan
     display: flex;
     align-items: center;
 }
-.btn span{
+
+.btn span {
     align-items: center;
 }
+
 .btn i, a i {
     margin-right: var(--dsb-md-gutter);
 }
@@ -244,6 +247,15 @@ legend {
     font-style: normal !important;
 }
 
+.btn-group.disabled input:disabled + label {
+    display: none;
+}
+
+.btn-group.disabled input:disabled:checked + label {
+    display: inline;
+    border-radius: 0.375rem
+}
+
 .btn-check:active + .btn-primary, .btn-check:checked + .btn-primary, .btn-primary.active, .btn-primary:active, .show > .btn-primary.dropdown-toggle {
     color: #fff;
     background-color: var(--bs-primary);
@@ -293,6 +305,8 @@ legend {
     justify-content: space-between;
     width: 100%;
 }
+
+
 /*******************************************************************************
  * Button animation
  */
@@ -306,14 +320,15 @@ legend {
 }
 
 .btn.animation.doing {
-    background:var(--bs-warning);
+    background: var(--bs-warning);
     color: var(--bs-white);
-    border-color:var(--bs-warning) ;
+    border-color: var(--bs-warning);
 }
 
 .btn .animation.reset {
     display: none;
 }
+
 /**************************************************************************************************************************************************
  * Accordions
  */
@@ -473,6 +488,7 @@ legend {
 #user-name hr {
     margin: var(--dsb-xs-gutter) 0 0;
 }
+
 #user-dropdown {
     margin: 10px;
     --dimension: calc(var(--dsb-header-height) - 30px);
@@ -751,8 +767,9 @@ body:not(.logged-in) #user-dropdown:hover {
 #content.loading {
     opacity: 0.04;
 }
+
 #content.loaded {
-     opacity: 1;
+    opacity: 1;
 }
 
 
@@ -778,7 +795,7 @@ body:not(.logged-in) #user-dropdown:hover {
     justify-content: flex-end;
 }
 
-.nav-pills,.nav-pills .nav-link {
+.nav-pills, .nav-pills .nav-link {
     display: flex;
 }
 
@@ -868,6 +885,7 @@ body:not(.logged-in) #user-dropdown:hover {
         transform: rotate(360deg);
     }
 }
+
 /*****************************************************************************************************************************************************
  * Hourglass           => https://codepen.io/alchatti/pen/wqZdaE
  */
@@ -875,32 +893,39 @@ body:not(.logged-in) #user-dropdown:hover {
 #hourglass {
     justify-self: center;
     position: absolute;
-     opacity: 0.7;
-     font-size: 1.5rem;
- }
+    opacity: 0.7;
+    font-size: 1.5rem;
+}
+
 #hourglass i {
     opacity: 0;
     animation: hourglass 2.4s ease-in infinite, hourglass-spin 2.4s ease-out infinite;
 }
+
 #hourglass > i:nth-child(1) {
     color: var(--bs-primary);
     animation-delay: 0s, 0s;
 }
+
 #hourglass > i:nth-child(2) {
     color: var(--bs-primary);
     animation-delay: 0.6s, 0s;
 }
+
 #hourglass > i:nth-child(3) {
     color: var(--bs-primary);
     animation-delay: 1.2s, 0s;
 }
+
 #hourglass > i:nth-child(4) {
     color: var(--bs-primary);
     animation-delay: 1.8s, 0s;
 }
+
 #hourglass > i:nth-child(4) {
     animation: hourglass-end 2.4s ease-in infinite, hourglass-spin 2.4s ease-out infinite;
 }
+
 #hourglass > i:nth-child(5) {
     color: var(--bs-secondary);
     opacity: 1;
@@ -918,6 +943,7 @@ body:not(.logged-in) #user-dropdown:hover {
         opacity: 0;
     }
 }
+
 @keyframes hourglass-end {
     0% {
         opacity: 0;
@@ -932,6 +958,7 @@ body:not(.logged-in) #user-dropdown:hover {
         opacity: 1;
     }
 }
+
 @keyframes hourglass-spin {
     75% {
         transform: rotate(0deg);
@@ -984,10 +1011,11 @@ footer {
     color: var(--bs-warning);
 }
 
-.modal .modal-footer,.modal .modal-footer > div {
+.modal .modal-footer, .modal .modal-footer > div {
     display: flex;
     gap: var(--dsb-gutter);
 }
+
 /*****************************************************************************************************************************************************
  * Toast
  */
@@ -1312,14 +1340,16 @@ console.pause console-menu button:hover {
 [data-template="blocks/languages"] .choices__inner {
     padding: var(--dsb-xs-gutter);
 }
+
 [data-template="blocks/languages"] i {
-    font-size: calc(1.2 * var(--dsb-main-font-size) )!important;
+    font-size: calc(1.2 * var(--dsb-main-font-size)) !important;
     line-height: 1;
 }
 
 [data-template="blocks/languages"] .choices__item.choices__item--choice.choices__item--selectable {
     padding-right: var(--dsb-md-gutter);
 }
+
 [data-template="blocks/languages"] .choice-list .choices__item.choices__item--choice.choices__item--selectable {
     width: auto;
     padding-right: 0 !important;
