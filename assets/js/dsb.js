@@ -1577,7 +1577,7 @@ var dsb = {
         backdrop: document.getElementById('dsb-backdrop'),
         check_lang: false,
         current_lang: null,
-        new_lang : false,
+        new_lang: false,
 
         hide: (element) => {
             if (element !== null) {
@@ -2047,7 +2047,7 @@ var dsb = {
             // we do not know the right name, but it's ended with -lang
             for (const cookie in Cookies.get()) {
                 if (cookie.endsWith('-lang')) {
-                    return {name:cookie, value:Cookies.get(cookie)}
+                    return {name: cookie, value: Cookies.get(cookie)}
                 }
             }
             return null
@@ -2057,6 +2057,43 @@ var dsb = {
             return document.querySelector('html').getAttribute('lang')
         },
 
+        /**
+         * Set Bootstrap switch
+         *
+         * The element that have the target must have also a role=switch
+         *
+         * @param element   the switch id element (HTMLElement,or string with|without #
+         * @param checked   the value to set
+         * @param values    the real values to push to element.value (['off','on'])
+         *                  this array is taken as  [false, true]
+         *
+         *
+         */
+        set_switch: (element, checked, values = ['off', 'on']) => {
+            if (!(element instanceof HTMLElement)) {
+                // suppress #if it exists
+                if (element.startsWith('#')) {
+                    element = element.substring(1)
+                }
+            } else {
+                element = element.id
+            }
+            const real = document.querySelector(`[role="switch"][data-target="#${element}"`)
+            real.checked = checked;
+            document.getElementById(element).value = values[Number(checked)]
+        },
+
+        /**
+         * Set a radio box element
+         *
+         * @param name      of the radio box
+         * @param value     of the element to click on
+         *
+         *
+         */
+        set_radio: (name, value) => {
+            document.querySelector(`[name="${name}"][value="${value}"]`).checked=true
+        },
 
         init: async (parent = document) => {
 
@@ -2085,7 +2122,7 @@ var dsb = {
             })
 
             // Lang switcher
-            dsb.ui.current_lang=dsb.ui.get_lang()
+            dsb.ui.current_lang = dsb.ui.get_lang()
             parent.querySelectorAll('select.lang-list').forEach(select => {
 
                 if (!select.hasAttribute('id')) {
@@ -2126,14 +2163,14 @@ var dsb = {
                      * @since 1.1.0
                      *
                      */
-                     if (dsb.ui.new_lang) {
-                         dsb.toast.message({
-                             title: select.dataset.toastTitle,
-                             message: select.dataset.toastText,
-                             type: 'success'
-                         })
-                         dsb.ui.new_lang=false
-                     }
+                    if (dsb.ui.new_lang) {
+                        dsb.toast.message({
+                            title: select.dataset.toastTitle,
+                            message: select.dataset.toastText,
+                            type: 'success'
+                        })
+                        dsb.ui.new_lang = false
+                    }
 
                     /**
                      * Change event
@@ -2142,10 +2179,10 @@ var dsb = {
                     dsb.ui.lists[select.id].passedElement.element.addEventListener(
                         'change',
                         async function (event) {
-                           let form_data = {
+                            let form_data = {
                                 headers: {'Content-Type': 'multipart/form-data'},
                                 lang: event.detail.value,
-                                old : dsb.ui.current_lang,
+                                old: dsb.ui.current_lang,
                                 action: 'set-lang'
                             }
 
@@ -2186,7 +2223,7 @@ var dsb = {
                     // it's a new lang, ok we sync the cookie content
                     content.old = null
                     content.change = false;
-                    Cookies.set(cookie.name,JSON.stringify(content))
+                    Cookies.set(cookie.name, JSON.stringify(content))
                     dsb.ui.new_lang = true
                 }
                 dsb.ui.check_lang = true
