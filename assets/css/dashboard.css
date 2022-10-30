@@ -549,7 +549,7 @@ body:not(.logged-in) #user-dropdown:hover {
     background: transparent;
 }
 
-#menu-container a {
+#menu-container a:not(.btn) {
     color: var(--bs-body-color);
     text-decoration: none;
     background: transparent;
