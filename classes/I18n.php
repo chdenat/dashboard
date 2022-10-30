@@ -42,12 +42,12 @@
 		public static function get_available_languages( string $directory )
 		: array {
 			$languages = [ LANG_DEFAULT ];
-			foreach ( glob( $directory . '*' ) as $trad ) {
+			foreach ( glob( $directory . '*' ) as $traductions ) {
+				list($trad) = explode('.utf8',$traductions);
 				if ( preg_match( '/([a-z]{2}_[A-Z]{2})/', $trad, $lang ) ) {
 					$languages[] = $lang[1];
 				}
 			}
-			
 			return $languages;
 			
 		}
@@ -111,10 +111,8 @@
 			$locale = in_array( $locale, LANG_LIST ) ? $locale : LANG_DEFAULT;
 			
 			// We set the locale
-			setlocale( LC_ALL, $locale );
-			setlocale( LC_MESSAGES, $locale );
-			setlocale( LC_CTYPE, $locale );
-			// set cookie set one year if it's not a get equiv ($old === null)
+			setlocale( LC_ALL,$locale.'.utf8',$locale );
+			// set cookie lifetime to one year if it's not a get equiv ($old === null)
 			setcookie( $name, json_encode( [
 				                               'lang'   => $locale,
 				                               'old'    => $old,
@@ -128,7 +126,7 @@
 		public static function get_lang()
 		: bool|string {
 			$cookie = json_decode( $_COOKIE[ C_NAME . '-lang' ] ?? '{}', true );
-			return $cookie['lang'];
+			return $cookie['lang'] ;
 		}
 		
 		public static function get_country_codes( $code = null )
