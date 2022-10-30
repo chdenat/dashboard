@@ -135,3 +135,9 @@
 		define( 'FAVICON', C_URL . 'assets/images/favicon/' );
 	}
 	
+	
+	/**
+	 * Authorized URLs
+	 */
+	
+	const D_AUTH_URLS=[  'page', 'pages' ,'favicon','home'];
