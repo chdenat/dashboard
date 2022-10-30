@@ -105,8 +105,8 @@
 		/**
 		 * Initialisation of the current page template
 		 *
-		 * If page template is home or page or pages, we'll show it
-		 * If page template is api the we redirect to the api
+		 * If page template is defined in D_AUTH_URLS, we'll show it
+		 * If page template is defined in C_AUTH_URLS, we'll show it
 		 * If there is an error we replace the page template with 404
 		 *
 		 * else we redirect
@@ -123,12 +123,13 @@
 			$this->page_template = $this->get_template_page();
 			
 			// Best way is to rebuilt the url... TODO Is it true maybe we can user SERVER... ?
-			$url = URIManager::instance()->build_url( short: false, params: URIManager::instance()
-			                                                                          ->get_information() );
-
+			$url = URIManager::instance()->build_url(
+				short: false, params: URIManager::instance()->get_information()
+			);
 			
-
-			if ( in_array( strtolower( $this->page_template ), [  'page', 'pages' ,'favicon','home'] ) ) {
+			
+			$location = strtolower( $this->page_template);
+			if ( in_array( $location , D_AUTH_URLS ) ) {
 				$this->located_template = Template::instance()->locate_template( $this->page_template );
 				// If not found, we continue with 404.
 				if ( ! $this->located_template ) {
@@ -139,10 +140,8 @@
 						echo sprintf( _( '<h1>%s not found !!!</h1>' ), $this->get_current_page_template() );
 					}
 				}
-			} elseif ( 'api' === strtolower( $this->page_template ) ) {
-				header( 'Location: /api' ); //  Nothing else for the moment
-				
-				//header( 'Location: ' . $url );  //TODO ajouter l'authent
+			} else if ( in_array($location,C_AUTH_URLS??[] )) {;
+				header( sprintf('Location: /%s',$location) );
 				die();
 			} else {
 				header( 'Location: ' . $url );
