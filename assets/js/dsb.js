@@ -1583,6 +1583,9 @@ var dsb = {
             if (element !== null) {
                 if (!(element instanceof HTMLElement) && element.startsWith('#')) {
                     element = document.querySelector(element)
+                    if (element === null) {
+                        return dsb.ui
+                    }
                 }
 
                 element.classList.add('dsb-hide')
@@ -1598,6 +1601,9 @@ var dsb = {
             if (element !== null) {
                 if (!(element instanceof HTMLElement) && element.includes('#')) {
                     element = document.querySelector(element)
+                    if (element === null) {
+                        return dsb.ui
+                    }
                 }
 
                 element.classList.remove('dsb-hide');
