@@ -137,7 +137,7 @@
 					$this->located_template = Template::instance()->locate_template( $this->page_template );
 					// 404 does not exist ...
 					if ( ! $this->located_template ) {
-						echo sprintf( _( '<h1>%s not found !</h1>' ), $this->get_current_page_template() );
+						echo sprintf( _( '<h1>%s not found!</h1>' ), $this->get_current_page_template() );
 					}
 				}
 			} else if ( in_array($location,C_AUTH_URLS??[] )) {;

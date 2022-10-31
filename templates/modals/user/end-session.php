@@ -21,10 +21,10 @@
 ?>
 <form id="login-after-session" name="login-after-session" action="<?= D_AJAX_POST ?>" enctype="multipart/form-data">
     <div class="modal-header">
-        <h5 class="modal-title"><?= _( 'Your session has been expired !' ) ?></h5>
+        <h5 class="modal-title"><?= _( 'Your session has been expired!' ) ?></h5>
     </div>
     <div class="modal-body">
-        <label class="form-label"><?= _( 'Do you you want to log in again ?' ) ?></label>
+        <label class="form-label"><?= _( 'Do you you want to log in again?' ) ?></label>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-outline-primary" data-action="dsb.user.logout" data-bs-dismiss="modal">
