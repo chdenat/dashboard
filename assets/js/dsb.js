@@ -14,10 +14,10 @@
  **********************************************************************************************************************/
 import {customAlphabet} from '../vendor/nanoid.js'
 import {EventEmitter} from "../vendor/EventEmitter/EventEmitter.js";
-//import {Cookies}  from '../vendor/js-cookie/js.cookie.min.js';
+await import ('../vendor/sprintf/sprintf.min.js');
+
 const nanoid = customAlphabet('1234567890', 6)
 const {Template} = await import ('./Template.js')
-
 
 const SECOND = 1000
 const MINUTE = 60 * SECOND
@@ -25,7 +25,6 @@ const HOUR = 60 * MINUTE
 const DAY = 24 * HOUR
 
 export {SECOND, MINUTE, HOUR, DAY}
-
 
 var dsb = {
 
