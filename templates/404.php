@@ -16,7 +16,7 @@
 
         </li>
         <li>
-			<?= _( 'You do not have the required privileges to see it' ) ?>
+			<?= _( 'You do not have the required privileges to see it.' ) ?>
         </li>
     </ul>
     <a class="btn btn-primary" href="/"><i class="fa-regular fa-house"></i><?= _( 'Home' ) ?></a>
