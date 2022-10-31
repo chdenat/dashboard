@@ -106,8 +106,5 @@
 	// we need some files
 	require_once DINCLUDES_DIR . 'utils.php';
 	
-	// It's time to initiate the lang.
-	require_once DSETTINGS_DIR . 'lang.php';
-	
 	// Load default scripts and styles
 	require_once DINCLUDES_DIR . 'dashboard-scripts.php';
