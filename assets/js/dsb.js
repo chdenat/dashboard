@@ -14,6 +14,7 @@
  **********************************************************************************************************************/
 import {customAlphabet} from '../vendor/nanoid.js'
 import {EventEmitter} from "../vendor/EventEmitter/EventEmitter.js";
+
 await import ('../vendor/sprintf/sprintf.min.js');
 
 const nanoid = customAlphabet('1234567890', 6)
@@ -1144,8 +1145,8 @@ var dsb = {
                     if (data.authorization) {
                         dsb.modal.hide();
                         dsb.toast.message({
-                            title: 'Log in',
-                            message: 'User <strong>' + form.user.value + '</strong> has been logged in successfully !',
+                            title: dsb.ui.get_text_i18n('log-in', 'title'),
+                            message: sprintf(dsb.ui.get_text_i18n('log-in', 'text'), `<strong>${form.user.value}</strong>`),
                             type: 'success'
                         })
                         document.dispatchEvent(dsb.user.events.dsb_login);
@@ -1215,8 +1216,8 @@ var dsb = {
                             dsb.modal.hide();
                         }
                         dsb.toast.message({
-                            title: 'Log out',
-                            message: 'User <strong>' + dsb.user.session.context.user + '</strong> has been logged out.',
+                            title: dsb.ui.get_text_i18n('log-out', 'title'),
+                            message: sprintf(dsb.ui.get_text_i18n('log-out', 'text'), `<strong>${dsb.user.session.context.user}</strong>`),
                             type: 'success'
                         })
                         document.dispatchEvent(dsb.user.events.dsb_logout);
@@ -1263,8 +1264,8 @@ var dsb = {
                         dsb.modal.hide();
                         document.dispatchEvent(dsb.user.events.dsb_logout);
                         dsb.toast.message({
-                            title: 'New password',
-                            message: 'Password changed for user <strong>' + dsb.user.session.context.user + '</strong>.',
+                            title: dsb.ui.get_text_i18n('new-password'),
+                            message: sprintf(dsb.ui.get_text_i18n('new-password', 'text'), dsb.user.session.context.user),
                             type: 'success'
                         })
 
@@ -2042,6 +2043,15 @@ var dsb = {
 
         },
 
+
+        get_text_i18n: (context, key = null) => {
+            const text = document.querySelector(`text-i18n[context="${context}"]`)
+            if (key) {
+                return text?.dataset[key]
+            }
+            return text?.dataset
+        },
+
         /**
          * Get the <appli>_lang cookie content
          *
@@ -2097,7 +2107,7 @@ var dsb = {
          *
          */
         set_radio: (name, value) => {
-            document.querySelector(`[name="${name}"][value="${value}"]`).checked=true
+            document.querySelector(`[name="${name}"][value="${value}"]`).checked = true
         },
 
         init: async (parent = document) => {

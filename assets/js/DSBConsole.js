@@ -84,8 +84,8 @@ class DSBConsole {
 
             // We alert the user with a toast
             dsb.toast.message({
-                title: `Clear console`,
-                message: `Console content cleared ! `,
+                title: dsb.ui.get_text_i18n('console/clear','title'),
+                message: dsb.ui.get_text_i18n('console/clear','text'),
                 type: 'success'
             })
         }
@@ -136,14 +136,14 @@ class DSBConsole {
         // We alert the user with a toast
         if (result) {
             dsb.toast.message({
-                title: `Copy Text`,
-                message: `Console content copied to the clipboard ! `,
+                title: dsb.ui.get_text_i18n('console/copy-text','title'),
+                message: dsb.ui.get_text_i18n('console/copy-text','text'),
                 type: 'success'
             })
         } else {
             dsb.toast.message({
-                title: `Copy Text`,
-                message: `An error occurs during copy ! `,
+                title: dsb.ui.get_text_i18n('console/copy-text-error','title'),
+                message: dsb.ui.get_text_i18n('console/copy-text-error','text'),
                 type: 'danger'
             })
         }

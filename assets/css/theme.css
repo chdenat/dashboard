@@ -108,3 +108,8 @@ table {
     --bs-table-hover-bg: rgba(var(--bs-primary-rgb),0.5 ) !important;
 }
 
+text-i18n {
+    display:none;
+    width: 0;
+    height: 0;
+}
