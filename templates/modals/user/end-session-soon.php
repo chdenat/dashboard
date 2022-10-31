@@ -21,7 +21,7 @@
 ?>
 <form id="login-after-session" name="login-after-session" action="<?= D_AJAX_POST ?>" enctype="multipart/form-data">
     <div class="modal-header">
-        <h5 class="modal-title"><i class="fa-regular fa-user-clock text-warning"></i>&nbsp;<?= _( 'Your session will expire soon ! ' )
+        <h5 class="modal-title"><i class="fa-regular fa-user-clock text-warning"></i>&nbsp;<?= _( 'Your session will expire soon !' )
             ?></h5>
     </div>
     
