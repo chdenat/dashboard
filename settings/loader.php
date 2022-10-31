@@ -108,3 +108,9 @@
 	
 	// Load default scripts and styles
 	require_once DINCLUDES_DIR . 'dashboard-scripts.php';
+	
+	// Load text to translates at the end of the body, before the JS
+	Hooks::instance()->add_action( 'template/body/end', function() {
+		require_once DSETTINGS_DIR . 'texts-4-i18n.php';
+	},1 );
+
