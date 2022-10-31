@@ -298,7 +298,7 @@
 					// adds an error message
 					ob_start(); ?>
                     <p style="color:red">
-						<?= sprintf( _( '%s not found !!!' ), $template ) ?>
+						<?= sprintf( _( '%s not found!' ), $template ) ?>
                     </p>
 					<?php echo ob_get_clean();
 				}
