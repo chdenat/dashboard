@@ -111,6 +111,11 @@
 	
 	// Load text to translates at the end of the body, before the JS
 	Hooks::instance()->add_action( 'template/body/end', function() {
+		// Dashboard
 		require_once DSETTINGS_DIR . 'texts-4-i18n.php';
+		// App
+		if (file_exists( CSETTINGS_DIR . 'texts-4-i18n.php')) {
+			require_once CSETTINGS_DIR . 'texts-4-i18n.php';
+		}
 	},1 );
 
