@@ -13,8 +13,30 @@
 	 * @copyright (c) 2022 noleam.fr
 	 *
 	 ******************************************************************************************************************/
-
-
+	
+	/**
+	 * Define texts to translate in a <text-i18n></text-i18n> pseudo HTML element and then to be used
+	 * in Javascript modules.
+	 *
+	 * IN HTML, in this file, you should declare the texts to translate.
+	 *
+	 *      <text-i18n context="<some-context>"
+	 *                 data-title="<?= _( '<some title here>' ) ?>"
+	 *                 data-text="<?= _( '<some text here>' ) ?>"
+	 *                 data-other="<?= _( '<some other text here>' ) ?>">
+	 *      </text-i18n>
+	 *
+	 *
+	 * Then, on JS side us  dsb.ui.get_text_i18n  function to retrieve translated texts.
+	 *
+	 *       dsb.ui.get_text_i18n(<some-context>')         :  {
+	 *                                                              title:translation of '<some title here>'
+	 *                                                              text : translation of '<some text here>'
+	 *                                                        }
+	 *       dsb.ui.get_text_i18n(<some-context>','title') :  translation of '<some title here>'
+	 *       dsb.ui.get_text_i18n(<some-context>').title   :  translation of '<some title here>'
+	 *
+	 */
 ?>
 
 <!-- User login, logout and change password -->
