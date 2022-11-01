@@ -1145,8 +1145,8 @@ var dsb = {
                     if (data.authorization) {
                         dsb.modal.hide();
                         dsb.toast.message({
-                            title: dsb.ui.get_text_i18n('log-in', 'title'),
-                            message: sprintf(dsb.ui.get_text_i18n('log-in', 'text'), `<strong>${form.user.value}</strong>`),
+                            title: dsb.ui.get_text_i18n('user/log-in', 'title'),
+                            message: sprintf(dsb.ui.get_text_i18n('user/log-in', 'text'), `<strong>${form.user.value}</strong>`),
                             type: 'success'
                         })
                         document.dispatchEvent(dsb.user.events.dsb_login);
@@ -1216,8 +1216,8 @@ var dsb = {
                             dsb.modal.hide();
                         }
                         dsb.toast.message({
-                            title: dsb.ui.get_text_i18n('log-out', 'title'),
-                            message: sprintf(dsb.ui.get_text_i18n('log-out', 'text'), `<strong>${dsb.user.session.context.user}</strong>`),
+                            title: dsb.ui.get_text_i18n('user/log-out', 'title'),
+                            message: sprintf(dsb.ui.get_text_i18n('user/log-out', 'text'), `<strong>${dsb.user.session.context.user}</strong>`),
                             type: 'success'
                         })
                         document.dispatchEvent(dsb.user.events.dsb_logout);
