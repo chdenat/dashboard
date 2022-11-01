@@ -20,7 +20,7 @@
 	use dashboard\Debug;
 	use dashboard\I18n;
 	use dashboard\Utils;
-	use shelteradmin\box\Box;
+	use Exception;
 	use dashboard\DSBException;
 	use dashboard\template\Template;
 	use dashboard\user\SessionManager;
@@ -36,7 +36,7 @@
 		public static function post( $params ) {
 			header( 'Content-Type: application/json; charset=utf-8' );
 			
-			self::extract_parameters($params);
+			self::extract_parameters( $params );
 			
 			switch ( $params['action'] ) {
 				
@@ -71,7 +71,7 @@
 					break;
 				
 				case 'set-lang' :
-					I18n::set_lang($params['lang'],$params['old']);
+					I18n::set_lang( $params['lang'], $params['old'] );
 					self::done();
 					
 					break;
@@ -95,7 +95,7 @@
 		 * @return void
 		 */
 		protected static function send_error(
-			?DSBException $exception = null, int $code = null, string $message =
+			?Exception $exception = null, int $code = null, string $message =
 		null
 		)
 		: void {
@@ -105,12 +105,31 @@
 		}
 		
 		/**
+		 * @param  null|\dashboard\DSBException  $exception
+		 * @param  null|int                      $code
+		 * @param  null|string                   $message
+		 *
+		 * @return void
+		 */
+		protected static function send_json_error(
+			?Exception $exception = null, int $code = null, string $message =
+		null
+		)
+		: void {
+			echo json_encode( [
+				                  'data'    => false,
+				                  'error'   => $code ?? $exception?->getCode(),
+				                  'message' => $message ?? $exception?->getMessage(),
+			                  ] );
+		}
+		
+		/**
 		 * @throws \JsonException
 		 * @throws \Exception
 		 */
 		public static function get( $params ) {
 			
-			self::extract_parameters($params);
+			self::extract_parameters( $params );
 			switch ( $params['action'] ?? false ) {
 				case 'login-form':
 					if ( $template = Template::instance()->locate_template( 'modals/user/login' ) ) {
@@ -129,9 +148,9 @@
 						require_once( $template );
 					}
 					break;
-					
+				
 				case 'read-json-menu':
-					echo file_get_contents(Template::instance()->locate_template( 'menu','json'));
+					echo file_get_contents( Template::instance()->locate_template( 'menu', 'json' ) );
 					break;
 				
 				
@@ -142,7 +161,7 @@
 						Template::instance()->include_block( $params['template'], params: json_decode( $params['parameters'], true ) ?? [] );
 						// we return also the templte in case the template provided is a directory
 						// We do not use json, due to some errors caused sometimes by some bad formatted HTML ...
-						echo  $template.'###'. ob_get_clean();
+						echo $template . '###' . ob_get_clean();
 					} else {
 						self::send_error( code: 404, message: _( 'Template does not exist ...' ) );
 					}
@@ -176,11 +195,12 @@
 		 *
 		 * @return array
 		 */
-		protected static function extract_parameters(&$params):void {
+		protected static function extract_parameters( &$params )
+		: void {
 			
-			if ($params['params']??null) {
+			if ( $params['params'] ?? null ) {
 				$tmp    = json_decode( $params['params'], true );
-				$params = Utils::parse_args( json_decode($tmp['jsonParameters']??'{}',true), $params );
+				$params = Utils::parse_args( json_decode( $tmp['jsonParameters'] ?? '{}', true ), $params );
 			}
 		}
 		
