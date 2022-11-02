@@ -72,3 +72,11 @@
            data-title="<?= _( 'Clear Console' ) ?>"
            data-text="<?= _( 'Console content cleared!' ) ?>">
 </text-i18n>
+
+<!-- Language change -->
+
+<text-i18n
+        context = "language/change"
+        data-title = "<?=_('New Language')?>"
+        data-text = "<?= _('Language set to %s!')?>">
+</text-i18n>
