@@ -113,13 +113,15 @@
 			// We set the locale
 			setlocale( LC_ALL,$locale.'.utf8',$locale );
 			// set cookie lifetime to one year if it's not a get equiv ($old === null)
+			$array = self::get_locales( $locale, false );
 			setcookie( $name, json_encode( [
 				                               'lang'   => $locale,
 				                               'old'    => $old,
 				                               'change' => $old !== null && $locale !== $old,
+				                               'name' => reset( $array )
 			                               ] ),
 			           time() + 60 * 60 * 24 * 365, '/' );
-			
+
 			return $locale;
 		}
 		
