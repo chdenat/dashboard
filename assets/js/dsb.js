@@ -375,7 +375,7 @@ var dsb = {
          * @since 1.0
          *
          */
-        init: async (event) => {
+        init: async (block) => {
             /**
              *
              * Read JSON menu
@@ -384,7 +384,7 @@ var dsb = {
              *
              */
 
-            dsb.menu.read_json()
+            await dsb.menu.read_json()
 
             let menu_container = document.getElementById('menu-container');
 
@@ -422,7 +422,7 @@ var dsb = {
             /**
              * Call synchronize when menu has been loaded
              */
-            dsb.menu.synchronize(event?.template, dsb.menu.pathname)
+            dsb.menu.synchronize(block, dsb.menu.pathname)
 
         },
     },
@@ -456,7 +456,6 @@ var dsb = {
                 template.container.querySelectorAll('a[data-content-modal]').forEach(item => {
                     item.addEventListener('click', dsb.ui.show_intermediate_content)
                 });
-
 
                 // Init UI
                 dsb.ui.init(template.container)
@@ -1555,16 +1554,23 @@ var dsb = {
         /**
          * Check if a file exists
          *
-         * @param url
          * @return boolean
          *
+         * @param file
          */
-        file_exists: async (url) => {
-            await fetch(url,
-                {method: "HEAD"}
-            ).then((response) => {
-                return response.ok
-            });
+        file_exists: async file => {
+            return await fetch(dsb_ajax.get + '?' + new URLSearchParams({
+                action: 'file-exists',
+                file: file
+            })).then(response => {
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                }
+                return response;
+            })
+                .then(response => response.json())
+                .then(data => data.exist)
+                .catch(exception => undefined)
         },
     },
     /**
@@ -2173,19 +2179,6 @@ var dsb = {
                             }
                         }
                     );
-                    /**
-                     * Add a toast if  there is a new lang
-                     * @since 1.1.0
-                     *
-                     */
-                    if (dsb.ui.new_lang) {
-                        dsb.toast.message({
-                            title: select.dataset.toastTitle,
-                            message: select.dataset.toastText,
-                            type: 'success'
-                        })
-                        dsb.ui.new_lang = false
-                    }
 
                     /**
                      * Change event
@@ -2224,30 +2217,56 @@ var dsb = {
 
             })
 
-            /**
-             * Check if lang as changed
-             * @since 1.1.0
-             *
-             */
-
-            if (!dsb.ui.check_lang) {
-                const cookie = dsb.ui.get_lang_cookie()
-                const content = JSON.parse(cookie.value)
-
-                if (cookie && content.change) {
-                    // it's a new lang, ok we sync the cookie content
-                    content.old = null
-                    content.change = false;
-                    Cookies.set(cookie.name, JSON.stringify(content))
-                    dsb.ui.new_lang = true
-                }
-                dsb.ui.check_lang = true
+            if (parent === document) {
+                dsb.init_lang()
             }
+
 
             // Add scrolling
             dsb.ui.add_scrolling(parent)
         }
 
+    },
+
+    init_lang: () => {
+        /**
+         * Check if lang as changed
+         * @since 1.1.0
+         *
+         */
+
+        if (!dsb.ui.check_lang) {
+            dsb.ui.new_lang = false
+            const cookie = dsb.ui.get_lang_cookie()
+            const content = JSON.parse(cookie.value)
+
+            if (cookie && content.change) {
+                // it's a new lang, ok we sync the cookie content
+                content.old = null
+                content.change = false;
+
+                Cookies.remove(cookie.name, {path: '/'})
+                //   Cookies.set(cookie.name, JSON.stringify(content), 365)
+                dsb.ui.new_lang = true
+
+                /**
+                 * Add a toast if  there is a new lang
+                 * @since 1.1.0
+                 *
+                 */
+
+                if (dsb.ui.new_lang) {
+                    console.log(content)
+                    dsb.toast.message({
+                        title: dsb.ui.get_text_i18n('language/change', 'title'),
+                        message: sprintf(dsb.ui.get_text_i18n('language/change', 'text'), content.name),
+                        type: 'success'
+                    })
+                    dsb.ui.new_lang = false
+                }
+            }
+            dsb.ui.check_lang = true
+        }
     },
 
 
@@ -2299,11 +2318,20 @@ var dsb = {
         /**
          * Once menu has been loaded, we initialise some functionalities
          */
-        document.addEventListener('template/load-done/blocks/menu', event => {
-            dsb.menu.init(event)
+        Template.event.once('load-done/blocks/menu', (block) => {
+            dsb.menu.init(block)
         })
 
-        dsb.ui.init();
+        /**
+         * Once menu has been loaded, we initialise some functionalities
+         */
+        Template.event.once('load-done/blocks/languages', block => {
+            dsb.init_lang()
+        })
+
+        dsb.ui.init().then(() => {
+
+        })
 
 
         // We need to manage some history retrieval
