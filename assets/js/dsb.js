@@ -14,6 +14,7 @@
  **********************************************************************************************************************/
 import {customAlphabet} from '../vendor/nanoid.js'
 import {EventEmitter} from "../vendor/EventEmitter/EventEmitter.js";
+import {LocalDB} from "./LocalDB.js";
 
 await import ('../vendor/sprintf/sprintf.min.js');
 
@@ -24,6 +25,9 @@ const SECOND = 1000
 const MINUTE = 60 * SECOND
 const HOUR = 60 * MINUTE
 const DAY = 24 * HOUR
+const WEEK = 7 * DAY
+const MONTH = 30 * DAY
+const YEAR = 365 * DAY
 
 export {SECOND, MINUTE, HOUR, DAY}
 
@@ -2270,6 +2274,11 @@ var dsb = {
     },
 
 
+    db: new LocalDB({
+        name: 'dashboard', store: ['transients'], version: null
+    }),
+    transient: {},
+
     /**
      * Init all functions
      *
@@ -2340,7 +2349,9 @@ var dsb = {
         console.info('Dashboard init done.')
 
         return this;
-    }
-}
+    },
 
+}
 export {dsb}
+
+/*1667583828996*/
