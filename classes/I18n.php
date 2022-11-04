@@ -121,14 +121,13 @@
 				                               'name' => reset( $array )
 			                               ] ),
 			           time() + 60 * 60 * 24 * 365, '/' );
-
 			return $locale;
 		}
 		
 		public static function get_lang()
 		: bool|string {
 			$cookie = json_decode( $_COOKIE[ C_NAME . '-lang' ] ?? '{}', true );
-			return $cookie['lang'] ;
+			return $cookie['lang'] ?? LANG_DEFAULT;
 		}
 		
 		public static function get_country_codes( $code = null )
