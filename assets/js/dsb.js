@@ -2208,7 +2208,11 @@ var dsb = {
                                 return response;
                             })
                                 .then(response => response.json())
-                                .then(data => location.reload())
+                                .then(data => {
+                                    //save transient
+                                    dsb.db.set(data.cookie.name,data.cookie.content,'transients',YEAR)
+                                   location.reload()
+                                })
                                 .catch(error => {
                                         console.error(error);
                                     }
@@ -2232,7 +2236,7 @@ var dsb = {
 
     },
 
-    init_lang: () => {
+    init_lang: async () => {
         /**
          * Check if lang as changed
          * @since 1.1.0
@@ -2242,15 +2246,21 @@ var dsb = {
         if (!dsb.ui.check_lang) {
             dsb.ui.new_lang = false
             const cookie = dsb.ui.get_lang_cookie()
-            const content = JSON.parse(cookie.value)
+
+            // it's better to read content from transients
+            let content = await dsb.db.get(cookie.name, 'transients')
 
             if (cookie && content.change) {
                 // it's a new lang, ok we sync the cookie content
                 content.old = null
                 content.change = false;
 
+                // update transient
+                await dsb.db.set(cookie.name, content, 'transients', YEAR)
+
                 Cookies.remove(cookie.name, {path: '/'})
                 //   Cookies.set(cookie.name, JSON.stringify(content), 365)
+
                 dsb.ui.new_lang = true
 
                 /**
