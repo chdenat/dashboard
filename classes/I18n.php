@@ -91,7 +91,7 @@
 		public static function set_lang(
 			$locale = null, $old = null
 		)
-		: string {
+		: array {
 			$name   = C_NAME . '-lang';
 			$cookie = null;
 			
@@ -114,14 +114,15 @@
 			setlocale( LC_ALL,$locale.'.utf8',$locale );
 			// set cookie lifetime to one year if it's not a get equiv ($old === null)
 			$array = self::get_locales( $locale, false );
-			setcookie( $name, json_encode( [
-				                               'lang'   => $locale,
-				                               'old'    => $old,
-				                               'change' => $old !== null && $locale !== $old,
-				                               'name' => reset( $array )
-			                               ] ),
+			$content=[
+				'lang'   => $locale,
+				'old'    => $old,
+				'change' => $old !== null && $locale !== $old,
+				'name' => reset( $array )
+			];
+			setcookie( $name, json_encode( $content ),
 			           time() + 60 * 60 * 24 * 365, '/' );
-			return $locale;
+			return ['name'=>$name,'content'=>$content];
 		}
 		
 		public static function get_lang()

@@ -71,9 +71,10 @@
 					break;
 				
 				case 'set-lang' :
-					I18n::set_lang( $params['lang'], $params['old'] );
-					self::done();
-					
+					echo json_encode( [
+						                  'cookie' => I18n::set_lang( $params['lang'], $params['old'] ),
+						                  'done'    => true,
+					                  ] );
 					break;
 			}
 			
@@ -154,7 +155,7 @@
 					break;
 				
 				case 'file-exists' :
-					echo json_encode(['exist'=>file_exists(ABSPATH.$params['file'])]);
+					echo json_encode( [ 'exist' => file_exists( ABSPATH . $params['file'] ) ] );
 					break;
 				
 				case 'load-template':
