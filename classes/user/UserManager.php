@@ -17,6 +17,7 @@
 	
 	namespace dashboard\user;
 	
+	use dashboard\Debug;
 	use dashboard\DSBException;
 	use Exception;
 	
@@ -29,10 +30,22 @@
 		public const PSWD_TYPE_DB   = 'db';
 		
 		private function __construct() {
+			require_once CSETTINGS_DIR . 'authentication/settings.php';
 			
 			if ( ! defined( 'AUTH_DIR' ) ) {
-				define( 'AUTH_DIR', DSETTINGS_DIR . 'auth/' );
-				require_once AUTH_DIR . 'settings.php';
+				die( _( 'Authentification directory not defined. Stop here!' ) );
+			} else {
+				
+				// Let's some check
+				if (!$this->check_password_db()) {
+					// If we use a file, but this does not exist,
+					// copy it from old location to new.
+					if (self::PSWD_TYPE_FILE === $this->get_password_db_type()) {
+						copy(DSETTINGS_DIR.'auth/dbpsw.avm',PSWD_DB['file']);
+					}
+					
+				}
+				
 			}
 			
 			/**
@@ -110,7 +123,7 @@
 		private function reset_password_db()
 		: bool {
 			if ( self::PSWD_TYPE_FILE === $this->get_password_db_type() ) {
-				return copy( PSWD_DB['default'], PSWD_DB['reset'] );
+				return copy( DSETTINGS_DIR.'auth/dbpsw-default.avm', PSWD_DB['file'] );
 			}
 			
 			return false;
@@ -265,21 +278,6 @@
 					throw new DSBException( 'Error with file DB.', 468 );
 				}
 			}
-			
-			
-			//TODO change or not ????
-			
-			//			// modify ftp password on Idefix
-			//			$fname2 = "$/settings/vsftpd_login.txt";
-			//			$fnum = fopen( $fname2, "w" );
-			//			fwrite( $fnum, "idefix\n" . $mdp_new . "\n" );
-			//			fclose( $fnum );
-			//			shell_exec( "db_load -T -t hash -f /var/www/idefix/$/settings/vsftpd_login.txt /home/rock64/idefix/vsftpd_login.db" );
-			//
-			//			// delete the text of the file because the password is in clear in it
-			//			$fnum = fopen( $fname2, "w" );
-			//			fwrite( $fnum, "" );
-			//			fclose( $fnum );
 			
 			return true;
 		}
