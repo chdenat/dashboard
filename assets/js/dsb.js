@@ -2256,9 +2256,6 @@ var dsb = {
                 content.old = null
                 content.change = false;
 
-                // update transient
-                await dsb.db.set(cookie.name, content, 'transients', YEAR)
-
                 Cookies.remove(cookie.name, {path: '/'})
                 //   Cookies.set(cookie.name, JSON.stringify(content), 365)
 
@@ -2271,7 +2268,6 @@ var dsb = {
                  */
 
                 if (dsb.ui.new_lang) {
-                    console.log(content)
                     dsb.toast.message({
                         title: dsb.ui.get_text_i18n('language/change', 'title'),
                         message: sprintf(dsb.ui.get_text_i18n('language/change', 'text'), content.name),
@@ -2280,6 +2276,10 @@ var dsb = {
                     dsb.ui.new_lang = false
                 }
             }
+
+            // update transient TTL
+            await dsb.db.set(cookie.name, content, 'transients', YEAR)
+
             dsb.ui.check_lang = true
         }
     },
