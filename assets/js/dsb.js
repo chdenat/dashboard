@@ -1228,9 +1228,9 @@ var dsb = {
                         if (redirection) {
                             let t = new Template('#content#', null, redirection)
                             t.load(true)
-                            Template.load_all_templates()
+                            Template.reload_page()
                         } else {
-                            window.location.href = '/'
+                            Template.reload_page()
                         }
 
                     }
@@ -1267,10 +1267,11 @@ var dsb = {
                         dsb.modal.hide();
                         document.dispatchEvent(dsb.user.events.dsb_logout);
                         dsb.toast.message({
-                            title: dsb.ui.get_text_i18n('new-password'),
-                            message: sprintf(dsb.ui.get_text_i18n('new-password', 'text'), dsb.user.session.context.user),
+                            title: dsb.ui.get_text_i18n('user/new-password','title'),
+                            message: sprintf(dsb.ui.get_text_i18n('user/new-password', 'text'), dsb.user.session.context.user),
                             type: 'success'
                         })
+                        Template.reload_page()
 
                     }
                 })
