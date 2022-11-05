@@ -1230,7 +1230,7 @@ var dsb = {
                             t.load(true)
                             Template.reload_page()
                         } else {
-                            Template.reload_page()
+                             Template.reload_page(false)
                         }
 
                     }
