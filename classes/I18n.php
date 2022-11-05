@@ -104,7 +104,7 @@
 			
 			if ($old === null) {
 				// Get old
-				$old = $cookie['old'];
+				$old = $cookie['old']??null;
 			}
 			
 			// If the local is not in the list of available languages, we set it to default
