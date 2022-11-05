@@ -670,6 +670,14 @@ class Template {
         t.stop_animation()
     }
 
+    static reload_page(soft=true) {
+        if (soft) {
+            Template.load_all_templates()
+            return
+        }
+        location.reload()
+    }
+
 }
 
 export {Template}
