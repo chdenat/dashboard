@@ -2251,7 +2251,7 @@ var dsb = {
             // it's better to read content from transients
             let content = await dsb.db.get(cookie.name, 'transients')
 
-            if (cookie && content.change) {
+            if (cookie && content?.change) {
                 // it's a new lang, ok we sync the cookie content
                 content.old = null
                 content.change = false;
