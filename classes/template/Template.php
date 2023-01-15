@@ -428,8 +428,8 @@
 			global $block_template, $block_slug, $page_template, $page_slug;
 			$template = ( $type === PAGE ) ? $page_template : $block_template;
 			$slug     = ( $type === PAGE ) ? $page_slug : $block_slug;
-			
-			if ( isset( $template ) ) {
+
+            if ( isset( $template ) ) {
 				// We locate standard templates, but if some others are in inputs  we get them
 				$assets               = AssetsManager::instance()->locate_template_assets( $template, $type );
                 if ($assets) {

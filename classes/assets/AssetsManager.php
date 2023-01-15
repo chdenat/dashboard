@@ -587,14 +587,27 @@
 		 * @since   1.0
 		 *
 		 */
-		public function print_js_asset( string $file, $type = "text/javascript" )
-		: void {
-			ob_start();
-			?>
+        public function print_js_asset( string $file, $type = "text/javascript" )
+        : void {
+            ob_start();
+            ?>
             <script type="<?= $type ?>" src="<?= $file ?>" charset="UTF-8"></script>
-			<?php
-			echo ob_get_clean();
-		}
+            <?php
+            echo ob_get_clean();
+        }
+        public function print_js_import( string $module, string $file)
+        : void {
+            ob_start();
+            ?>
+            <script type="module" charset="UTF-8">
+                import {<?= $module ?>} from <?=$file?>;
+                <?= $module ?>.init()
+            </script>
+            <?php
+            echo ob_get_clean();
+        }
+
+
 		
 		/**
 		 * Print JS in header

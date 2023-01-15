@@ -128,7 +128,7 @@ class Template {
     }
 
     get is_reserved() {
-        return  this.#reserved.includes(this.ID.replace(/#/g,'',))
+        return this.#reserved.includes(this.ID.replace(/#/g, '',))
     }
 
     get is_content() {
@@ -267,9 +267,9 @@ class Template {
         this.#tab = tmp[1] ?? '';
     }
 
-    static _check_link=(link)=> {
+    static _check_link = (link) => {
         let tmp = link.split('#');
-        return {file:tmp[0],tab: tmp[1] ?? ''};
+        return {file: tmp[0], tab: tmp[1] ?? ''};
     }
 
     /**
@@ -307,7 +307,7 @@ class Template {
      * This function should be launch using addEventListener
      * @param event
      */
-    static load_from_event(event) {
+    static async load_from_event(event) {
 
         // We check if the link has been bound to a reserved template
         for (const item in event.currentTarget.dataset) {
@@ -339,8 +339,15 @@ class Template {
                     }
 
                     // Load the link content in the right template
-                    template.load(force);
+                    if (template.is_content && dsb.instance) {
 
+                        await template.load(force).then(() => {
+                            dsb.instance.load_asset(template.file.split('/').pop())
+                        })
+
+                    } else {
+                        template.load(force);
+                    }
                     // save file information
                     template.#dom.container.setAttribute('data-template', template.file)
                 }
@@ -368,7 +375,7 @@ class Template {
      *
      */
 
-    load = (force = false, parameters = []) => {
+    load = async (force = false, parameters = []) => {
 
         /*
          * Bail early if we have no file in any template except content
@@ -383,7 +390,7 @@ class Template {
         this.parameters = parameters
 
         /**
-         * May be we need to redirect on home...
+         * Maybe we need to redirect on home...
          */
 
         this.#fix_template()
@@ -428,7 +435,9 @@ class Template {
             template: this.file,
             tab: this.tab,
             parameters: JSON.stringify(parameters)
-        }), {cache: "no-cache"}).then((response) => {
+        }), {
+            cache: "no-store"
+        }).then((response) => {
             if (response.ok) {
                 return response.text();     // <template>###<content>
             }
@@ -455,7 +464,6 @@ class Template {
             self.dispatch_events('load-done')
 
             Template.add_template_to_list(self)
-
 
             return true;
         }).catch((error) => {
@@ -518,14 +526,18 @@ class Template {
      *
      * @param parent root (document by default)
      */
-    static load_all_templates = function (parent = document) {
+    static load_all_templates = async function (parent = document) {
 
         let templates = Template.get_all_templates(parent);
 
         let children = []
 
         for (const template of templates) {
-            if (template.id !== 'pop-content') {
+            if (template.dataset?.templateId !== '#popcont#') {
+                if (template.dataset?.templateId === '#content#') {
+                    // In case it is  the content block, we push the baseUri as template
+                    template.setAttribute('data-template', dsb.utils.path_info(template.baseURI).file)
+                }
                 let item = new Template(template)
                 children.push(item)
             }
@@ -533,7 +545,13 @@ class Template {
 
         for (const template of children) {
             if (template.file !== null) {
-                template.load(true)
+                if (template.is_content && dsb.instance) {
+                    await template.load(true).then(() => {
+                        dsb.instance.load_asset(template.file.split('/').pop())
+                    })
+                } else {
+                    template.load(true)
+                }
             }
         }
 
@@ -566,13 +584,16 @@ class Template {
         // template event if it is a reserved template
         if (this.is_reserved) {
             Template.event.emit(`${type}/${this.ID}`, this);
+
         }
 
         if (file === null) {
             return
         }
 
+        // add some cleaning
         file = file.startsWith('/') ? file.substring(1) : file
+        file.replace('//', '/')
 
         // Specific event
         let load_event = new Event(`template/${type}/${file}`)
@@ -670,7 +691,7 @@ class Template {
         t.stop_animation()
     }
 
-    static reload_page(soft=true) {
+    static reload_page(soft = true) {
         if (soft) {
             Template.load_all_templates()
             return

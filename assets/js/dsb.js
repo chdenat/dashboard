@@ -15,6 +15,7 @@
 import {customAlphabet} from '../vendor/nanoid.js'
 import {EventEmitter} from "../vendor/EventEmitter/EventEmitter.js";
 import {LocalDB} from "./LocalDB.js";
+import {Dashboard} from "./Dashboard.js";
 
 await import ('../vendor/sprintf/sprintf.min.js');
 
@@ -34,6 +35,11 @@ export {SECOND, MINUTE, HOUR, DAY}
 var dsb = {
 
     content_event: new EventEmitter(),
+
+    add_instance(instance) {
+        dsb.instance = new Dashboard(instance)
+    },
+
 
     // app information
     page: {
@@ -303,7 +309,7 @@ var dsb = {
          * @since 1.0
          *
          */
-        click: (item, historize = false) => {
+        click: async (item, historize = false) => {
             // it's the link ?  Manage history (and add url in the browser bar)
             if (item?.dataset?.level) {
                 // Mark new menu item opened
@@ -311,9 +317,12 @@ var dsb = {
                 item.classList.add('opened')
                 // change title
                 dsb.page.set_title(dsb.menu.item_text(item)) //TODO change
+
                 if (historize) {
                     dsb.page.add_to_history_from_menu(item)
                 }
+
+
             }
             return false
         },
@@ -441,7 +450,7 @@ var dsb = {
             Template.use_404(false)
 
             // When a template has been loaded, we register specific link actions and load all the children
-            Template.event.once('load-done', template => {
+            Template.event.on('load-done', template => {
 
                 // Download the family
                 Template.load_all_templates(template.container)
@@ -451,8 +460,9 @@ var dsb = {
 
                     item.addEventListener('click', event => {
                         Template.load_from_event(event)
-                        event.preventDefault()
                         dsb.content_event.emit('click', item)
+                        event.preventDefault()
+
                     })
 
                 });
@@ -1230,7 +1240,7 @@ var dsb = {
                             t.load(true)
                             Template.reload_page()
                         } else {
-                             Template.reload_page(false)
+                            Template.reload_page(false)
                         }
 
                     }
@@ -1267,7 +1277,7 @@ var dsb = {
                         dsb.modal.hide();
                         document.dispatchEvent(dsb.user.events.dsb_logout);
                         dsb.toast.message({
-                            title: dsb.ui.get_text_i18n('user/new-password','title'),
+                            title: dsb.ui.get_text_i18n('user/new-password', 'title'),
                             message: sprintf(dsb.ui.get_text_i18n('user/new-password', 'text'), dsb.user.session.context.user),
                             type: 'success'
                         })
@@ -1610,7 +1620,7 @@ var dsb = {
 
         show: (element, flex = true) => {
             if (element !== null) {
-                if (!(element instanceof HTMLElement) && element.includes('#')) {
+                if (!(element instanceof HTMLElement) && element?.includes('#')) {
                     element = document.querySelector(element)
                     if (element === null) {
                         return dsb.ui
@@ -2211,8 +2221,8 @@ var dsb = {
                                 .then(response => response.json())
                                 .then(data => {
                                     //save transient
-                                    dsb.db.set(data.cookie.name,data.cookie.content,'transients',YEAR)
-                                   location.reload()
+                                    dsb.db.set(data.cookie.name, data.cookie.content, 'transients', YEAR)
+                                    location.reload()
                                 })
                                 .catch(error => {
                                         console.error(error);
@@ -2293,15 +2303,39 @@ var dsb = {
     /**
      * Init all functions
      *
+     * @param   instance (Object)
+     *               name : string
+     *               title : string
+     *
      * @returns {dsb}
      */
 
-    init: async () => {
+    init: async (instance) => {
 
         // Sometimes, init is called twice, so... //TODO Check this
         if (dsb.initialized) {
             return
         }
+
+        // var mutationObserver = new MutationObserver(function(mutations) {
+        //     mutations.forEach(function(mutation) {
+        //         if (mutation.target.id ==='content') {
+        //             console.log(mutation);
+        //         }
+        //     });
+        // });
+        // mutationObserver.observe(document.documentElement, {
+        //     attributes: true,
+        //     characterData: true,
+        //     childList: true,
+        //     subtree: true,
+        //     attributeOldValue: true,
+        //     characterDataOldValue: true
+        // });
+        dsb.add_instance(instance.name)
+        dsb.page.main_title = instance.title
+
+
         const {default: OverlaysScrollbars} = await import ('/dashboard/assets/vendor/overlay-scrollbars/OverlayScrollbars.js')
 
         /**
@@ -2334,6 +2368,7 @@ var dsb = {
         }
 
         dsb.template.init()
+
 
         /**
          * Once menu has been loaded, we initialise some functionalities
