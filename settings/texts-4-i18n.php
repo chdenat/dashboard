@@ -59,13 +59,18 @@
 <!-- Console -->
 
 <text-i18n context="console/copy-text"
-           data-title="<?= _( 'Copy text' ) ?>"
+           data-title="<?= _( 'Copy content' ) ?>"
            data-text="<?= _( 'Console content copied to the clipboard!' ) ?>">
 </text-i18n>
 
 <text-i18n context="console/copy-text-error"
-           data-title="<?= _( 'Copy text' ) ?>"
+           data-title="<?= _( 'Copy content' ) ?>"
            data-text="<?= _( 'An error occurs during copy!' ) ?>">
+</text-i18n>
+
+<text-i18n context="console/export-text"
+           data-title="<?= _( 'Export content' ) ?>"
+           data-text="<?= _( 'Console content exported !' ) ?>">
 </text-i18n>
 
 <text-i18n context="console/clear"

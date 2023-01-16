@@ -701,6 +701,9 @@
                     <button class="console-copy" title="<?= _( 'Copy content to the clipboard' ) ?>">
                         <i class="fa-regular fa-copy"></i>
                     </button>
+                    <button class="console-export" title="<?= _( 'Export content to a file' ) ?>">
+                        <i class="fa-regular fa-download"></i>
+                    </button>
                     <button class="console-erase" title="<?= _( 'Clear console' ) ?>">
                         <i class="fa-regular fa-eraser"></i>
                     </button>

@@ -23,7 +23,7 @@ class DSBConsole {
     #menu = null
     #last = null
     #scroller = null
-    #running=true
+    #running = true
 
     /**
      *
@@ -31,7 +31,7 @@ class DSBConsole {
      *
      * @param clean         Add the possibility to erase the content
      */
-    constructor(ID,clean=true) {
+    constructor(ID, clean = true) {
 
         this.#ID = ID
         if (ID instanceof HTMLElement) {
@@ -40,7 +40,7 @@ class DSBConsole {
             this.#console = document.querySelector(ID)
         }
 
-        this.#scroller = OverlayScrollbars(this.#console,{})
+        this.#scroller = OverlayScrollbars(this.#console, {})
         this.#console.appendChild(this.#console.getElementsByTagName('console-menu')[0]);
 
 
@@ -48,14 +48,16 @@ class DSBConsole {
         this.#menu = this.#console.querySelector('console-menu')
 
         // Hide or manage erase button
-        if (clean=== false) {
+        if (clean === false) {
             this.#menu.querySelector('.console-erase').classList.add('dsb-hide')
         } else {
-            this.#menu.querySelector('.console-erase').addEventListener('click',this.clear)
+            this.#menu.querySelector('.console-erase').addEventListener('click', this.clear)
         }
 
         // Manage Copy button
-        this.#menu.querySelector('.console-copy').addEventListener('click',this.copy)
+        this.#menu.querySelector('.console-copy').addEventListener('click', this.copy)
+        // Manage Export button
+        this.#menu.querySelector('.console-export').addEventListener('click', this.export)
 
         // Set it ready to print
         this.#prepare_next()
@@ -76,7 +78,7 @@ class DSBConsole {
 
         this.#body.innerHTML = ''
         this.#prepare_next()
-        this.#append( from_event ?'':starter, classes)
+        this.#append(from_event ? '' : starter, classes)
 
 
         if (from_event) {
@@ -84,8 +86,8 @@ class DSBConsole {
 
             // We alert the user with a toast
             dsb.toast.message({
-                title: dsb.ui.get_text_i18n('console/clear','title'),
-                message: dsb.ui.get_text_i18n('console/clear','text'),
+                title: dsb.ui.get_text_i18n('console/clear', 'title'),
+                message: dsb.ui.get_text_i18n('console/clear', 'text'),
                 type: 'success'
             })
         }
@@ -97,7 +99,7 @@ class DSBConsole {
      * @param parameter             parameter could be an event
      * @returns {Promise<void>}
      */
-    copy = async (parameter='') => {
+    copy = async (parameter = '') => {
         const from_event = parameter instanceof Event
         if (from_event) {
             parameter.preventDefault()
@@ -110,19 +112,17 @@ class DSBConsole {
         if (!navigator.clipboard) {
             let c = document.createElement("textarea");
             c.value = text;
-            c.style.maxWidth='0px';
-            c.style.maxHeight='0px';
+            c.style.maxWidth = '0px';
+            c.style.maxHeight = '0px';
             c.style.position = "fixed";  // Prevent scrolling to bottom of page in Microsoft Edge.
             this.#console.appendChild(c);
             c.focus()
             c.select();
             try {
                 document.execCommand("copy");
-            }
-            catch (e) {
+            } catch (e) {
                 result = false
-            }
-            finally {
+            } finally {
                 this.#console.removeChild(c);
             }
         } else {
@@ -136,14 +136,14 @@ class DSBConsole {
         // We alert the user with a toast
         if (result) {
             dsb.toast.message({
-                title: dsb.ui.get_text_i18n('console/copy-text','title'),
-                message: dsb.ui.get_text_i18n('console/copy-text','text'),
+                title: dsb.ui.get_text_i18n('console/copy-text', 'title'),
+                message: dsb.ui.get_text_i18n('console/copy-text', 'text'),
                 type: 'success'
             })
         } else {
             dsb.toast.message({
-                title: dsb.ui.get_text_i18n('console/copy-text-error','title'),
-                message: dsb.ui.get_text_i18n('console/copy-text-error','text'),
+                title: dsb.ui.get_text_i18n('console/copy-text-error', 'title'),
+                message: dsb.ui.get_text_i18n('console/copy-text-error', 'text'),
                 type: 'danger'
             })
         }
@@ -151,29 +151,52 @@ class DSBConsole {
     }
 
     /**
+     * export console content to a file
+     *
+     * @param parameter             parameter could be an event
+     * @returns {Promise<void>}
+     */
+    export =  (parameter) => {
+        const from_event = parameter instanceof Event
+        if (from_event) {
+            parameter.preventDefault()
+        }
+
+        dsb.utils.export_to_file(this.#body.innerText, 'console.txt')
+
+        // We alert the user with a toast
+            dsb.toast.message({
+                title: dsb.ui.get_text_i18n('console/export-text', 'title'),
+                message: dsb.ui.get_text_i18n('console/export-text', 'text'),
+                type: 'success'
+            })
+
+    }
+
+    /**
      * Pause the srcolling
      *
      */
-    pause = ()=> {
+    pause = () => {
         this.#scroller.sleep()
         this.#console.classList.toggle('pause')
 
         this.#console.querySelector('.console-play').classList.toggle('dsb-hide')
         this.#console.querySelector('.console-pause').classList.toggle('dsb-hide')
-        this.#running=false
+        this.#running = false
     }
 
     /**
      * Resume the scrolling
      *
      */
-    play = ()=> {
+    play = () => {
         this.#scroller.update()
         this.#console.classList.toggle('pause')
 
         this.#console.querySelector('.console-play').classList.toggle('dsb-hide')
         this.#console.querySelector('.console-pause').classList.toggle('dsb-hide')
-        this.#running=true
+        this.#running = true
     }
 
     /***
@@ -216,9 +239,9 @@ class DSBConsole {
      *
      *
      */
-    #append = (text='', classes = '') => {
+    #append = (text = '', classes = '') => {
         if ('' !== text) {
-            this.#last.innerHTML = text.replace(/(<br>*)+/g,'<br>')
+            this.#last.innerHTML = text.replace(/(<br>*)+/g, '<br>')
         }
         if (classes !== '') {
             this.#last.classList.add(classes)

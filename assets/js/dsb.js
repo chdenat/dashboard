@@ -1398,8 +1398,23 @@ var dsb = {
                 const item = new ClipboardItem({"image/svg": blob});
                 navigator.clipboard.write([item]);
             });
-        }
-        ,
+        },
+
+        /**
+         * Export content to a file
+         *
+         * @param content
+         * @param file
+         */
+
+        export_to_file: (content='',file='sample.txt') => {
+            const link = document.createElement("a");
+            const blob = new Blob([content], { type: 'text/plain' });
+            link.href = URL.createObjectURL(blob);
+            link.download =file;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        },
 
         /**
          * Download a file
