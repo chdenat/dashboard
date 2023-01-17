@@ -443,6 +443,7 @@ class Template {
             }
             return '###'                     // No valid template ...
 
+        }).then((html) => {
 
             let [template, content] = html.split('###')
             if (template) {
