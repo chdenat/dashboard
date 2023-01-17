@@ -12,10 +12,10 @@
  * @copyright (c) 2022 noleam.fr
  *
  **********************************************************************************************************************/
-import {LogContext} from './LogContext.js'
-import {DSBConsole} from './DSBConsole.js'
-import {dsb} from "./dsb.js";
-import {EventEmitter} from "../vendor/EventEmitter/EventEmitter.js";
+import {LogContext} from 'LogContext'
+import {DSBConsole} from 'DSBConsole'
+import {dsb} from "dsb";
+import {EventEmitter} from "EventEmitter";
 
 
 class Logger {

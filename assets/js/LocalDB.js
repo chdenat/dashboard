@@ -12,7 +12,7 @@
  * @copyright (c) 2022 noleam.fr
  *
  **********************************************************************************************************************/
-import {openDB} from '/dashboard/assets/vendor/idb/idb.min.js';
+import {openDB} from 'idb';
 
 
 export class LocalDB {

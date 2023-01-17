@@ -13,9 +13,9 @@
  *
  **********************************************************************************************************************/
 
-import {nanoid} from '../vendor/nanoid.js'
-import {Animation} from "./Animation.js";
-import {EventEmitter} from "../vendor/EventEmitter/EventEmitter.js";
+import {nanoid} from 'nanoid'
+import {Animation} from "Animation";
+import {EventEmitter} from "EventEmitter";
 
 
 let templates_list = [];
@@ -443,7 +443,7 @@ class Template {
             }
             return '###'                     // No valid template ...
 
-        }).then((html) => {
+
             let [template, content] = html.split('###')
             if (template) {
                 this.#template_completion(template)

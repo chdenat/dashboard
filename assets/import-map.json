@@ -1,0 +1,19 @@
+{
+  "imports": {
+    "@popperjs/core": "/dashboard/assets/vendor/popper.min.js",
+    "Animation": "/dashboard/assets/js/Animation.js",
+    "bootstrap": "/dashboard/assets/vendor/bootstrap/js/bootstrap.esm.js",
+    "Dashboard": "/dashboard/assets/js/Dashboard.js",
+    "dsb": "/dashboard/assets/js/dsb.js",
+    "DSBConsole": "/dashboard/assets/js/DSBConsole.js",
+    "EventEmitter": "/dashboard/assets/vendor/EventEmitter/EventEmitter.js",
+    "idb":"/dashboard/assets/vendor/idb/idb.min.js",
+    "Logger": "/dashboard/assets/js/Logger.js",
+    "LogContext": "/dashboard/assets/js/LogContext.js",
+    "LocalDB": "/dashboard/assets/js/LocalDB.js",
+    "nanoid": "/dashboard/assets/vendor/nanoid.js",
+    "sprintf": "/dashboard/assets/vendor/sprintf.min.js",
+    "Template": "/dashboard/assets/js/Template.js",
+    "Toaster": "/dashboard/assets/vendor/Toaster.js"
+  }
+}
