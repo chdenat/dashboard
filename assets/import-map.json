@@ -1,6 +1,6 @@
 {
   "imports": {
-    "@popperjs/core": "/dashboard/assets/vendor/popper.min.js",
+    "@popperjs/core": "/dashboard/assets/vendor/popper/popper.js",
     "Animation": "/dashboard/assets/js/Animation.js",
     "bootstrap": "/dashboard/assets/vendor/bootstrap/js/bootstrap.esm.js",
     "Dashboard": "/dashboard/assets/js/Dashboard.js",
