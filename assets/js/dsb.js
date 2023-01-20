@@ -12,15 +12,29 @@
  * @copyright (c) 2022 noleam.fr
  *
  **********************************************************************************************************************/
-import {customAlphabet} from '../vendor/nanoid.js'
-import {EventEmitter} from "../vendor/EventEmitter/EventEmitter.js";
-import {LocalDB} from "./LocalDB.js";
-import {Dashboard} from "./Dashboard.js";
+import {customAlphabet} from 'nanoid'
+import {EventEmitter} from 'EventEmitter';
+import {LocalDB} from 'LocalDB';
+import {Dashboard} from 'Dashboard';
+import * as Popper from '@popperjs/core';
+import * as bootstrap from 'bootstrap'
+// import {
+//     Dropdown as BSDropdown,
+//     Toast,
+//     Modal as BSModal
+// } from 'bootstrap';
 
-await import ('../vendor/sprintf/sprintf.min.js');
+import {
+    Toaster,
+    ToasterPosition,
+    ToasterTimer,
+    ToasterType,
+} from "Toaster";
+
+await import ('sprintf');
 
 const nanoid = customAlphabet('1234567890', 6)
-const {Template} = await import ('./Template.js')
+const {Template} = await import ('Template')
 
 const SECOND = 1000
 const MINUTE = 60 * SECOND
@@ -491,8 +505,6 @@ var dsb = {
      * Toast management
      */
     toast: {
-        _element: null,
-        _instance: null,
         /**
          *
          * @param title        of the toast
@@ -509,6 +521,8 @@ var dsb = {
         message: function ({title = '', message = '', button = null, type = 'primary', delay = 3000, hide = true}) {
 
             let text, icon;
+            const toast_type = eval(`ToasterType.${type.upper}`)
+
             switch (type) {
                 case 'success':
                     icon = 'fas fa-check-circle'
@@ -523,50 +537,42 @@ var dsb = {
                     icon = 'fas fa-fa-bell'
             }
 
-            // Let's use the right toast
+            // check permanent
 
-            let toast = dsb.toast.autohide
-            if (false === hide) {
-                toast = dsb.toast.permanent
-            }
-            let element = toast._element
+            dsb.toast.toaster.create(title, message,
+            )
 
-            element.querySelector('.toast-header span').innerHTML = '<i class="' + icon + '"></i>' + title
-            element.querySelector('.toast-body .toast-message').innerHTML = message
-            let btn = element.querySelector('.toast-body .btn')
 
-            if (button !== null) {
-                btn.innerHTML = button.text
-                btn.href = button.href
-                btn.id = button.id
-                btn.classList.add('btn-' + type)
-                dsb.ui.show(btn)
-            } else {
-                dsb.ui.hide(btn)
-            }
-
-            // remove existing type information in case it has not been hidden yet.
-            let classes = element.classList
-            classes.forEach(item => {
-                if (item.startsWith('bg-')) {
-                    element.classList.remove(item)
-                }
-            })
-            element.classList.remove('bg-success', 'bg-danger', 'bg-warning')
-            element.classList.add('bg-' + type)
-
-            toast._instance.show()
+            // element.querySelector('.toast-header span').innerHTML = '<i class="' + icon + '"></i>' + title
+            // element.querySelector('.toast-body .toast-message').innerHTML = message
+            // let btn = element.querySelector('.toast-body .btn')
+            //
+            // if (button !== null) {
+            //     btn.innerHTML = button.text
+            //     btn.href = button.href
+            //     btn.id = button.id
+            //     btn.classList.add('btn-' + type)
+            //     dsb.ui.show(btn)
+            // } else {
+            //     dsb.ui.hide(btn)
+            // }
+            //
+            // // remove existing type information in case it has not been hidden yet.
+            // let classes = element.classList
+            // classes.forEach(item => {
+            //     if (item.startsWith('bg-')) {
+            //         element.classList.remove(item)
+            //     }
+            // })
+            // element.classList.remove('bg-success', 'bg-danger', 'bg-warning')
+            // element.classList.add('bg-' + type)
+            //
+            // toast._instance.show()
         }
+
 
         ,
 
-        set_life: (delay) => {
-            if (0 === delay) {
-                dsb.toast.autohide._element.setAttribute('data-bs-autohide', false)
-            } else {
-                dsb.toast.autohide._element.setAttribute('data-bs-delay', delay)
-            }
-        },
 
         /**
          * Initialisation of the toast object
@@ -575,38 +581,16 @@ var dsb = {
          *
          * @since 1.0
          */
-        init: function (delay = 3000) {
+        init:  function (delay = 5000) {
 
-            let tmp = document.querySelector('#dsb-permanent-toast .toast')
-            dsb.toast.permanent = {
-                _element: tmp,
-                _instance: new bootstrap.Toast(tmp, {autohide: false})
-            }
-            dsb.toast.autohide = {
-                _element: tmp,
-                _instance: new bootstrap.Toast(tmp, {delay: delay})
-            }
-
-            // clean classes when toast are hidden
-            dsb.toast.permanent._element.addEventListener('hidden.bs.toast', () => {
-                ["bg-success", "bg-warning", "bg-danger"].forEach(cl => {
-                    if (dsb.toast.permanent._element.classList.contains(cl)) {
-                        dsb.toast.permanent._element.classList.remove(cl);
-                    }
-                })
-            })
-            dsb.toast.autohide._element.addEventListener('hidden.bs.toast', () => {
-                ["bg-success", "bg-warning", "bg-danger"].forEach(cl => {
-                    if (dsb.toast.autohide._element.classList.contains(cl)) {
-                        dsb.toast.autohide._element.classList.remove(cl);
-                    }
-                })
+            dsb.toast.toaster = new Toaster({
+                position: ToasterPosition.BOTTOM_END,
+                delay: delay,
+                timer: ToasterTimer.ELAPSED,
             })
             return dsb.toast;
         }
-    }
-    ,
-
+    },
     modal: {
         _element: null,
         _instance: null,
@@ -1407,11 +1391,11 @@ var dsb = {
          * @param file
          */
 
-        export_to_file: (content='',file='sample.txt') => {
+        export_to_file: (content = '', file = 'sample.txt') => {
             const link = document.createElement("a");
-            const blob = new Blob([content], { type: 'text/plain' });
+            const blob = new Blob([content], {type: 'text/plain'});
             link.href = URL.createObjectURL(blob);
-            link.download =file;
+            link.download = file;
             link.click();
             URL.revokeObjectURL(link.href);
         },
@@ -2293,6 +2277,8 @@ var dsb = {
                  */
 
                 if (dsb.ui.new_lang) {
+                    const lang_toast = new Toast({})
+
                     dsb.toast.message({
                         title: dsb.ui.get_text_i18n('language/change', 'title'),
                         message: sprintf(dsb.ui.get_text_i18n('language/change', 'text'), content.name),
