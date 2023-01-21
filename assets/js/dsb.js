@@ -18,11 +18,6 @@ import {LocalDB} from 'LocalDB';
 import {Dashboard} from 'Dashboard';
 import * as Popper from '@popperjs/core';
 import * as bootstrap from 'bootstrap'
-// import {
-//     Dropdown as BSDropdown,
-//     Toast,
-//     Modal as BSModal
-// } from 'bootstrap';
 
 import {
     Toaster,
@@ -53,7 +48,7 @@ var dsb = {
     add_instance(instance) {
         dsb.instance = new Dashboard(instance)
     },
-
+    instance: null,
 
     // app information
     page: {
