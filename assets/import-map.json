@@ -3,6 +3,7 @@
     "@popperjs/core": "/dashboard/assets/vendor/popper/popper.js",
     "Animation": "/dashboard/assets/js/Animation.js",
     "bootstrap": "/dashboard/assets/vendor/bootstrap/js/bootstrap.esm.js",
+    "DateTime" : "/dashboard/assets/vendor/luxon.min.js",
     "Dashboard": "/dashboard/assets/js/Dashboard.js",
     "dsb": "/dashboard/assets/js/dsb.js",
     "DSBConsole": "/dashboard/assets/js/DSBConsole.js",
