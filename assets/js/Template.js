@@ -14,8 +14,8 @@
  **********************************************************************************************************************/
 
 import {nanoid} from 'nanoid'
-import {Animation} from "Animation";
-import {EventEmitter} from "EventEmitter";
+import {Animation} from 'Animation';
+import {Bus as TemplateEvent} from 'Bus';
 
 
 let templates_list = [];
@@ -41,7 +41,7 @@ class Template {
 
     static #use_404 = false
 
-    static event = new EventEmitter()
+    static event = TemplateEvent
 
     /**
      *
@@ -337,7 +337,6 @@ class Template {
                     if (!template.is_content) {
                         Animation.loading('#content#')
                     }
-
                     // Load the link content in the right template
                     if (template.is_content && dsb.instance) {
 
@@ -346,7 +345,7 @@ class Template {
                         })
 
                     } else {
-                        template.load(force);
+                        await template.load(force);
                     }
                     // save file information
                     template.#dom.container.setAttribute('data-template', template.file)
@@ -460,7 +459,6 @@ class Template {
             }
             self.loaded = true
 
-
             // Step 5 : Loading is finished, we dispatch the load-done events
             self.dispatch_events('load-done')
 
@@ -530,9 +528,7 @@ class Template {
     static load_all_templates = async function (parent = document) {
 
         let templates = Template.get_all_templates(parent);
-
         let children = []
-
         for (const template of templates) {
             if (template.dataset?.templateId !== '#popcont#') {
                 if (template.dataset?.templateId === '#content#') {
@@ -551,7 +547,7 @@ class Template {
                         dsb.instance.load_asset(template.file.split('/').pop())
                     })
                 } else {
-                    template.load(true)
+                    await template.load(true)
                 }
             }
         }
