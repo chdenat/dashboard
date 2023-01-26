@@ -15,8 +15,6 @@
 import {LogContext} from 'LogContext'
 import {DSBConsole} from 'DSBConsole'
 import {dsb} from "dsb";
-import {EventEmitter} from "EventEmitter";
-
 
 class Logger {
 
@@ -49,7 +47,7 @@ class Logger {
 
     #parameters = {}
 
-    #event = new EventEmitter()
+    #event = dsb.content_event
 
     /**
      *
