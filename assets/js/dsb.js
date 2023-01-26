@@ -13,7 +13,7 @@
  *
  **********************************************************************************************************************/
 import {customAlphabet} from 'nanoid'
-import {EventEmitter} from 'EventEmitter';
+import {Bus as DSBEvent} from 'Bus';
 import {LocalDB} from 'LocalDB';
 import {Dashboard} from 'Dashboard';
 import * as Popper from '@popperjs/core';
@@ -43,7 +43,7 @@ export {SECOND, MINUTE, HOUR, DAY}
 
 var dsb = {
 
-    content_event: new EventEmitter(),
+    content_event: DSBEvent,
 
     add_instance(instance) {
         dsb.instance = new Dashboard(instance)
@@ -469,6 +469,7 @@ var dsb = {
 
                     item.addEventListener('click', event => {
                         Template.load_from_event(event)
+
                         dsb.content_event.emit('click', item)
                         event.preventDefault()
 
@@ -488,8 +489,7 @@ var dsb = {
             })
 
             // Update the page
-
-            Template.load_all_templates()
+           Template.load_all_templates()
 
         }
 
@@ -516,7 +516,7 @@ var dsb = {
         message: function ({title = '', message = '', button = null, type = 'primary', delay = 3000, hide = true}) {
 
             let text, icon;
-            const toast_type = eval(`ToasterType.${type.upper}`)
+            const toast_type = eval(`ToasterType.${type.toUpperCase()}`)
 
             switch (type) {
                 case 'success':
@@ -581,7 +581,6 @@ var dsb = {
             dsb.toast.toaster = new Toaster({
                 position: ToasterPosition.BOTTOM_END,
                 delay: delay,
-                timer: ToasterTimer.ELAPSED,
             })
             return dsb.toast;
         }
