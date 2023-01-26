@@ -7,7 +7,7 @@
     "Dashboard": "/dashboard/assets/js/Dashboard.js",
     "dsb": "/dashboard/assets/js/dsb.js",
     "DSBConsole": "/dashboard/assets/js/DSBConsole.js",
-    "EventEmitter": "/dashboard/assets/vendor/EventEmitter/EventEmitter.js",
+    "Bus": "/dashboard/assets/vendor/EventEmitter/Bus.js",
     "idb":"/dashboard/assets/vendor/idb/idb.min.js",
     "Logger": "/dashboard/assets/js/Logger.js",
     "LogContext": "/dashboard/assets/js/LogContext.js",
