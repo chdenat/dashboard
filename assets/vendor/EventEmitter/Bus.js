@@ -21,7 +21,7 @@ import {EventEmitter} from "./EventEmitter.js";
  * EventEmitter classe singleton.
  * Require EventEmitter class
  */
-const EventBus = (function() {
+ const Bus = (function() {
 
     /** @type {Object} module public api */
     var singleton = {};
@@ -47,4 +47,4 @@ const EventBus = (function() {
 })();
 
 
-export {EventBus}
+export {Bus}
