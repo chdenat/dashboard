@@ -516,6 +516,7 @@ var dsb = {
                                type = null,
                                delay = null,
                                hide = true
+
                            }) {
 
             let text, icon;
@@ -535,15 +536,24 @@ var dsb = {
                     icon = 'fas fa-bell'
             }
 
+            let html = ''
+            //Buttons can be an array of objects { id,href,text } or a string
+            if (buttons instanceof Array) {
+                buttons.forEach(button => {
+                    html += `<a id="${button.id}" class="btn btn-%TYPE%" href="${button.href}">${button.text}</a>`
+                })
+            } else {
+                html = buttons
+            }
 
             let options = {
                 icon: `<i class="${icon} %TYPE%"></i>`,
-                texts:{}
+                texts: {}
             }
 
             options.type = toast_type
             options.delay = delay
-            options.buttons = buttons
+            options.buttons = html
             options.template = template
 
             dsb.toast.toaster.create(title, message, options)
