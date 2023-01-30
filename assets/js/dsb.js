@@ -19,12 +19,7 @@ import {Dashboard} from 'Dashboard';
 import * as Popper from '@popperjs/core';
 import * as bootstrap from 'bootstrap'
 
-import {
-    Toaster,
-    ToasterPosition,
-    ToasterTimer,
-    ToasterType,
-} from "Toaster";
+import {Toaster} from 'Toaster';
 
 await import ('sprintf');
 
@@ -489,7 +484,7 @@ var dsb = {
             })
 
             // Update the page
-           Template.load_all_templates()
+            Template.load_all_templates()
 
         }
 
@@ -504,7 +499,7 @@ var dsb = {
          *
          * @param title        of the toast
          * @param message      content of the toast
-         * @param button
+         * @param buttons
          * @param type         any bootstrap type. Depending on the type, different icons are shown.
          * @param delay        Default to 3 seconds, To set it to permanent use 0
          * @param hide          autohide = true, permanent = false
@@ -513,29 +508,45 @@ var dsb = {
          * @since 1.0
          *
          */
-        message: function ({title = '', message = '', button = null, type = 'primary', delay = 3000, hide = true}) {
+        message: function ({
+                               title = '',
+                               message = '',
+                               template = null,
+                               buttons = null,
+                               type = null,
+                               delay = null,
+                               hide = true
+                           }) {
 
             let text, icon;
-            const toast_type = eval(`ToasterType.${type.toUpperCase()}`)
+            const toast_type = type ? eval(`Toaster.type.${type.toUpperCase()}`) : null
 
             switch (type) {
                 case 'success':
                     icon = 'fas fa-check-circle'
                     break;
                 case 'danger':
-                    icon = 'fa fa-bomb'
+                    icon = 'fas fa-bomb'
                     break;
                 case 'warning':
                     icon = 'fas fa-exclamation-triangle'
                     break;
                 default:
-                    icon = 'fas fa-fa-bell'
+                    icon = 'fas fa-bell'
             }
 
-            // check permanent
 
-            dsb.toast.toaster.create(title, message,
-            )
+            let options = {
+                icon: `<i class="${icon} %TYPE%"></i>`,
+                texts:{}
+            }
+
+            options.type = toast_type
+            options.delay = delay
+            options.buttons = buttons
+            options.template = template
+
+            dsb.toast.toaster.create(title, message, options)
 
 
             // element.querySelector('.toast-header span').innerHTML = '<i class="' + icon + '"></i>' + title
@@ -562,7 +573,8 @@ var dsb = {
             // element.classList.remove('bg-success', 'bg-danger', 'bg-warning')
             // element.classList.add('bg-' + type)
             //
-            // toast._instance.show()
+            //
+            //toast._instance.show()
         }
 
 
@@ -576,11 +588,25 @@ var dsb = {
          *
          * @since 1.0
          */
-        init:  function (delay = 5000) {
+        init: function (delay = 5000) {
 
             dsb.toast.toaster = new Toaster({
-                position: ToasterPosition.BOTTOM_END,
+                position: Toaster.position.BOTTOM_END,
                 delay: delay,
+                template: `
+<div class="toast fade bg-%TYPE%" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+        <span class="bs-toaster-icon d-flex">%ICON%</span>
+        <strong class="bs-toaster-title me-auto">%TITLE%</strong>
+        <small class="bs-toaster-timer text-muted">%TIMER%</small>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="bs-toaster-text toast-body">
+        %TEXT%
+        <div class="bs-toaster-buttons">%BUTTONS%</div>
+    </div>
+</div>
+`
             })
             return dsb.toast;
         }
