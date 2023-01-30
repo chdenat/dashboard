@@ -22,6 +22,8 @@ export class LocalDB {
     #stores = 'mystore'
     #name = 'mydb'
 
+    #transients = 'transients'
+
      constructor({name = this.#name, store = this.#stores, version = this.#version}) {
 
         if (!(store instanceof  Array)) {
@@ -78,6 +80,17 @@ export class LocalDB {
     }
 
     /**
+     * Alias for transients
+     *
+     * @param key
+     * @param with_ttl
+     * @return {Promise<*|null>}
+     */
+    get_transient = async(key, with_ttl = false)=> {
+       return  await dsb.db.get(key,this.#transients,with_ttl)
+}
+
+    /**
      * Add a key/value with optional ttl
      *
      *
@@ -101,6 +114,18 @@ export class LocalDB {
         return (await this.#db).put(store, data, key);
 
     }
+    /**
+     * Alias for transients
+     *
+     * @param key
+     * @param value
+     * @param ttl
+     * @return {Promise<*|null>}
+     */
+
+    set_transient = async (key,value,ttl = 0) => {
+        return await this.set(key,value,this.#transients,ttl)
+    }
 
 
     /**
@@ -108,15 +133,16 @@ export class LocalDB {
      *
      * @param key
      * @param value
+     * @param store
      * @param ttl       in milliseconds
      * @return {Promise<*>}
      */
-    update = async (key,value,ttl = 0) => {
+    update = async (key,value,store,ttl = 0) => {
         const old = this.get(key)
         if (old) {
             await this.del(key)
         }
-        return await this.set(key,value,ttl);
+        return await this.set(key,value,store,ttl);
     }
 
     /**
