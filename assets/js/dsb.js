@@ -2297,8 +2297,6 @@ var dsb = {
                  */
 
                 if (dsb.ui.new_lang) {
-                    const lang_toast = new Toast({})
-
                     dsb.toast.message({
                         title: dsb.ui.get_text_i18n('language/change', 'title'),
                         message: sprintf(dsb.ui.get_text_i18n('language/change', 'text'), content.name),
