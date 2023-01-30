@@ -336,8 +336,6 @@ export class Toaster {
 
         // Type can be used anywhere, so we change it in last
 
-        console.log(toastNode.innerHTML)
-
         //Render the toast
         this.#render(toastNode)
     }
