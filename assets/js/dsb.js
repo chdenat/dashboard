@@ -545,7 +545,7 @@ var dsb = {
             } else {
                 html = buttons
             }
-console.log(html)
+
             let options = {
                 icon: `<i class="${icon} %TYPE%"></i>`,
                 texts: {}
