@@ -307,11 +307,11 @@ export class Toaster {
         let buttons = options.buttons ?? false
 
         // Use tags for rendering
-        template = template.replace("%TEXT%", text)
-            .replace("%TITLE%", title)
-            .replace("%ICON%", icon)
-            .replace("%BUTTONS%", buttons)
-            .replace("%TYPE%", type)
+        template = template.replace(/%TEXT\%/g, text)
+            .replace(/%TITLE%/g, title)
+            .replace(/%ICON%/g, icon)
+            .replace(/%BUTTONS%/g, buttons)     // hidden later if necessary
+            .replace(/%TYPE%/g, type)
 
         // Create the template
         const toastNode = this.#createToastNode(template)
