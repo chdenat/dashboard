@@ -243,10 +243,7 @@
 			
 			//It's time to add the page footer.
 			self::instance()->include_block( 'footer' . ( ! empty( $slug ) ? '-' : '' ) . $slug );
-			
-			// Toast or bread ?
-			self::instance()->include_block( 'toast' . ( ! empty( $slug ) ? '-' : '' ) . $slug );
-			
+
 			/**
 			 * Fires after any HTML code
 			 *
