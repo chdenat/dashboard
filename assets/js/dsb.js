@@ -545,7 +545,7 @@ var dsb = {
             } else {
                 html = buttons
             }
-
+console.log(html)
             let options = {
                 icon: `<i class="${icon} %TYPE%"></i>`,
                 texts: {}
@@ -604,7 +604,7 @@ var dsb = {
                 position: Toaster.position.BOTTOM_END,
                 delay: delay,
                 template: `
-<div class="toast fade bg-%TYPE%" role="alert" aria-live="assertive" aria-atomic="true">
+<div class="toast fade text-bg-%TYPE%" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-header">
         <span class="bs-toaster-icon d-flex">%ICON%</span>
         <strong class="bs-toaster-title me-auto">%TITLE%</strong>
