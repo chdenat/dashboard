@@ -681,10 +681,10 @@ class Template {
         }
     }
 
-    static reload_content() {
+    static async reload_content() {
         let t = new Template(document.querySelector('[data-template-id="#content#"]'))
         t.start_animation()
-        t.load(true)
+       await t.load(true)
         t.stop_animation()
     }
 
