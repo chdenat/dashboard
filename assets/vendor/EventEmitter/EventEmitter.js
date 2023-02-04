@@ -5,7 +5,8 @@
  *
  * fork from  https://github.com/dimitrilahaye/vanilla-js-es6-event-emitter
  *
- * Create a 2.0 version
+ * 16/7/2022 : my 2.0 version
+ * 04/02/2023 : 2.1 version
  *
  * @author  Christian Denat
  * @email contact@noleam.fr
@@ -48,7 +49,7 @@ export class EventEmitter {
         this.#registerEvent(name, callback, {
             on: true,
             priority: options?.priority,
-            context: options?.context
+            context: options?.context ?? {}
         })
         return this;
     }
@@ -58,7 +59,7 @@ export class EventEmitter {
      *
      * Method can be bound to change this object.
      *
-     * @since 2.0 : change signatire (add options)
+     * @since 2.0 : change signature (add options)
      *
      * @param {string} name the name of the event to create or to update
      * @param {Function} callback the callback called when the event is emited
@@ -70,7 +71,7 @@ export class EventEmitter {
         this.#registerEvent(name, callback, {
             on: false,
             once: true,
-            context: options?.context
+            context: options?.context ?? {}
         })
     }
 
@@ -80,7 +81,8 @@ export class EventEmitter {
      *
      * Method can be bound to change this object.
      *
-     * @since 2.0 : change signatire (add options)
+     * @since 2.0 : change signature (add options)
+     * @since 2.1 : it's possible to specify only 'to' value
      *
      * @param {string} name the name of the event to create or to update
      * @param {Function} callback the callback called when the event is emited
@@ -89,13 +91,17 @@ export class EventEmitter {
      *          {int} priority:     The priority (default = 100, higher>100, lower <100)
      *          {Object} context:   the object's context on what the event is acting (default null)
      *
+     *        It is also possible to declare an integer, equal to 'to' value.
      */
     to = (name, callback, options = {}) => {
+        if (Number.isInteger(options) ) {
+            options={to:options}
+        }
         this.#registerEvent(name, callback, {
             on: false,
             priority: options?.priority,
             to: options.to,
-            context: options?.context
+            context: options?.context ?? {}
         })
     }
 
@@ -105,7 +111,8 @@ export class EventEmitter {
      *
      * Method can be bound to change this object.
      *
-     * @since 2.0 : change signatire (add options)
+     * @since 2.0 : change signature (add options)
+     * @since 2.1 : it's possible to specify only 'at' value
      *
      * @param {string} name the name of the event to create or to update
      * @param {Function} callback the callback called when the event is emited
@@ -114,12 +121,16 @@ export class EventEmitter {
      *          {int} priority:     The priority (default = 100, higher>100, lower <100)
      *          {Object} context:   the object's context on what the event is acting (default null)
      *
+     *        It is also possible to declare an integer, equal to 'at' value.
      */
     at = (name, callback, options = {}) => {
+        if (Number.isInteger(options) ) {
+            options={at:options}
+        }
         this.#registerEvent(name, callback, {
             on: false,
             priority: options?.priority,
-            context: options?.context,
+            context: options?.context ?? {},
             at: --options.at
         })
     }
@@ -130,7 +141,8 @@ export class EventEmitter {
      *
      * Method can be bound to change this object.
      *
-     * @since 2.0 : change signatire (add options)
+     * @since 2.0 : change signature (add options)
+     * @since 2.1 : it's possible to specify only 'there' value
      *
      * @param {string} name the name of the event to create or to update
      * @param {Function} callback the callback called when the event is emited*
@@ -139,13 +151,17 @@ export class EventEmitter {
      *           {int} priority:    The priority (default = 100, higher>100, lower <100)
      *           {Object} context:  the object's context on what the event is acting (default null)
      *
+     *        It is also possible to declare an integer, equal to 'at' value.
      */
     there = (name, callback, options = {}) => {
+        if (Number.isInteger(options) ) {
+            options={there:options}
+        }
         this.#registerEvent(name, callback, {
             on: false,
             priority: options?.priority,
-            context: options?.context,
-            there: --options.there
+            context: options?.context ?? {},
+            there: options.there
         })
     }
 
@@ -173,19 +189,22 @@ export class EventEmitter {
 
 
     /**
-     * Will remove from an array of events's namespace the registered context.
+     * Will remove from an array of events namespace the registered context.
      *
      * Method can be bound to change this object.
      *
      * @param {array | string} names the names of the events where we want to unregistred a context.
      *                               Could be a string if we want to unregister only one event, or an array for many.
      *
+     *
+     * @param {Object} context:  the object's context on what the event is acting (default {}')
+     *
      */
-    off = (names) => {
+    off = (names,context={}) => {
         for (const event of this.events) {
             if (names instanceof Array) {
                 for (const name of names) {
-                    this.#unregisterEvent(name, event, this)
+                    this.#unregisterEvent(name, event, )
                 }
             } else {
                 this.#unregisterEvent(names, event, this)
@@ -229,7 +248,7 @@ export class EventEmitter {
         let alreadyExists = false
 
         const event = {
-            context: options?.context ?? null,
+            context: options?.context ?? {},
             callback: callback,
             on: options.on ?? true,
             priority: options?.priority ?? 100,
@@ -324,7 +343,7 @@ export class EventEmitter {
      * @private
      *
      */
-    #unregisterEvent = (name, event, context) => {
+    #unregisterEvent = (name, event, context={}) => {
         if (event.name === name) {
             let j = 0
             for (const e of event.events) {
@@ -347,21 +366,7 @@ export class EventEmitter {
      * @private
      */
     #equals = (x, y) => {
-        let p
-        if (x === y) return true
-        if (!(x instanceof Object) || !(y instanceof Object)) return false
-        if (x.constructor !== y.constructor) return false
-        for (p in x) {
-            if (!x.hasOwnProperty(p)) continue
-            if (!y.hasOwnProperty(p)) return false
-            if (x[p] === y[p]) continue
-            if (typeof (x[p]) !== "object") return false
-            if (!Object.equals(x[p], y[p])) return false
-        }
-        for (p in y) {
-            if (y.hasOwnProperty(p) && !x.hasOwnProperty(p)) return false
-        }
-        return true
+        return JSON.stringify(x) === JSON.stringify(y)
     }
 
 }
