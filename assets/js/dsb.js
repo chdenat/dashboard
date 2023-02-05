@@ -2362,6 +2362,10 @@ var dsb = {
         //     characterDataOldValue: true
         // });
         dsb.add_instance(instance.name)
+
+        // Clean all eventswebserv
+        dsb.content_event.clean()
+
         dsb.page.main_title = instance.title
 
 
