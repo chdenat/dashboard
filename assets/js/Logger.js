@@ -15,6 +15,7 @@
 import {LogContext} from 'LogContext'
 import {DSBConsole} from 'DSBConsole'
 import {dsb} from "dsb";
+import {Bus as LoggerEvent} from 'Bus';
 
 class Logger {
 
@@ -47,7 +48,7 @@ class Logger {
 
     #parameters = {}
 
-    #event = dsb.content_event
+    #event = LoggerEvent
 
     /**
      *
@@ -111,7 +112,7 @@ class Logger {
         }
 
         this.#scroll_bottom = parameters.scroll_to_bottom ?? false
-
+        this.event.clean()
 
     }
 
@@ -125,6 +126,8 @@ class Logger {
         this.context.read_lines = await this.get_lines_number()
 
         // We need to manage some future standard events
+
+
         this.event.on('log/start', this.start_log);
         this.event.on('log/running', this.update_log);
         this.event.on('log/stop', this.end_log);
