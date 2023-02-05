@@ -684,7 +684,8 @@ class Template {
     static async reload_content() {
         let t = new Template(document.querySelector('[data-template-id="#content#"]'))
         t.start_animation()
-       await t.load(true)
+        await t.load(true)
+        await Template.load_all_templates(t.container)
         t.stop_animation()
     }
 
