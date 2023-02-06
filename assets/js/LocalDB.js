@@ -146,15 +146,39 @@ export class LocalDB {
     }
 
     /**
+     * Alias for transients
+     *
+     * @param key
+     * @param value
+     * @param ttl
+     * @return {Promise<*>}
+     */
+    update_transient = async (key,value,ttl = 0) => {
+        return await this.set(key,value,this.#transients,ttl);
+    }
+
+    /**
      * delete a key
      *
      * @param key
      * @param store
      * @return {Promise<*>}
      */
-    del=async (key,store) => {
+    delete=async (key,store) => {
         return (await this.#db).delete(store, key);
     }
+
+    /**
+     * Alias for transients
+     *
+     * @param key
+     * @param store
+     * @return {Promise<*>}
+     */
+    delete_transient =async (key) => {
+        return (await this.#db).delete(this.#transients, key);
+    }
+
 
     /**
      * Clear a store
