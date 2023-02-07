@@ -317,6 +317,7 @@ class Template {
 
                 if (undefined !== template) {
 
+
                     // save old...
                     template.historize = template
 
@@ -337,16 +338,9 @@ class Template {
                     if (!template.is_content) {
                         Animation.loading('#content#')
                     }
-                    // Load the link content in the right template
-                    if (template.is_content && dsb.instance) {
 
-                        await template.load(force).then(() => {
-                            dsb.instance.load_asset(template.file.split('/').pop())
-                        })
+                    template.load_content(force)
 
-                    } else {
-                        await template.load(force);
-                    }
                     // save file information
                     template.#dom.container.setAttribute('data-template', template.file)
                 }
@@ -355,7 +349,18 @@ class Template {
                 return false
             }
         }
-        //Animation.loaded('#content#')
+        Animation.loaded('#content#')
+    }
+
+    load_content = async (force) => {
+        // Load the link content in the right template
+        if (this.is_content && dsb.instance && this.file !== null) {
+            await this.load(force).then( () => {
+                Template.load_asset(this)
+            })
+        } else {
+             this.load(force);
+        }
     }
 
     /**
@@ -363,7 +368,7 @@ class Template {
      *
      * Template are loaded only if
      *    - data-template-forced is false or not defined
-     *    - force = false (ie defaults
+     *    - force = false (ie defaults)
      *
      * @param force         Force template to load
 
@@ -427,7 +432,7 @@ class Template {
         // Step 2 : run animation
         this.start_animation()
 
-        let self = this
+        let current = this
         // Step 3 : Load the template using ajax and children if there are some
         fetch(dsb_ajax.get + '?' + new URLSearchParams({
             action: 'load-template',
@@ -440,29 +445,30 @@ class Template {
             if (response.ok) {
                 return response.text();     // <template>###<content>
             }
+            this.stop_animation()
             return '###'                     // No valid template ...
 
         }).then((html) => {
-
             let [template, content] = html.split('###')
+            console.log('<<',template,content)
             if (template) {
-                this.#template_completion(template)
+                current.#template_completion(template)
                 //load content.
-                self.container.innerHTML = content;
+                current.container.innerHTML = content;
 
                 // Step 4 : Check if we need to open some tab
-                if (null !== self.tab) {
-                    dsb.ui.show_tab(self.tab)
+                if (null !== current.tab) {
+                    dsb.ui.show_tab(current.tab)
                 }
             } else {
-                Template.page_404(self.container?.dataset?.templateId, this.file)
+                Template.page_404(current.container?.dataset?.templateId, this.file)
             }
-            self.loaded = true
+            current.loaded = true
 
             // Step 5 : Loading is finished, we dispatch the load-done events
-            self.dispatch_events('load-done')
+            current.dispatch_events('load-done')
 
-            Template.add_template_to_list(self)
+            Template.add_template_to_list(current)
 
             return true;
         }).catch((error) => {
@@ -531,28 +537,35 @@ class Template {
         let children = []
         for (const template of templates) {
             if (template.dataset?.templateId !== '#popcont#') {
-                if (template.dataset?.templateId === '#content#') {
-                    // In case it is  the content block, we push the baseUri as template
-                    template.setAttribute('data-template', dsb.utils.path_info(template.baseURI).file)
-                }
-                let item = new Template(template)
+                let item = new Template(Template.add_base_to_template(template))
                 children.push(item)
             }
         }
 
         for (const template of children) {
-            if (template.file !== null) {
-                if (template.is_content && dsb.instance) {
-                    await template.load(true).then(() => {
-                        dsb.instance.load_asset(template.file.split('/').pop())
-                    })
-                } else {
-                    await template.load(true)
-                }
-            }
+           await template.load_content(true)
         }
 
     }
+
+    static add_base_to_template = (template) => {
+        if (template.dataset?.templateId === '#content#') {
+            // In case it is  the content block, we push the baseUri as template
+            template.setAttribute('data-template', dsb.utils.path_info(template.baseURI).file)
+        }
+        return template
+    }
+
+    static load_asset = (template) => {
+        let parts = template.file.split('/')
+        if (parts[parts.length - 1] === 'index') {
+            parts.pop()
+        }
+        let tmp = document.querySelector(`[data-template-id="${template.ID}"]`)
+        dsb.instance.load_asset(parts.pop())
+    }
+
+
     /**
      * Get all templates in DOM
      *
