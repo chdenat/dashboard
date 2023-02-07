@@ -18,7 +18,6 @@ class Dashboard {
 
 
     load_asset = async (page = null, js = 'script.js') => {
-
         if (page === null) {
             page = this.current_page
         }
