@@ -463,11 +463,9 @@ var dsb = {
                 template.container.querySelectorAll('a[data-content]').forEach(item => {
 
                     item.addEventListener('click', event => {
-                        Template.load_from_event(event)
-
-                        dsb.content_event.emit('click', item)
                         event.preventDefault()
-
+                        Template.load_from_event(event)
+                        dsb.content_event.emit('click', item)
                     })
 
                 });
@@ -696,7 +694,7 @@ var dsb = {
          * @since 1.0
          *
          */
-        load: function (action, params = {}, custom = false) {
+        load: async function (action, params = {}, custom = false) {
             this._parameters = params
             this._parameters['action'] = action
             dsb.modal.resize()
@@ -709,9 +707,9 @@ var dsb = {
                 params: JSON.stringify(params),
             })).then(function (response) {
                 return response.text()
-            }).then(function (html) {
+            }).then(async function (html) {
                 dsb.modal.message(html)
-                Template.load_all_templates(document.getElementById('dashboard-modal'))
+                await Template.load_all_templates(document.getElementById('dashboard-modal'))
                 return true;
             }).catch((error) => {
                 console.error('Error:', error); // Print or not print ?
@@ -1999,6 +1997,11 @@ var dsb = {
          * @param params
          */
         add_scrolling: (element, params = {}) => {
+
+            // Bail early in case we can not work with ekement
+            if (element === null) {
+                return
+            }
             let _params = {cascade: true, options: {}, scroll: {}}
             params = {..._params, ...params}
 
