@@ -86,7 +86,7 @@ class AssetsManager
         ob_start();
         ?>
 
-        <script async src="/dashboard/vendor/es-module-shims.js"></script>
+        <script async src="/dashboard/assets/vendor/es-module-shims.js"></script>
         <script type="importmap">
             <?php
             $json = [];
