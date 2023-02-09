@@ -2403,9 +2403,6 @@ var dsb = {
             document.body.classList.add(dsb.user.session.context.user);
         }
 
-        dsb.template.init()
-
-
         /**
          * Once menu has been loaded, we initialise some functionalities
          */
