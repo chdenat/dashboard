@@ -8,6 +8,7 @@ class Dashboard {
     #cpath = ''
     #js_path = 'assets/js'
     #dir = 'pages'
+    pages = []
 
     #dpath = 'dashboard/' + this.#js_path
 
@@ -17,22 +18,25 @@ class Dashboard {
     }
 
 
-    load_asset = async (page = null, js = 'script.js') => {
+    import_module = async (page = null, js = 'script.js') => {
         if (page === null) {
             page = this.current_page
         }
 
         if (page) {
-            const {module} =  import(`${this.#cpath}${this.#dir}${page}/${js}`)
+            await import(`${this.#cpath}${this.#dir}${page}/${js}`)
                 .then(module => {
                     if (module) {
 
                         let components = Object.values(module)
                         if (components.length !== 0) {
                             let script = Object.values(module)[0]
-                            if (script.module) {
+                            if (script?.module) {
+                                // We use legacy object, we need to force init
                                 window[script.module] = script
                                 script.init()
+                            } else {
+                                // We use Classes , nothing to do
                             }
                         }
                     }
