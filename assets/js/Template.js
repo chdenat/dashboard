@@ -352,14 +352,14 @@ class Template {
         Animation.loaded('#content#')
     }
 
-    load_content = async (force) => {
+    load_content =  async (force) => {
         // Load the link content in the right template
         if (this.is_content && dsb.instance && this.file !== null) {
-            await this.load(force).then( () => {
-                Template.load_asset(this)
-            })
+            await this.load(force)
+                Template.import_module(this)
+
         } else {
-             this.load(force);
+            this.load(force);
         }
     }
 
@@ -450,7 +450,6 @@ class Template {
 
         }).then((html) => {
             let [template, content] = html.split('###')
-            console.log('<<',template,content)
             if (template) {
                 current.#template_completion(template)
                 //load content.
@@ -543,7 +542,7 @@ class Template {
         }
 
         for (const template of children) {
-           await template.load_content(true)
+            template.load_content(true)
         }
 
     }
@@ -556,13 +555,12 @@ class Template {
         return template
     }
 
-    static load_asset = (template) => {
+    static import_module = (template) => {
         let parts = template.file.split('/')
         if (parts[parts.length - 1] === 'index') {
             parts.pop()
         }
-        let tmp = document.querySelector(`[data-template-id="${template.ID}"]`)
-        dsb.instance.load_asset(parts.pop())
+        dsb.instance.import_module(parts.pop())
     }
 
 
