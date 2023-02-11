@@ -19,7 +19,7 @@ class Animation {
 
     static #template
     static classes = {
-        unloading: 'unloading',
+        unload: 'unload',
         loading: 'loading',
         loaded: 'loaded',
         running: 'running',
