@@ -38,6 +38,7 @@ class Template {
     #variable = null
     #reserved = ['menu', 'content']    // Special templates
     animation = Animation
+    #page_path = '/pages/'
 
     static #use_404 = false
 
@@ -155,9 +156,16 @@ class Template {
     get file() {
         return this.#file ?? false
     }
+    set file(file) {
+        this.#file = file
+    }
 
     get directory() {
         return this.#directory
+    }
+
+    set directory(directory) {
+        this.#directory=directory
     }
 
     has_directory = () => {
@@ -285,7 +293,7 @@ class Template {
         }
 
         t.start_animation()
-        t.check_link('/pages/404')
+        t.check_link(`${this.#page_path}404`)
         t.load(true, {url: url})
         t.stop_animation()
         Template.use_404();
@@ -490,8 +498,13 @@ class Template {
             // If the file name is not the same, the origin template was a directory
             // so we save it and change the template file
             if (origin !== from_php) {
-                this.#directory = this.#file
-                this.#file += `/${from_php}`
+                this.directory = this.file
+                this.file += `/${from_php}`
+            }
+
+            // If we have /pages/, we remove it
+            if (this.directory.includes(this.#page_path)) {
+                this.directory = this.directory.replace(this.#page_path,'')
             }
         }
     }
@@ -509,7 +522,7 @@ class Template {
 
             if (!this.#check_exception(pathname)) {
 
-                if (pathname.includes('/pages/')) {
+                if (pathname.includes(this.#page_path)) {
                     // Redirection to /pages/xxxx
                     this.check_link(pathname)
                 } else if (pathname.includes('/home')) {
