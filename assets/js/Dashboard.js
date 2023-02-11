@@ -31,13 +31,18 @@ class Dashboard {
 
                             let components = Object.values(module)
                             if (components.length !== 0) {
-                                let script = Object.values(module)[0]
-                                if (script?.module) {
-                                    // We use legacy object, we need to force init
-                                    window[script.module] = script
-                                    script.init()
+                                let imported
+                                if (Object.values(module)[0]?.module) {
+                                    // We use object with module attribute, so we're able
+                                    // to create the exported variable, populate it and init it
+                                    imported = Object.values(module)[0]
+                                    window[imported.module] = imported
+                                    imported.init()
                                 } else {
-                                    // We use Classes , nothing to do
+                                    // We use Classes, so we're able
+                                    // to create and populate the exported variable
+                                    imported=Object.keys(module)[0]
+                                    window[imported] = components[0]
                                 }
                             }
                         }
