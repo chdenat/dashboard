@@ -454,7 +454,7 @@ var dsb = {
             Template.use_404(false)
 
             // When a template has been loaded, we register specific link actions and load all the children
-            Template.event.on('load-done', template => {
+            Template.event.on('template/loaded', template => {
 
                 // Download the family
                 Template.load_all_templates(template.container)
@@ -2349,21 +2349,6 @@ var dsb = {
             return
         }
 
-        // var mutationObserver = new MutationObserver(function(mutations) {
-        //     mutations.forEach(function(mutation) {
-        //         if (mutation.target.id ==='content') {
-        //             console.log(mutation);
-        //         }
-        //     });
-        // });
-        // mutationObserver.observe(document.documentElement, {
-        //     attributes: true,
-        //     characterData: true,
-        //     childList: true,
-        //     subtree: true,
-        //     attributeOldValue: true,
-        //     characterDataOldValue: true
-        // });
         dsb.add_instance(instance.name)
 
         // Clean all eventswebserv
@@ -2406,14 +2391,14 @@ var dsb = {
         /**
          * Once menu has been loaded, we initialise some functionalities
          */
-        Template.event.once('load-done/blocks/menu', (block) => {
+        Template.event.once('template/loaded/blocks/menu', (block) => {
             dsb.menu.init(block)
         })
 
         /**
          * Once menu has been loaded, we initialise some functionalities
          */
-        Template.event.once('load-done/blocks/languages', block => {
+        Template.event.once('template/loaded/blocks/languages', block => {
             dsb.init_lang()
         })
 
