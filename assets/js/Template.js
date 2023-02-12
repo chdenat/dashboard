@@ -19,7 +19,6 @@ import {Bus as TemplateEvent} from 'Bus';
 
 
 let templates_list = [];
-let reserved_templates = ['menu', 'content', 'pop-content']
 
 class Template {
 
@@ -36,13 +35,15 @@ class Template {
     #children = []
     #old = null
     #variable = null
-    #reserved = ['menu', 'content']    // Special templates
+    static #reserved = ['menu', 'content', 'pop-content']    // Special templates
     animation = Animation
     #page_path = '/pages/'
 
     static #use_404 = false
 
     static event = TemplateEvent
+
+    #observer
 
     /**
      *
@@ -104,10 +105,26 @@ class Template {
 
             this.children
 
-            // we push the next ID to the DOM element
+            // we push ID to the DOM element
             element.setAttribute('data-template-id', this.#ID)
 
 
+            // Observer
+            let template = this
+            this.observer = new MutationObserver(mutations => {
+                mutations.forEach(function (mutation) {
+                    let found = false
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        Object.values(Animation.classes).forEach(_class => {
+                            if (mutation.target.classList.contains(_class) && !found) {
+                                console.log(_class,mutation.oldValue)
+                                template.dispatch_events(`template/${_class}`)
+                                found = true
+                            }
+                        })
+                    }
+                });
+            })
         } else {
             this.#ID = null
         }
@@ -129,7 +146,7 @@ class Template {
     }
 
     get is_reserved() {
-        return this.#reserved.includes(this.ID.replace(/#/g, '',))
+        return Template.#reserved.includes(this.ID.replace(/#/g, '',))
     }
 
     get is_content() {
@@ -156,6 +173,7 @@ class Template {
     get file() {
         return this.#file ?? false
     }
+
     set file(file) {
         this.#file = file
     }
@@ -165,7 +183,7 @@ class Template {
     }
 
     set directory(directory) {
-        this.#directory=directory
+        this.#directory = directory
     }
 
     has_directory = () => {
@@ -292,10 +310,8 @@ class Template {
             return
         }
 
-        t.start_animation()
         t.check_link(`${this.#page_path}404`)
         t.load(true, {url: url})
-        t.stop_animation()
         Template.use_404();
 
     }
@@ -319,7 +335,7 @@ class Template {
 
         // We check if the link has been bound to a reserved template
         for (const item in event.currentTarget.dataset) {
-            if (reserved_templates.includes(item)) {
+            if (this.#reserved.includes(item)) {
                 // If it s the case, lets'go
                 let template = Template.get_template(`#${item}#`)
 
@@ -360,15 +376,33 @@ class Template {
         Animation.loaded('#content#')
     }
 
-    load_content =  async (force) => {
+    load_content = async (force) => {
         // Load the link content in the right template
         if (this.is_content && dsb.instance && this.file !== null) {
             await this.load(force)
-                Template.import_module(this)
+            Template.import_module(this)
 
         } else {
-            this.load(force);
+            await this.load(force);
         }
+    }
+
+    /**
+     * We detect if the target element has a new class.
+     * If it is the case we launch events accordingly
+     *
+     * @since 1.6
+     */
+    observe_change_status = () => {
+        this.observer.observe(this.#dom.container, {
+            attributeFilter: ['class'],
+            attributeOldValue: true,
+
+            characterData: false,
+            childList: false,
+            subtree: false,
+            characterDataOldValue: false
+        });
     }
 
     /**
@@ -422,11 +456,13 @@ class Template {
             return true
         }
 
+        this.observe_change_status()
+
         /**
          * We get the actual '#content#' template in order to apply unload event
          */
         if (!this.same_file) {
-            this.dispatch_events('unload', this.history)
+            this.unload_animation()
         }
 
         /**
@@ -435,14 +471,15 @@ class Template {
          */
 
         // Step 1 : Dispatch loading event
-        this.dispatch_events('loading')
+        this.loading_animation()
+
 
         // Step 2 : run animation
-        this.start_animation()
+
 
         let current = this
         // Step 3 : Load the template using ajax and children if there are some
-        fetch(dsb_ajax.get + '?' + new URLSearchParams({
+        await fetch(dsb_ajax.get + '?' + new URLSearchParams({
             action: 'load-template',
             template: this.file,
             tab: this.tab,
@@ -453,7 +490,6 @@ class Template {
             if (response.ok) {
                 return response.text();     // <template>###<content>
             }
-            this.stop_animation()
             return '###'                     // No valid template ...
 
         }).then((html) => {
@@ -471,9 +507,9 @@ class Template {
                 Template.page_404(current.container?.dataset?.templateId, this.file)
             }
             current.loaded = true
+            this.loaded_animation()
 
-            // Step 5 : Loading is finished, we dispatch the load-done events
-            current.dispatch_events('load-done')
+            //this.observer.disconnect()
 
             Template.add_template_to_list(current)
 
@@ -504,7 +540,7 @@ class Template {
 
             // If we have /pages/, we remove it
             if (this.directory.includes(this.#page_path)) {
-                this.directory = this.directory.replace(this.#page_path,'')
+                this.directory = this.directory.replace(this.#page_path, '')
             }
         }
     }
@@ -594,18 +630,17 @@ class Template {
     }
 
     dispatch_events = (type, file = this.file, directory = this.#directory) => {
-
-
-        let generic_event = new Event(`template/${type}`)
+        let generic_event = new Event(`${type}`)
         generic_event.template = this;
         document.dispatchEvent(generic_event)
-
         Template.event.emit(type, this);
 
         // template event if it is a reserved template
         if (this.is_reserved) {
             Template.event.emit(`${type}/${this.ID}`, this);
-
+            let load_event = new Event(`${type}/${this.ID}`)
+            load_event.template = this
+            document.dispatchEvent(load_event)
         }
 
         if (file === null) {
@@ -617,17 +652,11 @@ class Template {
         file.replace('//', '/')
 
         // Specific event
-        let load_event = new Event(`template/${type}/${file}`)
+        let load_event = new Event(`${type}/${file}`)
         load_event.template = this
         document.dispatchEvent(load_event)
         Template.event.emit(`${type}/${file}`, this);
 
-        // // Specific directory event
-        // if (this.#directory !== '') {
-        //     let dir_event = new Event(`template/${type}/${file}`)
-        //     dir_event.template = this
-        //     document.dispatchEvent(dir_event)
-        // }
     }
 
     /**
@@ -671,7 +700,7 @@ class Template {
      *
      */
     animate = () => {
-        return (this.is_content || this.#dom.animate)
+        return (this.is_reserved || this.#dom.animate)
     }
 
     /**
@@ -689,7 +718,7 @@ class Template {
      * Start the animation for this template (if there is one)
      *
      */
-    start_animation = () => {
+    loading_animation = () => {
         if (this.animate()) {
             this.animation.loading(this.ID)
         }
@@ -699,18 +728,28 @@ class Template {
      * Stop the animation for this template  (if there is one)
      *
      */
-    stop_animation = () => {
+    loaded_animation = () => {
         if (this.animate()) {
             this.animation.loaded(this.ID)
         }
     }
 
+    /**
+     * Stop the animation for this template  (if there is one)
+     *
+     */
+    unload_animation = () => {
+        if (this.animate()) {
+            this.animation.unloading(this.ID)
+        }
+    }
+
     static async reload_content() {
         let t = new Template(document.querySelector('[data-template-id="#content#"]'))
-        t.start_animation()
+        t.loading_animation()
         await t.load(true)
         await Template.load_all_templates(t.container)
-        t.stop_animation()
+        t.loaded_animation()
     }
 
     static reload_page(soft = true) {
