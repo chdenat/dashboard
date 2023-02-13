@@ -16,7 +16,6 @@ import {customAlphabet} from 'nanoid'
 import {Bus as DSBEvent} from 'Bus';
 import {LocalDB} from 'LocalDB';
 import {Dashboard} from 'Dashboard';
-import * as Popper from '@popperjs/core';
 import * as bootstrap from 'bootstrap'
 import {Template} from 'Template'
 import {Toaster} from 'Toaster';
@@ -455,9 +454,6 @@ var dsb = {
             // When a template has been loaded, we register specific link actions and load all the children
             Template.event.on('template/loaded', template => {
 
-                // Download the family
-                Template.load_all_templates(template.container)
-
                 // Let open links in content if required
                 template.container.querySelectorAll('a[data-content]').forEach(item => {
 
@@ -475,8 +471,8 @@ var dsb = {
 
                 // Init UI
                 dsb.ui.init(template.container)
-
                 Template.use_404()
+
 
             })
 
@@ -1365,17 +1361,17 @@ var dsb = {
      */
     utils: {
 
-        kebab2Pascal:(kebab) => {
+        kebab2Pascal: (kebab) => {
             return kebab.replace(/(^\w|-\w)/g, dsb.utils._clearAndUpper)
         },
-        kebab2Camel:(kebab) => {
+        kebab2Camel: (kebab) => {
             return kebab.replace(/-\w/g, dsb.utils._clearAndUpper);
         },
-        kebab2Snake:(kebab) => {
-            return kebab.replace('-','_');
+        kebab2Snake: (kebab) => {
+            return kebab.replace('-', '_');
         },
-        _clearAndUpper:(text) => {
-                return text.replace(/-/, "").toUpperCase();
+        _clearAndUpper: (text) => {
+            return text.replace(/-/, "").toUpperCase();
         },
 
         /**
@@ -2201,6 +2197,7 @@ var dsb = {
                 }
             })
 
+
             // Lang switcher
             dsb.ui.current_lang = dsb.ui.get_lang()
             parent.querySelectorAll('select.lang-list').forEach(select => {
@@ -2237,8 +2234,7 @@ var dsb = {
                                 }
                             }
                         }
-                    );
-
+                    )
                     /**
                      * Change event
                      * @since 1.1.0
@@ -2279,10 +2275,6 @@ var dsb = {
                 }
 
             })
-
-            if (parent === document) {
-                dsb.init_lang()
-            }
 
 
             // Add scrolling
@@ -2412,10 +2404,6 @@ var dsb = {
          */
         Template.event.once('template/loaded/blocks/languages', block => {
             dsb.init_lang()
-        })
-
-        dsb.ui.init().then(() => {
-
         })
 
 
