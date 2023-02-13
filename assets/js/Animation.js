@@ -39,18 +39,11 @@ class Animation {
         this.#template = new Template(template_id)
         let loader = Animation.#loader
 
-        if (this.#template.animate() && loader) {
-            let container = document.querySelector(`[data-template-id="${template_id}"]`)
-            Animation.#remove_classes(container)
-    //        if (container.classList.contains(Animation.classes.unload)) {
-                container.classList.replace(Animation.classes.unload, Animation.classes.loading)
-            } else if (container.classList.contains(Animation.classes.loaded)) {
-                container.classList.replace(Animation.classes.loaded, Animation.classes.loading)
-            } else if (container.classList.contains(Animation.classes.loading)) {
-                container.classList.add(Animation.classes.loading)
-            }
+        if (/*this.#template.animate() && */loader) {
+            Animation.#remove_classes(this.#template.container)
+            this.#template.container.classList.add(Animation.classes.loading)
             loader?.classList.add(Animation.classes.running)
-      //  }
+        }
     }
 
     static loaded(arg) {
@@ -59,17 +52,11 @@ class Animation {
         this.#template = new Template(template_id)
         let loader = Animation.#loader
 
-       // if (this.#template.animate() && loader) {
-            let container = document.querySelector(`[data-template-id="${template_id}"]`)
-            if (container.classList.contains(Animation.classes.loading)) {
-                container.classList.replace(Animation.classes.loading, Animation.classes.loaded)
-            } else if (container.classList.contains(Animation.classes.unload)) {
-                container.classList.replace(Animation.classes.unload, Animation.classes.loaded)
-            } else if (!container.classList.contains(Animation.classes.loaded)) {
-                container.classList.add(Animation.classes.loaded)
-            }
+        if (/*this.#template.animate() &&*/ loader) {
+            Animation.#remove_classes(this.#template.container)
+            this.#template.container.classList.add(Animation.classes.loaded)
             loader?.classList.remove(Animation.classes.running)
-        //}
+        }
     }
 
     static unloading(arg) {
@@ -77,19 +64,11 @@ class Animation {
         this.#template = new Template(template_id)
         let loader = Animation.#loader
 
-       // if (this.#template.animate() && loader) {
-            let container = document.querySelector(`[data-template-id="${template_id}"]`)
-
-            if (container.classList.contains(Animation.classes.loading)) {
-                container.classList.replace(Animation.classes.loading, Animation.classes.unload)
-            } else if (container.classList.contains(Animation.classes.loaded)) {
-                container.classList.replace(Animation.classes.loaded, Animation.classes.unload)
-            } else if (!container.classList.contains(Animation.classes.unload)) {
-                container.classList.add(Animation.classes.unload)
-            }
-
+        if (/*this.#template.animate() &&*/ loader) {
+            Animation.#remove_classes(this.#template.container)
+            this.#template.container.classList.add(Animation.classes.unload)
             loader?.classList.remove(Animation.classes.running)
-       // }
+        }
     }
 }
 
