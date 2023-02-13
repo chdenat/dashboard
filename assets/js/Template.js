@@ -97,9 +97,10 @@ class Template {
             this.#dom = {
                 container: element,
                 forced: element.dataset.templateForced ?? false,        // data-template-forced
-                animate: element.dataset.loadAnimation ?? false,        // data-load-animation
+                animate: element.dataset.nimationType ?? false,         // data-animation-load
                 animation_type: element.dataset.animationType ?? null,  // data-animation-type
             }
+
             this.#load = false
             this.#parent = element.parentElement.closest('[data-template]')
 
@@ -111,19 +112,7 @@ class Template {
 
             // Load Satus Observer
             let template = this
-            this.load_status_observer = new MutationObserver(mutations => {
-                mutations.forEach(function (mutation) {
-                    let found = false
-
-                    if (mutation.type === 'attributes' && mutation.attributeName === 'data-load-status') {
-                        let status = mutation.target.dataset.loadStatus
-                        if (status && status != mutation.oldValue && !found) {
-                            template.dispatch_events(`template/${status}`)
-                            found = true
-                        }
-                    }
-                });
-            })
+            this.load_status_observer = new MutationObserver(this.loadStatusObserver,this)
         } else {
             this.#ID = null
         }
@@ -410,6 +399,27 @@ class Template {
             characterDataOldValue: false
         });
     }
+    /**
+     * Load Status Observer
+     *
+     * @param mutations {MutationRecord}
+     *
+     * @since 1.6
+     *
+     */
+    loadStatusObserver = (mutations) => {
+        let template = this
+        mutations.forEach(function (mutation) {
+                let found = false
+                if (mutation.type === 'attributes' && mutation.attributeName === 'data-load-status') {
+                    let status = mutation.target.dataset.loadStatus
+                    if (status && status != mutation.oldValue && !found) {
+                        template.dispatchEvents(`template/${status}`)
+                        found = true
+                    }
+                }
+            })
+        }
 
     /**
      * Load a template by Ajax in any DOM element that contains the right data-template attribute
@@ -519,11 +529,8 @@ class Template {
             }
             current.loaded = true
 
-            Template.load_all_templates(this.#dom.container)
-
+            Template.load_all_templates(this.container)
             this.loaded_animation(true)
-
-            //this.observer.disconnect()
 
             Template.add_template_to_list(current)
 
@@ -622,7 +629,7 @@ class Template {
         if (parts[parts.length - 1] === 'index') {
             parts.pop()
         }
-        dsb.instance.importPageController(parts.pop())
+        dsb.instance.importPageController(parts.pop(),template)
     }
 
 
@@ -642,7 +649,7 @@ class Template {
         return parent.querySelectorAll(query)
     }
 
-    dispatch_events = (type, file = this.file, directory = this.#directory) => {
+    dispatchEvents = (type, file = this.file, directory = this.#directory) => {
 
         let generic_event = new Event(`${type}`)
         generic_event.template = this;
@@ -733,7 +740,7 @@ class Template {
      *
      */
     loading_animation = () => {
-        this.container.setAttribute('data-load-status',Animation.classes.loading)
+        this.container.setAttribute('data-load-status', Animation.classes.loading)
         if (this.animate()) {
             this.animation.loading(this.ID)
         }
@@ -744,7 +751,7 @@ class Template {
      *
      */
     loaded_animation = () => {
-        this.container.setAttribute('data-load-status',Animation.classes.loaded)
+        this.container.setAttribute('data-load-status', Animation.classes.loaded)
         if (this.animate()) {
             this.animation.loaded(this.ID)
         }
@@ -755,7 +762,7 @@ class Template {
      *
      */
     unload_animation = () => {
-        this.container.setAttribute('data-load-status',Animation.classes.unload)
+        this.container.setAttribute('data-load-status', Animation.classes.unload)
         if (this.animate()) {
             this.animation.unloading(this.ID)
         }
