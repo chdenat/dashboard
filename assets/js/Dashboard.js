@@ -2,7 +2,6 @@
  *
  *
  */
-//import {Template} from "/dashboard/assets/js/Template.js";
 
 class Dashboard {
     #cpath = ''
@@ -18,17 +17,28 @@ class Dashboard {
     }
 
 
-    import_module = async (page = null, js = 'page.js') => {
+    /**
+     * Import page controller.
+     *
+     * For each page, like  'my-admin', we should have a page controller named MyAdminPage
+     * then we instantiate a global variable my_admin=new MyAdminPage('my-admin')
+     *
+     * @param page
+     * @return {Promise<void>}
+     */
+    importPageController = async (page = null) => {
+
         if (page === null) {
             page = this.current_page
         }
 
         if (page) {
+
+            let pascal = `${dsb.utils.kebab2Pascal(page)}Page`
             try {
-                await import(`${this.#cpath}${this.#dir}${page}/${js}`)
+                await import(`${this.#cpath}${this.#dir}${page}/${pascal}.js`)
                     .then(module => {
                         if (module) {
-
                             let components = Object.values(module)
                             if (components.length !== 0) {
                                 let imported
@@ -40,9 +50,8 @@ class Dashboard {
                                     imported.init()
                                 } else {
                                     // We use Classes, so we're able
-                                    // to create and populate the exported variable
-                                    imported=Object.keys(module)[0]
-                                    window[imported] = components[0]
+                                    // to instantiate the class
+                                    window[dsb.utils.kebab2Snake(page)] = new components[0](page)
                                 }
                             }
                         }
