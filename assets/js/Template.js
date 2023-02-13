@@ -109,19 +109,18 @@ class Template {
             element.setAttribute('data-template-id', this.#ID)
 
 
-            // Observer
+            // Load Satus Observer
             let template = this
-            this.observer = new MutationObserver(mutations => {
+            this.load_status_observer = new MutationObserver(mutations => {
                 mutations.forEach(function (mutation) {
                     let found = false
-                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                        Object.values(Animation.classes).forEach(_class => {
-                            if (mutation.target.classList.contains(_class) && !found) {
-                                console.log(_class,mutation.oldValue)
-                                template.dispatch_events(`template/${_class}`)
-                                found = true
-                            }
-                        })
+
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'data-load-status') {
+                        let status = mutation.target.dataset.loadStatus
+                        if (status && status != mutation.oldValue && !found) {
+                            template.dispatch_events(`template/${status}`)
+                            found = true
+                        }
                     }
                 });
             })
@@ -157,6 +156,13 @@ class Template {
         return this.#ID
     }
 
+    get container() {
+        return this.dom.container
+    }
+
+    get dom() {
+        return this.#dom
+    }
 
     static ID_from_element(element) {
         if (!element instanceof HTMLElement) {
@@ -380,7 +386,7 @@ class Template {
         // Load the link content in the right template
         if (this.is_content && dsb.instance && this.file !== null) {
             await this.load(force)
-            Template.import_module(this)
+            Template.importPageController(this)
 
         } else {
             await this.load(force);
@@ -388,14 +394,14 @@ class Template {
     }
 
     /**
-     * We detect if the target element has a new class.
+     * We detect if the target element has a data-load-status change.
      * If it is the case we launch events accordingly
      *
      * @since 1.6
      */
-    observe_change_status = () => {
-        this.observer.observe(this.#dom.container, {
-            attributeFilter: ['class'],
+    observeLoadStatus = () => {
+        this.load_status_observer.observe(this.#dom.container, {
+            attributeFilter: ['data-load-status'],
             attributeOldValue: true,
 
             characterData: false,
@@ -456,13 +462,16 @@ class Template {
             return true
         }
 
-        this.observe_change_status()
+        /**
+         * We observe the change on block
+         */
+        this.observeLoadStatus()
 
         /**
          * We get the actual '#content#' template in order to apply unload event
          */
         if (!this.same_file) {
-            this.unload_animation()
+            this.unload_animation(true)
         }
 
         /**
@@ -471,7 +480,7 @@ class Template {
          */
 
         // Step 1 : Dispatch loading event
-        this.loading_animation()
+        this.loading_animation(true)
 
 
         // Step 2 : run animation
@@ -479,7 +488,7 @@ class Template {
 
         let current = this
         // Step 3 : Load the template using ajax and children if there are some
-        await fetch(dsb_ajax.get + '?' + new URLSearchParams({
+        fetch(dsb_ajax.get + '?' + new URLSearchParams({
             action: 'load-template',
             template: this.file,
             tab: this.tab,
@@ -493,8 +502,10 @@ class Template {
             return '###'                     // No valid template ...
 
         }).then((html) => {
+
             let [template, content] = html.split('###')
             if (template) {
+
                 current.#template_completion(template)
                 //load content.
                 current.container.innerHTML = content;
@@ -507,7 +518,10 @@ class Template {
                 Template.page_404(current.container?.dataset?.templateId, this.file)
             }
             current.loaded = true
-            this.loaded_animation()
+
+            Template.load_all_templates(this.#dom.container)
+
+            this.loaded_animation(true)
 
             //this.observer.disconnect()
 
@@ -589,7 +603,6 @@ class Template {
                 children.push(item)
             }
         }
-
         for (const template of children) {
             template.load_content(true)
         }
@@ -604,12 +617,12 @@ class Template {
         return template
     }
 
-    static import_module = (template) => {
+    static importPageController = (template) => {
         let parts = template.file.split('/')
         if (parts[parts.length - 1] === 'index') {
             parts.pop()
         }
-        dsb.instance.import_module(parts.pop())
+        dsb.instance.importPageController(parts.pop())
     }
 
 
@@ -630,6 +643,7 @@ class Template {
     }
 
     dispatch_events = (type, file = this.file, directory = this.#directory) => {
+
         let generic_event = new Event(`${type}`)
         generic_event.template = this;
         document.dispatchEvent(generic_event)
@@ -719,6 +733,7 @@ class Template {
      *
      */
     loading_animation = () => {
+        this.container.setAttribute('data-load-status',Animation.classes.loading)
         if (this.animate()) {
             this.animation.loading(this.ID)
         }
@@ -729,6 +744,7 @@ class Template {
      *
      */
     loaded_animation = () => {
+        this.container.setAttribute('data-load-status',Animation.classes.loaded)
         if (this.animate()) {
             this.animation.loaded(this.ID)
         }
@@ -739,6 +755,7 @@ class Template {
      *
      */
     unload_animation = () => {
+        this.container.setAttribute('data-load-status',Animation.classes.unload)
         if (this.animate()) {
             this.animation.unloading(this.ID)
         }
