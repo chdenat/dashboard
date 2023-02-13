@@ -26,7 +26,7 @@ class Dashboard {
      * @param page
      * @return {Promise<void>}
      */
-    importPageController = async (page = null) => {
+    importPageController = async (page = null,template = null) => {
 
         if (page === null) {
             page = this.current_page
@@ -51,7 +51,7 @@ class Dashboard {
                                 } else {
                                     // We use Classes, so we're able
                                     // to instantiate the class
-                                    window[dsb.utils.kebab2Snake(page)] = new components[0](page)
+                                    window[dsb.utils.kebab2Snake(page)] = new components[0](page,template)
                                 }
                             }
                         }
