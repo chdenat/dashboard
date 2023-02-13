@@ -17,25 +17,29 @@ import {dsb} from "dsb";
 
 export class Page {
 
-    #main = null
+    #template = null
     #page= null
 
-    constructor(page) {
+    constructor(page,template) {
         this.#page = page
+        this.#template = template
         dsb.instance.current_page
+
+        //import sheet from './style.css' assert { type: 'css' };
+        //document.adoptedStyleSheets = [sheet];
     }
 
     loaded() {
         Animation.loaded('#content#')
-      //  dsb.ui.show(this.main)
     }
 
     /**
-     * main setter
-     * @param id
+     * template getter
+     *
+     * @return {Template|null}
      */
-    set main(id) {
-        this.#main = document.getElementById(id)
+    get template() {
+        return this.#template
     }
 
     /**
