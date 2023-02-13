@@ -18,13 +18,12 @@ import {LocalDB} from 'LocalDB';
 import {Dashboard} from 'Dashboard';
 import * as Popper from '@popperjs/core';
 import * as bootstrap from 'bootstrap'
-
+import {Template} from 'Template'
 import {Toaster} from 'Toaster';
 
 await import ('sprintf');
 
 const nanoid = customAlphabet('1234567890', 6)
-const {Template} = await import ('Template')
 
 const SECOND = 1000
 const MINUTE = 60 * SECOND
