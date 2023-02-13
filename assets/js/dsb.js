@@ -1366,6 +1366,19 @@ var dsb = {
      */
     utils: {
 
+        kebab2Pascal:(kebab) => {
+            return kebab.replace(/(^\w|-\w)/g, dsb.utils._clearAndUpper)
+        },
+        kebab2Camel:(kebab) => {
+            return kebab.replace(/-\w/g, dsb.utils._clearAndUpper);
+        },
+        kebab2Snake:(kebab) => {
+            return kebab.replace('-','_');
+        },
+        _clearAndUpper:(text) => {
+                return text.replace(/-/, "").toUpperCase();
+        },
+
         /**
          * path info
          *
