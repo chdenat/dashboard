@@ -18,16 +18,16 @@ import {dsb} from "dsb";
 export class Page {
 
     #main = null
-    #id= ''
+    #page= null
 
-    constructor(id) {
-        this.#id = id
-        this.main=id
+    constructor(page) {
+        this.#page = page
+        dsb.instance.current_page
     }
 
     loaded() {
         Animation.loaded('#content#')
-        dsb.ui.show(this.main)
+      //  dsb.ui.show(this.main)
     }
 
     /**
@@ -39,21 +39,12 @@ export class Page {
     }
 
     /**
-     * main getter
+     * page getter
      *
-     * @return {HTMLElement}
+     * @return {string|null}
      */
-    get main() {
-        return this.#main
-    }
-
-    /**
-     * page id getter
-     *
-     * @return {string}
-     */
-    get id() {
-        return this.#id
+    get page() {
+        return this.#page
     }
 
 }
