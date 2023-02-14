@@ -51,7 +51,7 @@ class Dashboard {
                                 } else {
                                     // We use Classes, so we're able
                                     // to instantiate the class
-                                    window[dsb.utils.kebab2Snake(page)] = new components[0](page,template)
+                                    window[dsb.utils.kebab2Camel(page)] = new components[0](page,template)
                                 }
                             }
                         }
