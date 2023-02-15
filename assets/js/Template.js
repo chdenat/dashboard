@@ -112,7 +112,7 @@ class Template {
 
             // Load Satus Observer
             let template = this
-            this.load_status_observer = new MutationObserver(this.loadStatusObserver,this)
+            this.load_status_observer = new MutationObserver(this.loadStatusObserver, this)
         } else {
             this.#ID = null
         }
@@ -358,7 +358,7 @@ class Template {
                         Animation.loading('#content#')
                     }
 
-                    template.load_content(force)
+                    template.loadPage(force)
 
                     // save file information
                     template.#dom.container.setAttribute('data-template', template.file)
@@ -371,12 +371,30 @@ class Template {
         Animation.loaded('#content#')
     }
 
-    load_content = async (force) => {
+    /**
+     * Load a page if the template target is #content#
+     *
+     *
+     * @param force
+     * @return {Promise<void>}
+     */
+    loadPage = async (force) => {
         // Load the link content in the right template
         if (this.is_content && dsb.instance && this.file !== null) {
-            await this.load(force)
             Template.importPageController(this)
-
+                .then(result => {
+                    // Once it has benn loaded, it's time to initalise the page
+                    if (result.success) {
+                        this.load(force).then(() => {
+                            if (!result.message) {
+                                result.page.initialisation()
+                            }
+                        })
+                    }
+                })
+                .catch(error => {
+                    console.error(error.message)
+                })
         } else {
             await this.load(force);
         }
@@ -410,16 +428,16 @@ class Template {
     loadStatusObserver = (mutations) => {
         let template = this
         mutations.forEach(function (mutation) {
-                let found = false
-                if (mutation.type === 'attributes' && mutation.attributeName === 'data-load-status') {
-                    let status = mutation.target.dataset.loadStatus
-                    if (status && status != mutation.oldValue && !found) {
-                        template.dispatchEvents(`template/${status}`)
-                        found = true
-                    }
+            let found = false
+            if (mutation.type === 'attributes' && mutation.attributeName === 'data-load-status') {
+                let status = mutation.target.dataset.loadStatus
+                if (status && status != mutation.oldValue && !found) {
+                    template.dispatchEvents(`template/${status}`)
+                    found = true
                 }
-            })
-        }
+            }
+        })
+    }
 
     /**
      * Load a template by Ajax in any DOM element that contains the right data-template attribute
@@ -611,7 +629,7 @@ class Template {
             }
         }
         for (const template of children) {
-            template.load_content(true)
+            template.loadPage(true)
         }
 
     }
@@ -624,12 +642,12 @@ class Template {
         return template
     }
 
-    static importPageController = (template) => {
+    static importPageController = async (template) => {
         let parts = template.file.split('/')
         if (parts[parts.length - 1] === 'index') {
             parts.pop()
         }
-        dsb.instance.importPageController(parts.pop(),template)
+        return dsb.instance.importPageController(parts.pop(), template)
     }
 
 
@@ -768,7 +786,7 @@ class Template {
         }
     }
 
-    static async reload_content() {
+    static async reloadPage() {
         let t = new Template(document.querySelector('[data-template-id="#content#"]'))
         t.loading_animation()
         await t.load(true)
