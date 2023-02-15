@@ -36,7 +36,7 @@ class Dashboard {
 
             let pascal = `${dsb.utils.kebab2Pascal(page)}Page`
             try {
-                await import(`${this.#cpath}${this.#dir}${page}/${pascal}.js`)
+                import(`${this.#cpath}${this.#dir}${page}/${pascal}.js`)
                     .then(module => {
                         if (module) {
                             let components = Object.values(module)
