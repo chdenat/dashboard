@@ -452,37 +452,36 @@ var dsb = {
             Template.use_404(false)
 
             // When a template has been loaded, we register specific link actions and load all the children
-            Template.event.on('template/loaded', template => {
-
-                // Let open links in content if required
-                template.container.querySelectorAll('a[data-content]').forEach(item => {
-
-                    item.addEventListener('click', event => {
-                        event.preventDefault()
-                        Template.load_from_event(event)
-                        dsb.content_event.emit('click', item)
-                    })
-
-                });
-                // Here is the case we need to open in content pseudo-modal
-                template.container.querySelectorAll('a[data-content-modal]').forEach(item => {
-                    item.addEventListener('click', dsb.ui.show_intermediate_content)
-                });
-
-                // Init UI
-                dsb.ui.init(template.container)
-                Template.use_404()
-
-
-            })
+            Template.event.on('template/loaded', dsb.template.genericLoadedEvent)
 
             // Update the page
             Template.load_all_templates()
 
-        }
+        },
 
-    }
-    ,
+        genericLoadedEvent:(template => {
+            // Let open links in content if required
+            template.container.querySelectorAll('a[data-content]').forEach(item => {
+
+                item.addEventListener('click', event => {
+                    event.preventDefault()
+                    Template.load_from_event(event)
+                    dsb.content_event.emit('click', item)
+                })
+
+            });
+            // Here is the case we need to open in content pseudo-modal
+            template.container.querySelectorAll('a[data-content-modal]').forEach(item => {
+                item.addEventListener('click', dsb.ui.show_intermediate_content)
+            });
+
+            // Init UI
+            dsb.ui.init(template.container)
+            Template.use_404()
+
+        }),
+
+    },
 
     /**
      * Toast management
