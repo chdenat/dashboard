@@ -29,6 +29,14 @@ export class Page {
         //document.adoptedStyleSheets = [sheet];
     }
 
+    attachEvents  = ()=> {
+        throw new Error(`You must implement "attachEvents" method !`)
+    }
+
+    initialisation = ()=> {
+        //Silent mode :  this is called when there is no child method
+    }
+
     loaded() {
         Animation.loaded('#content#')
     }
