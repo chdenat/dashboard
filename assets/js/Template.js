@@ -516,7 +516,7 @@ class Template {
 
         let current = this
         // Step 3 : Load the template using ajax and children if there are some
-        fetch(dsb_ajax.get + '?' + new URLSearchParams({
+        await fetch(dsb_ajax.get + '?' + new URLSearchParams({
             action: 'load-template',
             template: this.file,
             tab: this.tab,
