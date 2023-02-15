@@ -24,49 +24,82 @@ class Dashboard {
      * then we instantiate a global variable my_admin=new MyAdminPage('my-admin')
      *
      * @param page
-     * @return {Promise<void>}
+     * @param template
+     *
+     * @return {Promise}
+     *         resolve : {
+     *                       success : true
+     *                       page : page controller
+     *                   }
+     *         reject :  {
+     *                      success : true
+     *                   }
+     *
      */
-    importPageController = async (page = null,template = null) => {
+    importPageController = (page = null, template = null) => {
+
+        let success = false
+        let _page = null;
 
         if (page === null) {
             page = this.current_page
         }
 
-        if (page) {
-
-            let pascal = `${dsb.utils.kebab2Pascal(page)}Page`
-            try {
-                import(`${this.#cpath}${this.#dir}${page}/${pascal}.js`)
-                    .then(module => {
-                        if (module) {
-                            let components = Object.values(module)
-                            if (components.length !== 0) {
-                                let imported
-                                if (Object.values(module)[0]?.module) {
-                                    // We use object with module attribute, so we're able
-                                    // to create the exported variable, populate it and init it
-                                    imported = Object.values(module)[0]
-                                    window[imported.module] = imported
-                                    imported.init()
-                                } else {
-                                    // We use Classes, so we're able
-                                    // to instantiate the class
-                                    window[dsb.utils.kebab2Camel(page)] = new components[0](page,template)
+        return new Promise((resolve, reject) => {
+                let pascal = `${dsb.utils.kebab2Pascal(page)}Page`
+                try {
+                    import(`${this.#cpath}${this.#dir}${page}/${pascal}.js`)
+                        .then(module => {
+                            if (module) {
+                                let components = Object.values(module)
+                                if (components.length !== 0) {
+                                    let imported
+                                    if (Object.values(module)[0]?.module) {
+                                        // We use object with module attribute, so we're able
+                                        // to create the exported variable, populate it and init it
+                                        imported = Object.values(module)[0]
+                                        window[imported.module] = imported
+                                        imported.init()
+                                        return {legacy:imported,controller:imported.module}
+                                    } else {
+                                        // We use Classes, so we're able
+                                        // to instantiate the class
+                                        let name = dsb.utils.kebab2Camel(page)
+                                        window[name] = new components[0](page, template)
+                                        // Then to attach all the events
+                                        window[name].attachEvents()
+                                        // Finally we pass it to the caller
+                                        return window[name]
+                                    }
                                 }
                             }
-                        }
+                        })
+                        .then(page => {
+                            if (page?.legacy) {
+                                resolve({
+                                    success:true,
+                                    page:page.legacy,message:`${page.controller} use legacy controller !`
+                                })
+                            }
+                            resolve({success:true,page:page})
+                        })
+                        .catch(error => {
+                            reject({
+                                success:false,
+                                message:error
+                            })
+                        })
+                } catch (error) {
+                    reject({
+                        success:false,
+                        message : 'Probably due to legacy :' + error
                     })
-                    .catch(error => {
-                        console.error(error)
-                    })
-            } catch(error) {
-                console.error('Probably due to legacy :'+error)
+                }
+        })
 
-            }
-        }
     }
 
-    get current_page()  {
+    get current_page() {
         //assume pathname = /pages/<page>
 
         // We 1st set current to home (can contains #)
