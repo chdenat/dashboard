@@ -305,7 +305,7 @@ class Template {
             return
         }
 
-        t.check_link(`${this.#page_path}404`)
+        t.check_link(`${t.#page_path}404`)
         t.load(true, {url: url})
         Template.use_404();
 
