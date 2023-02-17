@@ -16,31 +16,31 @@
  **********************************************************************************************************************/
 
 import {dsb} from 'dsb'
-import {Bus} from 'Bus'
+import {Bus as ConsoleEvent} from 'Bus'
 
 class DSBConsole {
-    #ID = null
+    #id = null
     #console = null
     #body = null
     #menu = null
     #last = null
     #scroller = null
     #running = true
-    #event= Bus
+    static event= ConsoleEvent
 
     /**
      *
-     * @param ID            CSS Selector of the console or DOM Element
+     * @param id            CSS Selector of the console or DOM Element
      *
      * @param clean         Add the possibility to erase the content
      */
-    constructor(ID, clean = true) {
+    constructor(id, clean = true) {
 
-        this.#ID = ID
-        if (ID instanceof HTMLElement) {
-            this.#console = ID
+        this.#id = id
+        if (id instanceof HTMLElement) {
+            this.#console = id
         } else {
-            this.#console = document.querySelector(ID)
+            this.#console = document.querySelector(id)
         }
 
         this.#scroller = OverlayScrollbars(this.#console, {})
@@ -64,9 +64,7 @@ class DSBConsole {
 
         // Set it ready to print
         this.#prepare_next()
-        this.event.emit(`console/start/${this.#ID}`,[{result:result}])
-
-
+        DSBConsole.event.emit(`console/start/${this.#id}`)
     }
 
     /**
@@ -85,7 +83,7 @@ class DSBConsole {
         this.#prepare_next()
         this.#append(from_event ? '' : starter, classes)
 
-        this.event.emit(`console/clear/${this.#ID}`)
+        DSBConsole.event.emit(`console/clear/${this.#id}`)
 
         if (from_event) {
             starter.preventDefault()
@@ -139,7 +137,7 @@ class DSBConsole {
             }
         }
 
-        this.event.emit(`console/copy/${this.#ID}`,[{result:result}])
+        DSBConsole.event.emit(`console/copy/${this.#id}`,[{result:result}])
 
 
         // We alert the user with a toast
@@ -173,7 +171,7 @@ class DSBConsole {
 
         dsb.utils.export_to_file(this.#body.innerText, 'console.txt')
 
-        this.event.emit(`console/export/${this.#ID}`)
+        DSBConsole.event.emit(`console/export/${this.#id}`)
 
         // We alert the user with a toast
             dsb.toast.message({
@@ -193,7 +191,7 @@ class DSBConsole {
         this.#console.classList.toggle('pause')
         this.#running = false
 
-        this.event.emit(`console/pause/${this.#ID}`,[{running:this.#running}])
+        DSBConsole.event.emit(`console/pause/${this.#id}`,[{running:this.#running}])
 
         this.#console.querySelector('.console-play').classList.toggle('dsb-hide')
         this.#console.querySelector('.console-pause').classList.toggle('dsb-hide')
@@ -208,7 +206,7 @@ class DSBConsole {
         this.#console.classList.toggle('pause')
         this.#running = true
 
-        this.event.emit(`console/play/${this.#ID}`,[{running:this.#running}])
+        DSBConsole.event.emit(`console/play/${this.#id}`,[{running:this.#running}])
 
         this.#console.querySelector('.console-play').classList.toggle('dsb-hide')
         this.#console.querySelector('.console-pause').classList.toggle('dsb-hide')
@@ -235,7 +233,7 @@ class DSBConsole {
      * Show console
      */
     show = () => {
-        this.event.emit(`console/show/${this.#ID}`)
+        DSBConsole.event.emit(`console/show/${this.#id}`)
         this.#console.classList.remove('dsb-hide')
     }
 
@@ -243,7 +241,7 @@ class DSBConsole {
      * Hide console
      */
     hide = () => {
-        this.event.emit(`console/hide/${this.#ID}`)
+        DSBConsole.event.emit(`console/hide/${this.#id}`)
         this.#console.classList.add('dsb-hide')
     }
 
@@ -263,7 +261,7 @@ class DSBConsole {
         if (classes !== '') {
             this.#last.classList.add(classes)
         }
-        this.event.emit(`console/append/${this.#ID}`)
+        DSBConsole.event.emit(`console/append/${this.#id}`)
 
         return this.#prepare_next()
     }
@@ -319,12 +317,11 @@ class DSBConsole {
     }
 
     /**
-     * Return the event manager
-     *
-     * @return {*}
+     * Return id
+     * @return {null}
      */
-    get event() {
-        return this.#event
+    get id() {
+        return this.#id
     }
 
 }
