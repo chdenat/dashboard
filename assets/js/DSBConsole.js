@@ -1,4 +1,4 @@
-import {dsb} from "dsb";
+
 
 /***********************************************************************************************************************
  *
@@ -15,6 +15,8 @@ import {dsb} from "dsb";
  *
  **********************************************************************************************************************/
 
+import {dsb} from 'dsb'
+import {Bus} from 'Bus'
 
 class DSBConsole {
     #ID = null
@@ -24,6 +26,7 @@ class DSBConsole {
     #last = null
     #scroller = null
     #running = true
+    #event= Bus
 
     /**
      *
@@ -61,6 +64,8 @@ class DSBConsole {
 
         // Set it ready to print
         this.#prepare_next()
+        this.event.emit(`console/start/${this.#ID}`,[{result:result}])
+
 
     }
 
@@ -80,6 +85,7 @@ class DSBConsole {
         this.#prepare_next()
         this.#append(from_event ? '' : starter, classes)
 
+        this.event.emit(`console/clear/${this.#ID}`)
 
         if (from_event) {
             starter.preventDefault()
@@ -133,6 +139,9 @@ class DSBConsole {
             }
         }
 
+        this.event.emit(`console/copy/${this.#ID}`,[{result:result}])
+
+
         // We alert the user with a toast
         if (result) {
             dsb.toast.message({
@@ -164,6 +173,8 @@ class DSBConsole {
 
         dsb.utils.export_to_file(this.#body.innerText, 'console.txt')
 
+        this.event.emit(`console/export/${this.#ID}`)
+
         // We alert the user with a toast
             dsb.toast.message({
                 title: dsb.ui.get_text_i18n('console/export-text', 'title'),
@@ -180,10 +191,12 @@ class DSBConsole {
     pause = () => {
         this.#scroller.sleep()
         this.#console.classList.toggle('pause')
+        this.#running = false
+
+        this.event.emit(`console/pause/${this.#ID}`,[{running:this.#running}])
 
         this.#console.querySelector('.console-play').classList.toggle('dsb-hide')
         this.#console.querySelector('.console-pause').classList.toggle('dsb-hide')
-        this.#running = false
     }
 
     /**
@@ -193,10 +206,12 @@ class DSBConsole {
     play = () => {
         this.#scroller.update()
         this.#console.classList.toggle('pause')
+        this.#running = true
+
+        this.event.emit(`console/play/${this.#ID}`,[{running:this.#running}])
 
         this.#console.querySelector('.console-play').classList.toggle('dsb-hide')
         this.#console.querySelector('.console-pause').classList.toggle('dsb-hide')
-        this.#running = true
     }
 
     /***
@@ -220,6 +235,7 @@ class DSBConsole {
      * Show console
      */
     show = () => {
+        this.event.emit(`console/show/${this.#ID}`)
         this.#console.classList.remove('dsb-hide')
     }
 
@@ -227,6 +243,7 @@ class DSBConsole {
      * Hide console
      */
     hide = () => {
+        this.event.emit(`console/hide/${this.#ID}`)
         this.#console.classList.add('dsb-hide')
     }
 
@@ -246,6 +263,7 @@ class DSBConsole {
         if (classes !== '') {
             this.#last.classList.add(classes)
         }
+        this.event.emit(`console/append/${this.#ID}`)
 
         return this.#prepare_next()
     }
@@ -298,6 +316,15 @@ class DSBConsole {
 
     get running() {
         return this.#running
+    }
+
+    /**
+     * Return the event manager
+     *
+     * @return {*}
+     */
+    get event() {
+        return this.#event
     }
 
 }
