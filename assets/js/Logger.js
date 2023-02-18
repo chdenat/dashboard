@@ -105,7 +105,6 @@ class Logger {
             lines: lines,
             read: 0
         }
-
         this.#scroll_bottom = parameters.scroll_to_bottom ?? false
     }
 
@@ -177,6 +176,7 @@ class Logger {
      * @returns {Promise<Logger>}
      */
     start = (show_console = true) => {
+        console.log(this.id)
 
         // Get the number of lines
         this.context.read_lines = this.get_lines_number()
@@ -258,6 +258,7 @@ class Logger {
         if (!this.#once) {
             this.animate()
         }
+
         fetch(ajax.get + '?' + new URLSearchParams({
             action: 'logger',
             file: this.context.file,
@@ -316,8 +317,8 @@ class Logger {
                     Logger.event.emit(`log/running/${this.#id}`, {logger: this, json: json})
 
                     // Relaunch the reading in few seconds
+                    this.#clear_timers()
                     if (!this.#once) {
-                        this.#clear_timers()
                         this.context.timers.read = setTimeout(this.read, this.#delays.read)
                     }
 
@@ -422,6 +423,11 @@ class Logger {
 
     animate = (animation = true, type = 'dotshorts') => {
 
+        // Bail early if there is only one run
+        if (this.#once) {
+            return
+        }
+
         let anime = {};
         const max = 80; //()=>{return Math.round(20 + Math.random() * 60)}
 
@@ -472,7 +478,7 @@ class Logger {
      * Event launched before reading
      *
      */
-    start_log = async () => {
+    start_log = async (data) => {
         // Keep the user focused on
         this.animate(true)
     }
