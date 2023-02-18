@@ -743,8 +743,8 @@ var dsb = {
             // and a new specific running event
 
             let specific = new Event(`modal/loaded/${dsb.modal._parameters.action}`)
-            generic.modal = dsb.modal
-            generic.parameters = dsb.modal._parameters.keys
+            specific.modal = dsb.modal
+            specific.parameters = dsb.modal._parameters.keys
             document.dispatchEvent(specific)
         },
 
