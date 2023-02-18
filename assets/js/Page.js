@@ -20,7 +20,7 @@ export class Page {
     #template = null
     #page= null
 
-    constructor(page,template) {
+    constructor(page, template) {
         this.#page = page
         this.#template = template
         dsb.instance.current_page
@@ -29,11 +29,24 @@ export class Page {
         //document.adoptedStyleSheets = [sheet];
     }
 
-    attachEvents  = ()=> {
+    /**
+     * Those 2 methods could be declared in the Cpntroller Page Class
+     *
+     * They are automatically called when we import the class and instantiate the controller
+     *
+
+     static globalPageInitialisation  = ()=> {
+        console.error(`You must implement "globalPageInitialisation" method !`)
+    }
+     attachEvents  = ()=> {
         throw new Error(`You must implement "attachEvents" method !`)
     }
 
-    initialisation = ()=> {
+     *
+     *
+     */
+
+    initialisation = () => {
         //Silent mode :  this is called when there is no child method
     }
 
