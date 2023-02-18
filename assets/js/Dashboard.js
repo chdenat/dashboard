@@ -80,11 +80,11 @@ class Dashboard {
                                     let name = dsb.utils.kebab2Camel(page)
                                     window[name] = new _class(page, template)
                                     //Call  Global page Initialisation which is a static method
-                                    if (undefined === window[name]['globalPageInitialisation']) {
+                                    if (undefined !== window[name]['globalPageInitialisation']) {
                                         _class.globalPageInitialisation()
                                     }
                                     // Then attach all the events to the instance
-                                    if (undefined === window[name]['attachEvents']) {
+                                    if (undefined !== window[name]['attachEvents']) {
                                         window[name].attachEvents()
                                     }
                                     // Finally we pass it to the caller
