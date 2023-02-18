@@ -16,6 +16,18 @@ class Dashboard {
         this.#dir = `${dir}/`
     }
 
+    get current_page() {
+        //assume pathname = /pages/<page>
+
+        // We 1st set current to home (can contains #)
+        let current = '' // Template.get_home().split('#')[0].split('/').pop()
+
+        let path = location.pathname
+        if (path !== '/') {
+            current = path.split('/')[2]
+        }
+        return current
+    }
 
     /**
      * Import page controller.
@@ -46,70 +58,64 @@ class Dashboard {
         }
 
         return new Promise((resolve, reject) => {
-                let pascal = `${dsb.utils.kebab2Pascal(page)}Page`
-                try {
-                    import(`${this.#cpath}${this.#dir}${page}/${pascal}.js`)
-                        .then(module => {
-                            if (module) {
-                                let components = Object.values(module)
-                                if (components.length !== 0) {
-                                    let imported
-                                    if (Object.values(module)[0]?.module) {
-                                        // We use object with module attribute, so we're able
-                                        // to create the exported variable, populate it and init it
-                                        imported = Object.values(module)[0]
-                                        window[imported.module] = imported
-                                        imported.init()
-                                        return {legacy:imported,controller:imported.module}
-                                    } else {
-                                        // We use Classes, so we're able
-                                        // to instantiate the class
-                                        let name = dsb.utils.kebab2Camel(page)
-                                        window[name] = new components[0](page, template)
-                                        // Then to attach all the events
-                                        window[name].attachEvents()
-                                        // Finally we pass it to the caller
-                                        return window[name]
+            let pascal = `${dsb.utils.kebab2Pascal(page)}Page`
+            try {
+                import(`${this.#cpath}${this.#dir}${page}/${pascal}.js`)
+                    .then(module => {
+                        if (module) {
+                            let components = Object.values(module)
+                            if (components.length !== 0) {
+                                let imported
+                                if (Object.values(module)[0]?.module) {
+                                    // We use object with module attribute, so we're able
+                                    // to create the exported variable, populate it and init it
+                                    imported = Object.values(module)[0]
+                                    window[imported.module] = imported
+                                    imported.init()
+                                    return {legacy: imported, controller: imported.module}
+                                } else {
+                                    // We use Classes, so we're able
+                                    // to instantiate the class
+                                    let _class = components[0]
+                                    let name = dsb.utils.kebab2Camel(page)
+                                    window[name] = new _class(page, template)
+                                    //Call  Global page Initialisation which is a static method
+                                    if (undefined === window[name]['globalPageInitialisation']) {
+                                        _class.globalPageInitialisation()
                                     }
+                                    // Then attach all the events to the instance
+                                    if (undefined === window[name]['attachEvents']) {
+                                        window[name].attachEvents()
+                                    }
+                                    // Finally we pass it to the caller
+                                    return window[name]
                                 }
                             }
-                        })
-                        .then(page => {
-                            if (page?.legacy) {
-                                resolve({
-                                    success:true,
-                                    page:page.legacy,message:`${page.controller} use legacy controller !`
-                                })
-                            }
-                            resolve({success:true,page:page})
-                        })
-                        .catch(error => {
-                            reject({
-                                success:false,
-                                message:error
-                            })
-                        })
-                } catch (error) {
-                    reject({
-                        success:false,
-                        message : 'Probably due to legacy :' + error
+                        }
                     })
-                }
+                    .then(page => {
+                        if (page?.legacy) {
+                            resolve({
+                                success: true,
+                                page: page.legacy, message: `${page.controller} use legacy controller !`
+                            })
+                        }
+                        resolve({success: true, page: page})
+                    })
+                    .catch(error => {
+                        reject({
+                            success: false,
+                            message: error
+                        })
+                    })
+            } catch (error) {
+                reject({
+                    success: false,
+                    message: 'Probably due to legacy :' + error
+                })
+            }
         })
 
-    }
-
-    get current_page() {
-        //assume pathname = /pages/<page>
-
-        // We 1st set current to home (can contains #)
-        let current = '' // Template.get_home().split('#')[0].split('/').pop()
-
-        let path = location.pathname
-        if (path !== '/') {
-            current = path.split('/')[2]
-        }
-        return current
     }
 }
 
