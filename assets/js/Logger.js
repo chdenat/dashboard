@@ -176,7 +176,6 @@ class Logger {
      * @returns {Promise<Logger>}
      */
     start = (show_console = true) => {
-        console.log(this.id)
 
         // Get the number of lines
         this.context.read_lines = this.get_lines_number()
