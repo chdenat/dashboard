@@ -204,10 +204,10 @@ export class EventEmitter {
         for (const event of this.events) {
             if (names instanceof Array) {
                 for (const name of names) {
-                    this.#unregisterEvent(name, event, )
+                    this.#unregisterEvent(name, event, context)
                 }
             } else {
-                this.#unregisterEvent(names, event, this)
+                this.#unregisterEvent(names, event, context)
             }
         }
     }
