@@ -1408,8 +1408,32 @@ var dsb = {
          * @since 1.0
          *
          */
-        copy_to_clipboard: (text) => {
-            navigator.clipboard.writeText(text);
+        copy_to_clipboard: async (text) => {
+            let result = true;
+            if (!navigator.clipboard) {
+                let c = document.createElement("textarea");
+                c.value = text;
+                c.style.maxWidth = '0px';
+                c.style.maxHeight = '0px';
+                c.style.position = "fixed";  // Prevent scrolling to bottom of page in Microsoft Edge.
+                document.body.appendChild(c);
+                c.focus()
+                c.select();
+                try {
+                    document.execCommand("copy");
+                } catch (e) {
+                    result = false
+                } finally {
+                    document.body.removeChild(c);
+                }
+            } else {
+                try {
+                    await navigator.clipboard.writeText(text)
+                } catch (e) {
+                    result = false
+                }
+            }
+            return result
         },
 
         copy_canvas_to_clipboard(canvas) {
