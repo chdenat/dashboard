@@ -383,11 +383,12 @@ class Template {
         if (this.is_content && dsb.instance && this.file !== null) {
             Template.importPageController(this)
                 .then(result => {
-                    // Once it has benn loaded, it's time to initalise the page
+                    // Once the page  has been loaded, it's time to initalise the page,
+                    // if the required method exists
                     if (result.success) {
                         this.load(force).then(() => {
-                            if (!result.message) {
-                                result.page.initialisation()
+                            if (!result.message && result.page['pageInitialisation']) {
+                                result.page.pageInitialisation()
                             }
                         })
                     }
