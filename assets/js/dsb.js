@@ -1,16 +1,15 @@
-/***********************************************************************************************************************
- *
- * Project : supervix4
- * file : utils.js
- *
- * @author  Christian Denat
- * @email contact@noleam.fr
- * --
- *
- * updated on :  1/18/22, 11:19 AM
- *
- * @copyright (c) 2022 noleam.fr
- *
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : dsb.js                                                                                                      *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 20/02/2023  20:12                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
  **********************************************************************************************************************/
 import {customAlphabet} from 'nanoid'
 import {Bus as DSBEvent} from 'Bus';
@@ -2104,13 +2103,17 @@ var dsb = {
         },
 
         chart: {
-            export_to_svg: (chart) => {
-                chart.ctx.exports.exportToSVG(chart.ctx);
+            export_to_svg: (chart, fileName = 'sample.csv') => {
+                let tmp = chart.ctx.exports.w.config.chart.toolbar.export.svg.filename
+                chart.ctx.exports.w.config.chart.toolbar.export.svg.filename = fileName
+                chart.ctx.exports.exportToSVG(chart.ctx, {fileName: fileName});
+                chart.ctx.exports.w.config.chart.toolbar.export.svg.filename = tmp
             },
-            export_to_csv: (chart, series) => {
+            export_to_csv: (chart, series, fileName = 'sample.svg') => {
                 chart.ctx.exports.exportToCSV({
                     series: series,
-                    columnDelimiter: ','
+                    columnDelimiter: ',',
+                    fileName: fileName
                 });
             },
         },
