@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 21/02/2023  09:34                                                                                *
+ * Last updated on : 21/02/2023  09:46                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -458,7 +458,7 @@ var dsb = {
 
         },
 
-        genericLoadedEvent:(template => {
+        genericLoadedEvent: (template => {
             // Let open links in content if required
             template.container.querySelectorAll('a[data-content]').forEach(item => {
 
@@ -2116,8 +2116,20 @@ var dsb = {
                     chart.ctx.exports.w.config.chart.toolbar.export.svg.filename = fileName
                     chart.ctx.exports.exportToSVG(chart.ctx, {fileName: fileName});
                     chart.ctx.exports.w.config.chart.toolbar.export.svg.filename = tmp
+
+                    dsb.toast.message({
+                        title: dsb.ui.get_text_i18n('chart/svg', 'title'),
+                        message: sprintf(dsb.ui.get_text_i18n('chart/svg', 'text'), fileName),
+                        type: 'success'
+                    })
+
                     return true
                 } catch (e) {
+                    dsb.toast.message({
+                        title: dsb.ui.get_text_i18n('chart/svg', 'title'),
+                        message: sprintf(dsb.ui.get_text_i18n('chart/svg', 'error'), fileName),
+                        type: 'danger'
+                    })
                     return false
                 }
             },
@@ -2137,8 +2149,22 @@ var dsb = {
                         columnDelimiter: ',',
                         fileName: fileName
                     });
+
+                    dsb.toast.message({
+                        title: dsb.ui.get_text_i18n('chart/csv', 'title'),
+                        message: sprintf(dsb.ui.get_text_i18n('chart/csv', 'text'), fileName),
+                        type: 'success'
+                    })
+
                     return true
                 } catch (e) {
+
+                    dsb.toast.message({
+                        title: dsb.ui.get_text_i18n('chart/csv', 'title'),
+                        message: sprintf(dsb.ui.get_text_i18n('chart/csv', 'error'), fileName),
+                        type: 'danger'
+                    })
+
                     return false
                 }
             },
