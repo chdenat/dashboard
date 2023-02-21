@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 20/02/2023  20:12                                                                                *
+ * Last updated on : 21/02/2023  09:34                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -2103,18 +2103,44 @@ var dsb = {
         },
 
         chart: {
-            export_to_svg: (chart, fileName = 'sample.csv') => {
-                let tmp = chart.ctx.exports.w.config.chart.toolbar.export.svg.filename
-                chart.ctx.exports.w.config.chart.toolbar.export.svg.filename = fileName
-                chart.ctx.exports.exportToSVG(chart.ctx, {fileName: fileName});
-                chart.ctx.exports.w.config.chart.toolbar.export.svg.filename = tmp
+            /**
+             * Apex Chart export to csv
+             *
+             * @param chart
+             * @param fileName
+             * @return {Promise<boolean>}
+             */
+            export_to_svg: async (chart, fileName = 'sample') => {
+                try {
+                    let tmp = chart.ctx.exports.w.config.chart.toolbar.export.svg.filename
+                    chart.ctx.exports.w.config.chart.toolbar.export.svg.filename = fileName
+                    chart.ctx.exports.exportToSVG(chart.ctx, {fileName: fileName});
+                    chart.ctx.exports.w.config.chart.toolbar.export.svg.filename = tmp
+                    return true
+                } catch (e) {
+                    return false
+                }
             },
-            export_to_csv: (chart, series, fileName = 'sample.svg') => {
-                chart.ctx.exports.exportToCSV({
-                    series: series,
-                    columnDelimiter: ',',
-                    fileName: fileName
-                });
+
+            /**
+             *  Apex Chart export svg
+             *
+             * @param chart
+             * @param series
+             * @param fileName
+             * @return {Promise<boolean>}
+             */
+            export_to_csv: async (chart, series, fileName = 'sample') => {
+                try {
+                    chart.ctx.exports.exportToCSV({
+                        series: series,
+                        columnDelimiter: ',',
+                        fileName: fileName
+                    });
+                    return true
+                } catch (e) {
+                    return false
+                }
             },
         },
 
