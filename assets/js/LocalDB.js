@@ -1,16 +1,15 @@
-/***********************************************************************************************************************
- *
- * Project : supervix4
- * file : Animation.js
- *
- * @author  Christian Denat
- * @email contact@noleam.fr
- * --
- *
- * updated on :  6/1/22, 3:16 PM
- *
- * @copyright (c) 2022 noleam.fr
- *
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : LocalDB.js                                                                                                  *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 22/02/2023  13:32                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
  **********************************************************************************************************************/
 import {openDB} from 'idb';
 
@@ -86,9 +85,9 @@ export class LocalDB {
      * @param with_ttl
      * @return {Promise<*|null>}
      */
-    get_transient = async(key, with_ttl = false)=> {
-       return  await dsb.db.get(key,this.#transients,with_ttl)
-}
+    getTransient = async (key, with_ttl = false) => {
+        return await dsb.db.get(key, this.#transients, with_ttl)
+    }
 
     /**
      * Add a key/value with optional ttl
@@ -123,8 +122,8 @@ export class LocalDB {
      * @return {Promise<*|null>}
      */
 
-    set_transient = async (key,value,ttl = 0) => {
-        return await this.set(key,value,this.#transients,ttl)
+    setTransient = async (key, value, ttl = 0) => {
+        return await this.set(key, value, this.#transients, ttl)
     }
 
 
@@ -153,8 +152,8 @@ export class LocalDB {
      * @param ttl
      * @return {Promise<*>}
      */
-    update_transient = async (key,value,ttl = 0) => {
-        return await this.set(key,value,this.#transients,ttl);
+    updateTransient = async (key, value, ttl = 0) => {
+        return await this.set(key, value, this.#transients, ttl);
     }
 
     /**
@@ -175,7 +174,7 @@ export class LocalDB {
      * @param store
      * @return {Promise<*>}
      */
-    delete_transient =async (key) => {
+    deleteTransient = async (key) => {
         return (await this.#db).delete(this.#transients, key);
     }
 
