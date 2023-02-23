@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : dashboard                                                                                                *
+ * Project : shelteradmin                                                                                             *
  * File : LocalDB.js                                                                                                  *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 22/02/2023  13:32                                                                                *
+ * Last updated on : 22/02/2023  20:13                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -86,7 +86,7 @@ export class LocalDB {
      * @return {Promise<*|null>}
      */
     getTransient = async (key, with_ttl = false) => {
-        return await dsb.db.get(key, this.#transients, with_ttl)
+        return await this.get(key, this.#transients, with_ttl)
     }
 
     /**
