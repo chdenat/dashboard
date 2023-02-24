@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 24/02/2023  15:28                                                                                *
+ * Last updated on : 24/02/2023  15:46                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -35,13 +35,13 @@ class Transient {
     /**
      * Set the transient
      *
-     * @param object
+     * @param value
      *
      * @param duration
      */
-    set = async (object, duration = 60) => {
-        if (object !== undefined) {
-            await dsb.db.set(this.#key, object, this.#store, duration * MINUTE)
+    set = async (value, duration = 60) => {
+        if (value !== undefined) {
+            await dsb.db.set(this.#key, value, this.#store, duration * MINUTE)
         }
     }
 
@@ -52,9 +52,9 @@ class Transient {
     /**
      * Update the transient
      */
-    update = async (object, duration = 0) => {
-        if (object !== undefined) {
-            return await dsb.db.update(this.#key, object, this.#store, duration)
+    update = async (value, duration = 0) => {
+        if (value !== undefined) {
+            return await dsb.db.update(this.#key, value, this.#store, duration)
         }
     }
     /**
