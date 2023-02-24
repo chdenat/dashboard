@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 23/02/2023  19:51                                                                                *
+ * Last updated on : 24/02/2023  16:07                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -257,7 +257,7 @@ export class EventEmitter {
         for (const e of this.events) {
             if (e.name === name) {
                 e.events.push(event)
-                e.events.sort((a, b) => (a.priority < b.priority) ? 1 : -1)
+                e.events.sort((a, b) => (a.priority > b.priority) ? 1 : -1)
                 alreadyExists = true
             }
         }
