@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 24/02/2023  13:41                                                                                *
+ * Last updated on : 24/02/2023  15:29                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -23,17 +23,26 @@ export class LocalDB {
 
     #transients = 'transients'
 
-     constructor({name = this.#name, store = this.#stores, version = this.#version}) {
+    constructor({
+                    name = this.#name,
+                    store = this.#stores,
+                    manageTransients = false,
+                    version = this.#version
+                }) {
 
-        if (!(store instanceof  Array)) {
+        if (!(store instanceof Array)) {
             store = [store]
         }
+        if (manageTransients) {
+            store.push(this.#transients)
+        }
+
         this.#stores = store
         this.#name = name
 
-         let tables = this.#stores // passe dto upgrad contest
-        this.#db = openDB(this.#name,  this.#version, {
-            upgrade(db,old_version, new_version) {
+        let tables = this.#stores // passe dto upgrad contest
+        this.#db = openDB(this.#name, this.#version, {
+            upgrade(db, old_version, new_version) {
                 tables.forEach(table => {
                     db.createObjectStore(table);
                 })
@@ -41,8 +50,16 @@ export class LocalDB {
         })
     }
 
-    static = db => {
-
+    /**
+     * Return the transient store name
+     *
+     * @return {*|null}
+     */
+    get transientStore() {
+        if (this.#stores.includes(this.#transients)) {
+            return this.#transients
+        }
+        return null
     }
 
     /**
@@ -79,17 +96,6 @@ export class LocalDB {
     }
 
     /**
-     * Alias for transients
-     *
-     * @param key
-     * @param with_ttl
-     * @return {Promise<*|null>}
-     */
-    getTransient = async (key, with_ttl = false) => {
-        return await this.get(key, this.#transients, with_ttl)
-    }
-
-    /**
      * Add a key/value with optional ttl
      *
      *
@@ -113,19 +119,6 @@ export class LocalDB {
         return (await this.#db).put(store, data, key);
 
     }
-    /**
-     * Alias for transients
-     *
-     * @param key
-     * @param value
-     * @param ttl
-     * @return {Promise<*|null>}
-     */
-
-    setTransient = async (key, value, ttl = 0) => {
-        return await this.set(key, value, this.#transients, ttl)
-    }
-
 
     /**
      *  Update a key with a new value
@@ -148,18 +141,6 @@ export class LocalDB {
     }
 
     /**
-     * Alias for transients
-     *
-     * @param key
-     * @param value
-     * @param ttl
-     * @return {Promise<*>}
-     */
-    updateTransient = async (key, value, ttl = 0) => {
-        return await this.update(key, value, this.#transients, ttl);
-    }
-
-    /**
      * delete a key
      *
      * @param key
@@ -169,18 +150,6 @@ export class LocalDB {
     delete=async (key,store) => {
         return (await this.#db).delete(store, key);
     }
-
-    /**
-     * Alias for transients
-     *
-     * @param key
-     * @param store
-     * @return {Promise<*>}
-     */
-    deleteTransient = async (key) => {
-        return await this.delete(key, this.#transients);
-    }
-
 
     /**
      * Clear a store
