@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 21/02/2023  09:46                                                                                *
+ * Last updated on : 24/02/2023  15:29                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -2410,9 +2410,11 @@ var dsb = {
 
 
     db: new LocalDB({
-        name: 'dashboard', store: ['transients'], version: null
+        name: 'dashboard',
+        store: [],
+        manageTransients: true,
+        version: null
     }),
-    transient: {},
 
     /**
      * Init all functions
