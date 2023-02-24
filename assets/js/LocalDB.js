@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : shelteradmin                                                                                             *
+ * Project : dashboard                                                                                                *
  * File : LocalDB.js                                                                                                  *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 22/02/2023  20:13                                                                                *
+ * Last updated on : 24/02/2023  13:41                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -137,9 +137,12 @@ export class LocalDB {
      * @return {Promise<*>}
      */
     update = async (key,value,store,ttl = 0) => {
-        const old = this.get(key)
+        const old = await this.get(key, store, true)
         if (old) {
-            await this.del(key)
+            await this.delete(key, store)
+            if (ttl === 0) {
+                ttl = old._ttl_
+            }
         }
         return await this.set(key,value,store,ttl);
     }
@@ -153,7 +156,7 @@ export class LocalDB {
      * @return {Promise<*>}
      */
     updateTransient = async (key, value, ttl = 0) => {
-        return await this.set(key, value, this.#transients, ttl);
+        return await this.update(key, value, this.#transients, ttl);
     }
 
     /**
@@ -175,7 +178,7 @@ export class LocalDB {
      * @return {Promise<*>}
      */
     deleteTransient = async (key) => {
-        return (await this.#db).delete(this.#transients, key);
+        return await this.delete(key, this.#transients);
     }
 
 
