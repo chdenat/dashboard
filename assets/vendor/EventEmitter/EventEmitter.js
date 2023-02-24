@@ -1,21 +1,15 @@
-/***********************************************************************************************************************
- *
- * Project : supervix4
- * file : EventEmitter.js
- *
- * fork from  https://github.com/dimitrilahaye/vanilla-js-es6-event-emitter
- *
- * 16/7/2022 : my 2.0 version
- * 04/02/2023 : 2.1 version
- *
- * @author  Christian Denat
- * @email contact@noleam.fr
- * --
- *
- * updated on :  7/16/22, 4:48 PM
- *
- * @copyright (c) 2022 noleam.fr
- *
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : EventEmitter.js                                                                                             *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 23/02/2023  19:51                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
  **********************************************************************************************************************/
 
 
@@ -41,7 +35,7 @@ export class EventEmitter {
      * @param {string} name the name of the event to create or to update
      * @param {Function} callback the callback called when the event is emitted
      * @param {Object} options :
-     *          {int} priority:     The priority (default = 100, higher>100, lower <100)
+     *          {int} priority:     The priority (default = 100, lower > 100, higher <100)
      *          {Object} context:   the object's context on what the event is acting (default null)
      *
      */
@@ -88,7 +82,7 @@ export class EventEmitter {
      * @param {Function} callback the callback called when the event is emited
      * @param {Object} options :
      *          {int} to:           number of time the event has to be emit
-     *          {int} priority:     The priority (default = 100, higher>100, lower <100)
+     *          {int} priority:     The priority (default =  lower > 100, higher <1000)
      *          {Object} context:   the object's context on what the event is acting (default null)
      *
      *        It is also possible to declare an integer, equal to 'to' value.
@@ -118,7 +112,7 @@ export class EventEmitter {
      * @param {Function} callback the callback called when the event is emited
      * @param {Object} options :
      *          {int} at:           how many time the event has to be emit before to launch its callback
-     *          {int} priority:     The priority (default = 100, higher>100, lower <100)
+     *          {int} priority:     The priority (default = 100,  lower > 100, higher <100)
      *          {Object} context:   the object's context on what the event is acting (default null)
      *
      *        It is also possible to declare an integer, equal to 'at' value.
@@ -148,7 +142,7 @@ export class EventEmitter {
      * @param {Function} callback the callback called when the event is emited*
      * @param {Object} options :
      *           {int} there:       how many time the event has to be emit before to launch its callback once
-     *           {int} priority:    The priority (default = 100, higher>100, lower <100)
+     *           {int} priority:    The priority (default = 100, lower > 100, higher <100)
      *           {Object} context:  the object's context on what the event is acting (default null)
      *
      *        It is also possible to declare an integer, equal to 'at' value.
@@ -231,7 +225,7 @@ export class EventEmitter {
      * @param {Function} callback   the callback call ed when the event is emitted
      *
      * @param {Object} options :
-     *         {int} priority:      The priority (default = 100, higher>100, lower <100)
+     *         {int} priority:      The priority (default = 100, lower>100, higher <100)
      *         {bool} on:           has this event to be emitted (default)
      *         {bool} once:         has this event to be emitted only once
      *         {int} to:            number of time the event has to be emit
@@ -263,7 +257,7 @@ export class EventEmitter {
         for (const e of this.events) {
             if (e.name === name) {
                 e.events.push(event)
-                e.events.sort((a, b) => (a.priority > b.priority) ? 1 : -1)
+                e.events.sort((a, b) => (a.priority < b.priority) ? 1 : -1)
                 alreadyExists = true
             }
         }
