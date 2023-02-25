@@ -1,16 +1,15 @@
-/***********************************************************************************************************************
- *
- * Project : supervix4
- * file : Template.js
- *
- * @author  Christian Denat
- * @email contact@noleam.fr
- * --
- *
- * updated on :  6/1/22, 8:46 AM
- *
- * @copyright (c) 2022 noleam.fr
- *
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : Template.js                                                                                                 *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 25/02/2023  11:59                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
  **********************************************************************************************************************/
 
 import {nanoid} from 'nanoid'
@@ -22,10 +21,12 @@ let templates_list = [];
 
 class Template {
 
-    #ID = null
     static #HOME = ''
     static #EXCEPTIONS = []
-
+    static #reserved = ['menu', 'content', 'pop-content']    // Special templates
+    static #use_404 = false
+    static event = TemplateEvent
+    #ID = null
     #file = ''
     #directory = ''
     #tab = ''
@@ -35,14 +36,8 @@ class Template {
     #children = []
     #old = null
     #variable = null
-    static #reserved = ['menu', 'content', 'pop-content']    // Special templates
     animation = Animation
     #page_path = '/pages/'
-
-    static #use_404 = false
-
-    static event = TemplateEvent
-
     #observer
 
     /**
@@ -70,7 +65,7 @@ class Template {
         if (element) {
             this.#ID = element.dataset.templateId ?? '#' + nanoid()
 
-            // fil or data-template-info
+            // file  or data-template info
             this.check_link(file ?? element.dataset.template)
 
             // Then save it in DOM
@@ -97,7 +92,7 @@ class Template {
             this.#dom = {
                 container: element,
                 forced: element.dataset.templateForced ?? false,        // data-template-forced
-                animate: element.dataset.nimationType ?? false,         // data-animation-load
+                animate: element.dataset.animationType ?? false,         // data-animation-load
                 animation_type: element.dataset.animationType ?? null,  // data-animation-type
             }
 
@@ -111,8 +106,8 @@ class Template {
 
 
             // Load Satus Observer
-            let template = this
             this.load_status_observer = new MutationObserver(this.loadStatusObserver, this)
+
         } else {
             this.#ID = null
         }
@@ -153,20 +148,12 @@ class Template {
         return this.#dom
     }
 
-    static ID_from_element(element) {
-        if (!element instanceof HTMLElement) {
-            element = document.querySelector(element)
-        }
-
-        if (element?.dataset?.templateID?.startsWith('#')) {
-            return element?.dataset?.templateID
-        }
-
-        return ''
-    }
-
     get file() {
         return this.#file ?? false
+    }
+
+    set file(file) {
+        this.#file = file
     }
 
     set file(file) {
@@ -181,46 +168,20 @@ class Template {
         this.#directory = directory
     }
 
-    has_directory = () => {
-        return this.directory !== ''
-    }
-
     get tab() {
         return this.#tab
-    }
-
-    has_tab = () => {
-        return this.tab !== ''
-    }
-    /**
-     * Get templates by name
-     *
-     * @param parent
-     * @param name
-     * @returns NodeList  {NodeListOf<Element> | NodeListOf<SVGElementTagNameMap[keyof SVGElementTagNameMap]> |
-     *                     NodeListOf<HTMLElementTagNameMap[keyof HTMLElementTagNameMap]>}
-     *
-     * @since 1.0
-     *
-     */
-    static get_templates_by_name = (parent, name) => {
-        return parent.querySelectorAll(`block[data-template="${name}"]`);
-    }
-
-    set file(file) {
-        this.#file = file
     }
 
     set tab(tab) {
         this.#tab = tab
     }
 
-    set loaded(status) {
-        this.#load = status
-    }
-
     get loaded() {
         return this.#load
+    }
+
+    set loaded(status) {
+        this.#load = status
     }
 
     set historize(template) {
@@ -239,6 +200,33 @@ class Template {
         return this.#dom.container
     }
 
+    static ID_from_element(element) {
+        if (!element instanceof HTMLElement) {
+            element = document.querySelector(element)
+        }
+
+        if (element?.dataset?.templateID?.startsWith('#')) {
+            return element?.dataset?.templateID
+        }
+
+        return ''
+    }
+
+    /**
+     * Get templates by name
+     *
+     * @param parent
+     * @param name
+     * @returns NodeList  {NodeListOf<Element> | NodeListOf<SVGElementTagNameMap[keyof SVGElementTagNameMap]> |
+     *                     NodeListOf<HTMLElementTagNameMap[keyof HTMLElementTagNameMap]>}
+     *
+     * @since 1.0
+     *
+     */
+    static get_templates_by_name = (parent, name) => {
+        return parent.querySelectorAll(`block[data-template="${name}"]`);
+    }
+
     static set_home(home) {
         Template.#HOME = home
     }
@@ -253,39 +241,6 @@ class Template {
 
     static get_exceptions() {
         return Template.#EXCEPTIONS
-    }
-
-    /**
-     * Check if a string is an exception
-     *
-     *
-     * @return {boolean}
-     * @param text
-     */
-    #check_exception = (text) => {
-        let is_exception = false;
-        for (let exception in Template.get_exceptions()) {
-            if (text.includes(exception)) {
-                is_exception = true
-                break
-            }
-        }
-        return is_exception
-    }
-
-    /**
-     * Checks the href refers to a tab
-     *
-     *   => without     dummy/page
-     *   => with        dummy/page#tab
-     *
-     * @param link
-     */
-
-    check_link = (link) => {
-        let tmp = link.split('#');
-        this.#file = tmp[0]
-        this.#tab = tmp[1] ?? '';
     }
 
     static _check_link = (link) => {
@@ -372,6 +327,166 @@ class Template {
     }
 
     /**
+     * Load all tremplates
+     *
+     * @param parent root (document by default)
+     */
+    static load_all_templates = async function (parent = document) {
+
+        let templates = Template.get_all_templates(parent);
+        let children = []
+        for (const template of templates) {
+            if (template.dataset?.templateId !== '#popcont#') {
+                let element = Template.add_base_to_template(template)
+                let item = new Template(element)
+                children.push(item)
+            }
+        }
+        for (const template of children) {
+            template.loadPage(true).then(() => {
+                template.loadDefer()
+            })
+        }
+
+
+    }
+
+    static add_base_to_template = (template) => {
+        if (template.dataset?.templateId === '#content#') {
+            // In case it is  the content block, we push the baseUri as template
+            template.setAttribute('data-template', dsb.utils.path_info(template.baseURI).file)
+        }
+        return template
+    }
+
+    static importPageController = async (template) => {
+        let parts = template.file.split('/')
+        if (parts[parts.length - 1] === 'index') {
+            parts.pop()
+        }
+        return dsb.instance.importPageController(parts.pop(), template)
+    }
+
+    /**
+     * Get all templates in DOM
+     *
+     * @param parent
+     * @param no_empty : boolean empty templates with no value
+     *
+     * @returns {NodeListOf<Element> | NodeListOf<SVGElementTagNameMap[keyof SVGElementTagNameMap]> | NodeListOf<HTMLElementTagNameMap[keyof HTMLElementTagNameMap]>}
+     *
+     * @since 1.0
+     *
+     */
+    static get_all_templates = (parent, no_empty = false) => {
+        let query = 'block[data-template]' + (no_empty ? ':not([data-template=""])' : '')
+        return parent.querySelectorAll(query)
+    }
+
+    /**
+     * Add a template to the DOM list
+     *
+     * @param template
+     */
+    static add_template_to_list = (template = this) => {
+        templates_list[template.ID] = template
+    }
+
+    /**
+     * Delete a template from the DOM list
+     *
+     * @param key  key could be a template ID or a template object
+     */
+    static remove_template_from_list = (key = this) => {
+        let id = key
+        if (key instanceof Template) {
+            id = key.ID
+        }
+        templates_list.forEach((item, index) => {
+            if (index === id) {
+                templates_list.splice(index, 1);
+            }
+        })
+    }
+
+    /**
+     * Set a template by getting the item in the list
+     *
+     * @param key
+     * @returns {*}
+     */
+    static get_template = (key) => {
+        return templates_list[key]
+    }
+
+    static async reloadPage() {
+        let t = new Template(document.querySelector('[data-template-id="#content#"]'))
+        t.loading_animation()
+        await t.load(true)
+        await Template.load_all_templates(t.container)
+        t.loaded_animation()
+    }
+
+    static reload_page(soft = true) {
+        if (soft) {
+            Template.load_all_templates()
+            return
+        }
+        location.reload()
+    }
+
+    /**
+     * Load all templates with tag defer
+     */
+    loadDefer = () => {
+        this.container.querySelectorAll("[data-template-defer]").forEach(async template => {
+            const t = new Template(template, null, template.dataset.templateDefer)
+            await t.load(true)
+        })
+    }
+
+    has_directory = () => {
+        return this.directory !== ''
+    }
+
+    has_tab = () => {
+        return this.tab !== ''
+    }
+
+    /**
+     * Check if a string is an exception
+     *
+     *
+     * @return {boolean}
+     * @param text
+     */
+    #check_exception = (text) => {
+        let is_exception = false;
+        for (let exception in Template.get_exceptions()) {
+            if (text.includes(exception)) {
+                is_exception = true
+                break
+            }
+        }
+        return is_exception
+    }
+
+    /**
+     * Checks the href refers to a tab
+     *
+     *   => without     dummy/page
+     *   => with        dummy/page#tab
+     *
+     * @param link
+     */
+
+    check_link = (link) => {
+        let tmp = link.split('#');
+        this.#file = tmp[0]
+        this.#tab = tmp[1] ?? '';
+    }
+
+    /**
      * Load a page if the template target is #content#
      *
      *
@@ -418,6 +533,7 @@ class Template {
             characterDataOldValue: false
         });
     }
+
     /**
      * Load Status Observer
      *
@@ -613,61 +729,6 @@ class Template {
         }
     }
 
-
-    /**
-     * Load all tremplates
-     *
-     * @param parent root (document by default)
-     */
-    static load_all_templates = async function (parent = document) {
-
-        let templates = Template.get_all_templates(parent);
-        let children = []
-        for (const template of templates) {
-            if (template.dataset?.templateId !== '#popcont#') {
-                let item = new Template(Template.add_base_to_template(template))
-                children.push(item)
-            }
-        }
-        for (const template of children) {
-            template.loadPage(true)
-        }
-
-    }
-
-    static add_base_to_template = (template) => {
-        if (template.dataset?.templateId === '#content#') {
-            // In case it is  the content block, we push the baseUri as template
-            template.setAttribute('data-template', dsb.utils.path_info(template.baseURI).file)
-        }
-        return template
-    }
-
-    static importPageController = async (template) => {
-        let parts = template.file.split('/')
-        if (parts[parts.length - 1] === 'index') {
-            parts.pop()
-        }
-        return dsb.instance.importPageController(parts.pop(), template)
-    }
-
-
-    /**
-     * Get all templates in DOM
-     *
-     * @param parent
-     * @param no_empty : boolean empty templates with no value
-     *
-     * @returns {NodeListOf<Element> | NodeListOf<SVGElementTagNameMap[keyof SVGElementTagNameMap]> | NodeListOf<HTMLElementTagNameMap[keyof HTMLElementTagNameMap]>}
-     *
-     * @since 1.0
-     *
-     */
-    static get_all_templates = (parent, no_empty = false) => {
-        let query = 'block[data-template]' + (no_empty ? ':not([data-template=""])' : '')
-        return parent.querySelectorAll(query)
-    }
-
     dispatchEvents = (type, file = this.file, directory = this.#directory) => {
 
         let generic_event = new Event(`${type}`)
@@ -699,40 +760,6 @@ class Template {
 
     }
 
-    /**
-     * Add a template to the DOM list
-     *
-     * @param template
-     */
-    static add_template_to_list = (template = this) => {
-        templates_list[template.ID] = template
-    }
-
-    /**
-     * Delete a template from the DOM list
-     *
-     * @param key  key could be a template ID or a template object
-     */
-    static remove_template_from_list = (key = this) => {
-        let id = key
-        if (key instanceof Template) {
-            id = key.ID
-        }
-        templates_list.forEach((item, index) => {
-            if (index === id) {
-                templates_list.splice(index, 1);
-            }
-        })
-    }
-    /**
-     * Set a template by getting the item in the list
-     *
-     * @param key
-     * @returns {*}
-     */
-    static get_template = (key) => {
-        return templates_list[key]
-    }
     /**
      * Check if there is an animation with this template
      *
@@ -785,22 +812,6 @@ class Template {
         if (this.animate()) {
             this.animation.unloading(this.ID)
         }
-    }
-
-    static async reloadPage() {
-        let t = new Template(document.querySelector('[data-template-id="#content#"]'))
-        t.loading_animation()
-        await t.load(true)
-        await Template.load_all_templates(t.container)
-        t.loaded_animation()
-    }
-
-    static reload_page(soft = true) {
-        if (soft) {
-            Template.load_all_templates()
-            return
-        }
-        location.reload()
     }
 
 }
