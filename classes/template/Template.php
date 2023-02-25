@@ -1,32 +1,30 @@
 <?php
 	
-	/***********************************************************************************************************************
-	 *
-	 * Project : supervix4
-	 * file : Template.php
-	 *
-	 * @author        Christian Denat
-	 * @email contact@noleam.fr
-	 * --
-	 *
-	 * updated on :  1/18/22, 11:20 AM
-	 *
-	 * @copyright (c) 2022 noleam.fr
-	 *
-	 **********************************************************************************************************************/
+	/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : Template.php                                                                                                *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 25/02/2023  11:57                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
 	
 	namespace dashboard\template;
 	
 	use dashboard\assets\Asset;
-	use dashboard\assets\AssetsManager;
-	
-	use dashboard\hooks\Hooks;
-	use dashboard\Debug;
-	use dashboard\user\SessionManager;
-	
-	class Template {
+    use dashboard\assets\AssetsManager;
+    use dashboard\Debug;
+    use dashboard\hooks\Hooks;
+    use dashboard\user\SessionManager;
+
+    class Template {
 		/**
-		 * @var null|\dashboard\template\Template
+		 * @var null|Template
 		 *
 		 * @access private
 		 *
@@ -57,7 +55,7 @@
 		 * It's a Singleton , this method is used to retrieve the instance
 		 * initialisation : see parameters in constructor comments
 		 *
-		 * @return \dashboard\template\Template
+		 * @return Template
 		 * @access public
 		 *
 		 * @since  1.0
@@ -302,7 +300,7 @@
 			}
 			
 			if ( Debug::is_debug_on() ) {
-				echo $this->comments( 'Template ' . $template );
+			//	echo $this->comments( 'Template ' . $template );
 			}
 			
 			/**
@@ -331,7 +329,7 @@
 			$this->clear_template_parameters();
 			
 			if ( Debug::is_debug_on() ) {
-				echo $this->end_comments();
+                //	echo $this->end_comments();
 			}
 			
 			echo ob_get_clean();
@@ -626,19 +624,20 @@
 		 *                          [
 		 *                             'pause' => [
 		 *                                  'action' => javascript method to call
-		 *                                  'text'   => tooltip text
-		 *                          ]
-		 *                          [
-		 *                             'play' => [
-		 *                                  'action' => javascript method to call
-		 *                                  'text'   => tooltip text
-		 *                          ]
-		 *
-		 * @return string|false
-		 * @access public
-		 *
-		 * @since  1.0
-		 */
+         *                                  'text'   => tooltip text
+         *                          ]
+         *                          [
+         *                             'play' => [
+         *                                  'action' => javascript method to call
+         *                                  'text'   => tooltip text
+         *                          ]
+         *
+         * @return string|false
+         * @access public
+         * @access public
+         *
+         * @since  1.0
+         */
 		public function add_console(
 			array $classes = [], array $data = [], string $style = '', string $id = '', string $content = '',
 			array $options = []
