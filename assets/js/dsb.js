@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 24/02/2023  15:29                                                                                *
+ * Last updated on : 25/02/2023  12:08                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -464,8 +464,9 @@ var dsb = {
 
                 item.addEventListener('click', event => {
                     event.preventDefault()
-                    Template.load_from_event(event)
-                    dsb.content_event.emit('click', item)
+                    Template.load_from_event(event).then(() => {
+                        dsb.content_event.emit('click', item)
+                    })
                 })
 
             });
@@ -2490,7 +2491,7 @@ var dsb = {
         // We need to manage some history retrieval
 
         dsb.initialized = true;
-        console.info('Dashboard init done.')
+        console.info('Dashboard Engine is running.')
 
         return this;
     },
