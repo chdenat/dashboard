@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/02/2023  15:35                                                                                *
+ * Last updated on : 26/02/2023  15:58                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -36,7 +36,7 @@ class Transient {
      * Create the transient
      *
      * @param value
-     * @param duration in minute (default to 60, ie one hour)
+     * @param duration in minutse (default to 60, ie one hour)
      *
      *
      */
@@ -49,7 +49,8 @@ class Transient {
     /**
      * Read the transient
      * @param full      if true we'll return the full object, including time
-     *                      else only the transient value
+     *                  else only the transient value.
+     *
      * @return {Promise<*>}
      */
     read = async (full = false) => {
