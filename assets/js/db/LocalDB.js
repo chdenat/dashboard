@@ -6,13 +6,20 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 24/02/2023  15:29                                                                                *
+ * Last updated on : 26/02/2023  19:11                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {openDB} from 'idb';
 
+/**
+ * Dependencies
+ */
+import {openDB} from 'idb';
+import {DateTime} from 'luxon'
+import {SECOND} from 'dsb'
+
+let millis = 1000
 
 export class LocalDB {
 
@@ -68,11 +75,11 @@ export class LocalDB {
      *
      * @param key           The key used
      * @param store
-     * @param with_ttl      If false (default), get returns only the value
+     * @param full      If false (default), get returns only the value
      *                      else it returns value+ttl, ie the full DB data content
      * @return {Promise<null|any>}
      */
-    get = async (key,store,with_ttl=false) => {
+    get = async (key, store, full = false) => {
 
         // Get the normal value
         const data = await (await this.#db).get(store, key);
@@ -81,16 +88,9 @@ export class LocalDB {
         }
 
         // If we need ttl, we return the full object
-        if (with_ttl) {
+        if (full) {
             return data
         }
-
-        // If ttl exists and is expired, let's return null
-        if (data._ttl_ && (new Date()).getTime() > data._ttl_) {
-            await (await this.#db).delete(store, key);
-            return null
-        }
-        // else returns the object stored
         return data.value
 
     }
@@ -112,8 +112,12 @@ export class LocalDB {
             value: value
         }
 
+        data._ct_ = DateTime.now().toMillis()
+
         if (ttl > 0) {
-            data._ttl_ = (new Date()).getTime() + ttl
+            data._ttl_ = ttl * millis
+            data._dt_ = data._ct_ + data._ttl_
+            data._iso_ = DateTime.now().toISO()
         }
 
         return (await this.#db).put(store, data, key);
@@ -134,7 +138,7 @@ export class LocalDB {
         if (old) {
             await this.delete(key, store)
             if (ttl === 0) {
-                ttl = old._ttl_
+                ttl = old._ttl_ / SECOND
             }
         }
         return await this.set(key,value,store,ttl);
