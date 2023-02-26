@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 25/02/2023  11:59                                                                                *
+ * Last updated on : 26/02/2023  10:46                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -17,15 +17,16 @@ import {Animation} from 'Animation';
 import {Bus as TemplateEvent} from 'Bus';
 
 
-let templates_list = [];
+let blocksList = [];
 
 class Template {
 
     static #HOME = ''
     static #EXCEPTIONS = []
     static #reserved = ['menu', 'content', 'pop-content']    // Special templates
-    static #use_404 = false
+    static #use404 = false
     static event = TemplateEvent
+    static #TAG = 'BLOCK'
     #ID = null
     #file = ''
     #directory = ''
@@ -39,6 +40,8 @@ class Template {
     animation = Animation
     #page_path = '/pages/'
     #observer
+    #defer;
+    #nofile;
 
     /**
      *
@@ -56,7 +59,6 @@ class Template {
      */
     constructor(element = document, variable = null, file = null) {
 
-
         // If it is not a DOM element, we get it from the ID
         if (typeof element === 'string') {
             element = document.querySelector(`[data-template-id="${element}"]`)
@@ -64,9 +66,10 @@ class Template {
 
         if (element) {
             this.#ID = element.dataset.templateId ?? '#' + nanoid()
+            this.#defer = (element.getAttribute('defer') != undefined)
 
             // file  or data-template info
-            this.check_link(file ?? element.dataset.template)
+            this.checkLink4Tab(file ?? element.dataset.template)
 
             // Then save it in DOM
             if (file) {
@@ -89,15 +92,18 @@ class Template {
                 this.file = this.file.replace(`[${this.#variable}]`, '')
             }
 
+            this.#nofile = this.file === '' || this.file === null
+
             this.#dom = {
                 container: element,
+                defer: this.#defer,
                 forced: element.dataset.templateForced ?? false,        // data-template-forced
                 animate: element.dataset.animationType ?? false,         // data-animation-load
                 animation_type: element.dataset.animationType ?? null,  // data-animation-type
             }
 
             this.#load = false
-            this.#parent = element.parentElement.closest('[data-template]')
+            this.#parent = element.parentElement?.closest('[data-template]')
 
             this.children
 
@@ -105,8 +111,8 @@ class Template {
             element.setAttribute('data-template-id', this.#ID)
 
 
-            // Load Satus Observer
-            this.load_status_observer = new MutationObserver(this.loadStatusObserver, this)
+            // Load Status Observer use d to load the right events
+            this.load_status_observer = new MutationObserver(this.loadStatusObserver)
 
         } else {
             this.#ID = null
@@ -120,10 +126,10 @@ class Template {
      *
      */
     get children() {
-        let parent = this.#dom.container ?? document
-        Template.get_all_templates(parent).forEach(child => {
+        let parent = this.#dom.container ?? document.body
+        Template.getBlocksParent(parent).forEach(child => {
             let tmp = new Template(child)
-            Template.add_template_to_list(tmp)
+            Template.addBlockToList(tmp)
             this.#children.push(tmp);
         })
     }
@@ -200,6 +206,14 @@ class Template {
         return this.#dom.container
     }
 
+    get defer() {
+        return this.#defer
+    }
+
+    set defer(value) {
+        this.#defer = false;
+    }
+
     static ID_from_element(element) {
         if (!element instanceof HTMLElement) {
             element = document.querySelector(element)
@@ -227,11 +241,11 @@ class Template {
         return parent.querySelectorAll(`block[data-template="${name}"]`);
     }
 
-    static set_home(home) {
+    static setHome(home) {
         Template.#HOME = home
     }
 
-    static get_home() {
+    static getHome() {
         return Template.#HOME
     }
 
@@ -253,25 +267,25 @@ class Template {
      * @param template_id
      * @param url
      */
-    static page_404 = (template_id, url) => {
+    static page404 = (template_id, url) => {
         let t = new Template(document.querySelector(`[data-template-id="${template_id}"]`))
 
-        if (t.is_content && !Template.#use_404) {
+        if (t.is_content && !Template.#use404) {
             return
         }
 
-        t.check_link(`${t.#page_path}404`)
+        t.checkLink4Tab(`${t.#page_path}404`)
         t.load(true, {url: url})
-        Template.use_404();
+        Template.use404();
 
     }
 
-    static use_404 = (use = true) => {
-        Template.#use_404 = use
+    static use404 = (use = true) => {
+        Template.#use404 = use
     }
 
-    static do_we_use_404 = () => {
-        return Template.#use_404
+    static doWeUse404 = () => {
+        return Template.#use404
     }
 
     /**
@@ -281,13 +295,13 @@ class Template {
      * This function should be launch using addEventListener
      * @param event
      */
-    static async load_from_event(event) {
+    static async loadBlockFromEvent(event) {
 
         // We check if the link has been bound to a reserved template
         for (const item in event.currentTarget.dataset) {
             if (this.#reserved.includes(item)) {
                 // If it s the case, lets'go
-                let template = Template.get_template(`#${item}#`)
+                let template = Template.getBlock(`#${item}#`)
 
                 if (undefined !== template) {
 
@@ -296,7 +310,7 @@ class Template {
                     template.historize = template
 
                     // And now we work on the new content, we push the file and tab
-                    template.check_link(event.currentTarget.getAttribute('href'))
+                    template.checkLink4Tab(event.currentTarget.getAttribute('href'))
 
                     let force = true
                     // Same file  : De we force a loading?
@@ -327,36 +341,35 @@ class Template {
     }
 
     /**
-     * Load all tremplates
+     * Load Blocks (only 1st level)
      *
      * @param parent root (document by default)
      */
-    static load_all_templates = async function (parent = document) {
-
-        let templates = Template.get_all_templates(parent);
+    static importChildren = async function (parent = document) {
+        let blocks = Template.getBlocksParent(parent);
         let children = []
-        for (const template of templates) {
-            if (template.dataset?.templateId !== '#popcont#') {
-                let element = Template.add_base_to_template(template)
+        for (const block of blocks) {
+            if (block.dataset?.blockId !== '#popcont#') {
+                let element = Template.addBaseToTemplate(block)
                 let item = new Template(element)
                 children.push(item)
             }
         }
-        for (const template of children) {
-            template.loadPage(true).then(() => {
-                template.loadDefer()
+        for (const block of children) {
+            block.loadPage(true).then(async (ok) => {
+                if (ok) {
+                    await block.importDeferBlocks()
+                }
             })
         }
-
-
     }
 
-    static add_base_to_template = (template) => {
-        if (template.dataset?.templateId === '#content#') {
-            // In case it is  the content block, we push the baseUri as template
-            template.setAttribute('data-template', dsb.utils.path_info(template.baseURI).file)
+    static addBaseToTemplate = (block) => {
+        if (block.dataset?.templateId === '#content#') {
+            // In case it is  the content block, we push the baseUri as block
+            block.setAttribute('data-template', dsb.utils.path_info(block.baseURI).file)
         }
-        return template
+        return block
     }
 
     static importPageController = async (template) => {
@@ -368,19 +381,26 @@ class Template {
     }
 
     /**
-     * Get all templates in DOM
+     * For a dedicated node, find the first elements of type #TAG in each node.
      *
-     * @param parent
-     * @param no_empty : boolean empty templates with no value
+     * - node - tag#1
+     *   node - node -tag#2
+     *   node - tag#3 - tag#4
+     *
+     *   It retrieves : tag#1,tag#2,tag#3
+     *
+     *
+     * @param node  the node element
+     * @param tag   the tag to search on (#TAG by default)
+     *
      *
      * @returns {NodeListOf<Element> | NodeListOf<SVGElementTagNameMap[keyof SVGElementTagNameMap]> | NodeListOf<HTMLElementTagNameMap[keyof HTMLElementTagNameMap]>}
      *
      * @since 1.0
      *
      */
-    static get_all_templates = (parent, no_empty = false) => {
-        let query = 'block[data-template]' + (no_empty ? ':not([data-template=""])' : '')
-        return parent.querySelectorAll(query)
+    static getBlocksParent = (node = document, tag = Template.#TAG) => {
+        return node.querySelectorAll(`${tag}:first-of-type:not(${tag} *)`)
     }
 
     /**
@@ -388,8 +408,8 @@ class Template {
      *
      * @param template
      */
-    static add_template_to_list = (template = this) => {
-        templates_list[template.ID] = template
+    static addBlockToList = (block = this) => {
+        blocksList[block.ID] = block
     }
 
     /**
@@ -397,39 +417,39 @@ class Template {
      *
      * @param key  key could be a template ID or a template object
      */
-    static remove_template_from_list = (key = this) => {
+    static removeBlockFromList = (key = this) => {
         let id = key
         if (key instanceof Template) {
             id = key.ID
         }
-        templates_list.forEach((item, index) => {
+        blocksList.forEach((item, index) => {
             if (index === id) {
-                templates_list.splice(index, 1);
+                blocksList.splice(index, 1);
             }
         })
     }
 
     /**
-     * Set a template by getting the item in the list
+     * Set a block by getting the item in the list
      *
      * @param key
      * @returns {*}
      */
-    static get_template = (key) => {
-        return templates_list[key]
+    static getBlock = (key) => {
+        return blocksList[key]
     }
 
     static async reloadPage() {
         let t = new Template(document.querySelector('[data-template-id="#content#"]'))
         t.loading_animation()
         await t.load(true)
-        await Template.load_all_templates(t.container)
+        // await Template.importChildren(t.container)
         t.loaded_animation()
     }
 
     static reload_page(soft = true) {
         if (soft) {
-            Template.load_all_templates()
+            Template.importChildren()
             return
         }
         location.reload()
@@ -438,18 +458,27 @@ class Template {
     /**
      * Load all templates with tag defer
      */
-    loadDefer = () => {
-        this.container.querySelectorAll("[data-template-defer]").forEach(async template => {
-            const t = new Template(template, null, template.dataset.templateDefer)
-            await t.load(true)
-        })
+    importDeferBlocks = async () => {
+        for (const block of this.container.querySelectorAll("[defer]")) {
+            let template = new Template(block)
+            template.defer = false
+            await template.load(true)
+        }
+        return true
     }
 
-    has_directory = () => {
+    /**
+     * Reset the defer value frome the one saved during the template creation
+     */
+    #resetDefer = () => {
+        this.#defer = this.#dom.defer
+    }
+
+    hasDirectory = () => {
         return this.directory !== ''
     }
 
-    has_tab = () => {
+    hasTab = () => {
         return this.tab !== ''
     }
 
@@ -460,7 +489,7 @@ class Template {
      * @return {boolean}
      * @param text
      */
-    #check_exception = (text) => {
+    #isException = (text) => {
         let is_exception = false;
         for (let exception in Template.get_exceptions()) {
             if (text.includes(exception)) {
@@ -480,40 +509,63 @@ class Template {
      * @param link
      */
 
-    check_link = (link) => {
+    checkLink4Tab = (link) => {
         let tmp = link.split('#');
         this.#file = tmp[0]
         this.#tab = tmp[1] ?? '';
     }
 
     /**
-     * Load a page if the template target is #content#
+     * Load a block
      *
+     * if the template target is #content#, let init the page
+     * else load olly defer
      *
      * @param force
-     * @return {Promise<void>}
+     * @return {Promise<boolean>}
      */
     loadPage = async (force) => {
+        let value = true
         // Load the link content in the right template
-        if (this.is_content && dsb.instance && this.file !== null) {
+        if (this.is_content && !this.#nofile) {
             Template.importPageController(this)
                 .then(result => {
                     // Once the page  has been loaded, it's time to initalise the page,
                     // if the required method exists
                     if (result.success) {
-                        this.load(force).then(() => {
-                            if (!result.message && result.page['pageInitialisation']) {
-                                result.page.pageInitialisation()
+                        this.load(force).then((ok) => {
+                            if (ok) {
+                                this.importDeferBlocks().then((ok) => {
+                                    if (ok) {
+                                        if (!result.message && result.page['pageInitialisation']) {
+                                            result.page.pageInitialisation()
+                                        }
+                                    } else {
+                                        value = false
+                                    }
+                                })
+                            } else {
+                                value = false
                             }
                         })
                     }
                 })
                 .catch(error => {
                     console.error(error.message)
+                    value = false
                 })
         } else {
-            await this.load(force);
+            this.load(force).then((ok) => {
+                if (ok) {
+                    this.importDeferBlocks(ok => {
+                        value = ok
+                    })
+                } else {
+                    value = false
+                }
+            })
         }
+        return value
     }
 
     /**
@@ -577,7 +629,8 @@ class Template {
         /*
          * Bail early if we have no file in any template except content
          */
-        if (this.file === '' && !this.is_content) {
+
+        if ((!this.is_content && this.#nofile) || this.#defer) {
             return false
         }
 
@@ -604,6 +657,7 @@ class Template {
             if (null !== this.tab) {
                 dsb.ui.show_tab(this.tab)
             }
+            this.#resetDefer()
             return true
         }
 
@@ -646,12 +700,12 @@ class Template {
             }
             return '###'                     // No valid template ...
 
-        }).then((html) => {
+        }).then(async (html) => {
 
             let [template, content] = html.split('###')
             if (template) {
 
-                current.#template_completion(template)
+                current.#templateCompletion(template)
                 //load content.
                 current.container.innerHTML = content;
 
@@ -660,20 +714,22 @@ class Template {
                     dsb.ui.show_tab(current.tab)
                 }
             } else {
-                Template.page_404(current.container?.dataset?.templateId, this.file)
+                Template.page404(current.container?.dataset?.templateId, this.file)
             }
             current.loaded = true
 
-            Template.load_all_templates(this.container)
-            this.loaded_animation(true)
+            await Template.importChildren(current.container)
 
-            Template.add_template_to_list(current)
+            Template.addBlockToList(current)
 
-            return true;
         }).catch((error) => {
             console.error('Error:', error);                     // Print or not print ?
         })
 
+        this.loaded_animation(true)
+        this.#resetDefer()
+
+        return true
     }
 
     /**
@@ -681,7 +737,7 @@ class Template {
      *
      * @param template
      */
-    #template_completion(template) {
+    #templateCompletion(template) {
         if (template.includes('.php')) {
             template = template.slice(0, template.length - 4) // remove .php
             let origin = dsb.utils.path_info(this.file).name
@@ -712,16 +768,16 @@ class Template {
             // 2 possibilities : app home page or dedicated pages ('/pages/....')
             const pathname = location.pathname
 
-            if (!this.#check_exception(pathname)) {
+            if (!this.#isException(pathname)) {
 
                 if (pathname.includes(this.#page_path)) {
                     // Redirection to /pages/xxxx
-                    this.check_link(pathname)
+                    this.checkLink4Tab(pathname)
                 } else if (pathname.includes('/home')) {
-                    this.check_link(Template.get_home())
+                    this.checkLink4Tab(Template.getHome())
                 } else {
                     // Redirection to home
-                    this.check_link(Template.get_home())
+                    this.checkLink4Tab(Template.getHome())
                 }
 
             }
