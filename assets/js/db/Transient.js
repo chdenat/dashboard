@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 24/02/2023  15:46                                                                                *
+ * Last updated on : 26/02/2023  15:35                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -33,24 +33,35 @@ class Transient {
     }
 
     /**
-     * Set the transient
+     * Create the transient
      *
      * @param value
+     * @param duration in minute (default to 60, ie one hour)
      *
-     * @param duration
+     *
      */
-    set = async (value, duration = 60) => {
+    create = async (value, duration = 60) => {
         if (value !== undefined) {
             await dsb.db.set(this.#key, value, this.#store, duration * MINUTE)
         }
     }
 
-    get = async (with_ttl = false) => {
-        return await dsb.db.get(this.#key, this.#store, with_ttl)
+    /**
+     * Read the transient
+     * @param full      if true we'll return the full object, including time
+     *                      else only the transient value
+     * @return {Promise<*>}
+     */
+    read = async (full = false) => {
+        return await dsb.db.get(this.#key, this.#store, full)
     }
 
     /**
      * Update the transient
+     *
+     * @param value
+     * @param duration
+     * @return {Promise<*>}
      */
     update = async (value, duration = 0) => {
         if (value !== undefined) {
