@@ -1,17 +1,16 @@
-/*******************************************************************************************************************
- * Project : shelteradmin
- * file       : Page.js
- *
- * @author : Christian Denat
- * @email   : contact@noleam.fr
- *
- * --
- *
- * updated on:  2/8/23, 7:36 PM
- *
- * @copyright (c) 2023 noleam.fr
- *
- ******************************************************************************************************************/
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : Dashboard.js                                                                                                *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 26/02/2023  10:46                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
 
 class Dashboard {
     #cpath = ''
@@ -30,7 +29,7 @@ class Dashboard {
         //assume pathname = /pages/<page>
 
         // We 1st set current to home (can contains #)
-        let current = '' // Template.get_home().split('#')[0].split('/').pop()
+        let current = '' // Block.getHome().split('#')[0].split('/').pop()
 
         let path = location.pathname
         if (path !== '/') {

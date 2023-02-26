@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 25/02/2023  12:08                                                                                *
+ * Last updated on : 26/02/2023  10:46                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -16,7 +16,7 @@ import {Bus as DSBEvent} from 'Bus';
 import {LocalDB} from 'LocalDB';
 import {Dashboard} from 'Dashboard';
 import * as bootstrap from 'bootstrap'
-import {Template} from 'Template'
+import {Block} from 'Block'
 import {Toaster} from 'Toaster';
 
 await import ('sprintf');
@@ -233,13 +233,13 @@ var dsb = {
                         } else {
                             // Menu item : we do not click but simulate
                             dsb.menu.click(item, true);
-                            dsb.ui.show_tab(Template._check_link(link).tab)
+                            dsb.ui.show_tab(Block._check_link(link).tab)
                         }
                         id += '-'
 
                     })
                 } else {
-                    Template.page_404('#content#', origin)
+                    Block.page404('#content#', origin)
                 }
             })
         },
@@ -448,13 +448,13 @@ var dsb = {
 
         init: () => {
             // During the init phase, we do not use teh 404 redirection
-            Template.use_404(false)
+            Block.use404(false)
 
             // When a template has been loaded, we register specific link actions and load all the children
-            Template.event.on('template/loaded', dsb.template.genericLoadedEvent)
+            Block.event.on('template/loaded', dsb.template.genericLoadedEvent)
 
             // Update the page
-            Template.load_all_templates()
+            Block.importChildren()
 
         },
 
@@ -464,7 +464,7 @@ var dsb = {
 
                 item.addEventListener('click', event => {
                     event.preventDefault()
-                    Template.load_from_event(event).then(() => {
+                    Block.loadBlockFromEvent(event).then(() => {
                         dsb.content_event.emit('click', item)
                     })
                 })
@@ -477,7 +477,7 @@ var dsb = {
 
             // Init UI
             dsb.ui.init(template.container)
-            Template.use_404()
+            Block.use404()
 
         }),
 
@@ -703,7 +703,7 @@ var dsb = {
                 return response.text()
             }).then(async function (html) {
                 dsb.modal.message(html)
-                await Template.load_all_templates(document.getElementById('dashboard-modal'))
+                await Block.importChildren(document.getElementById('dashboard-modal'))
                 return true;
             }).catch((error) => {
                 console.error('Error:', error); // Print or not print ?
@@ -792,7 +792,7 @@ var dsb = {
                 dsb.user.session.init()
 
                 // As some parts depends on user session, we relead all the page content
-                Template.load_all_templates()
+                Block.importChildren()
 
                 dsb.user.events.loaded();
                 event.preventDefault();
@@ -1242,11 +1242,11 @@ var dsb = {
                         document.dispatchEvent(dsb.user.events.dsb_logout);
 
                         if (redirection) {
-                            let t = new Template('#content#', null, redirection)
+                            let t = new Block('#content#', null, redirection)
                             t.load(true)
-                            Template.reload_page()
+                            Block.reload_page()
                         } else {
-                            Template.reload_page(false)
+                            Block.reload_page(false)
                         }
 
                     }
@@ -1287,7 +1287,7 @@ var dsb = {
                             message: sprintf(dsb.ui.get_text_i18n('user/new-password', 'text'), dsb.user.session.context.user),
                             type: 'success'
                         })
-                        Template.reload_page()
+                        Block.reload_page()
 
                     }
                 })
@@ -1956,8 +1956,8 @@ var dsb = {
 
         show_intermediate_content: (event) => {
             event.preventDefault();
-            let template = new Template('#popcont#')
-            template.check_link(event.currentTarget.getAttribute('href'))
+            let template = new Block('#popcont#')
+            template.checkLink4Tab(event.currentTarget.getAttribute('href'))
             template.load({
                 template: template,
                 force: true,
@@ -2476,14 +2476,14 @@ var dsb = {
         /**
          * Once menu has been loaded, we initialise some functionalities
          */
-        Template.event.once('template/loaded/blocks/menu', (block) => {
+        Block.event.once('template/loaded/blocks/menu', (block) => {
             dsb.menu.init(block)
         })
 
         /**
          * Once menu has been loaded, we initialise some functionalities
          */
-        Template.event.once('template/loaded/blocks/languages', block => {
+        Block.event.once('template/loaded/blocks/languages', block => {
             dsb.init_lang()
         })
 

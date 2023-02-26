@@ -1,18 +1,17 @@
-/***********************************************************************************************************************
- *
- * Project : supervix4
- * file : Animation.js
- *
- * @author  Christian Denat
- * @email contact@noleam.fr
- * --
- *
- * updated on :  6/1/22, 3:16 PM
- *
- * @copyright (c) 2022 noleam.fr
- *
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : Animation.js                                                                                                *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 26/02/2023  10:46                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
  **********************************************************************************************************************/
-import {Template} from "./Template.js";
+import {Block} from "./Block.js";
 
 
 class Animation {
@@ -36,7 +35,7 @@ class Animation {
     static loading(arg) {
 
         let template_id = (arg instanceof Event) ? arg.template.ID : arg
-        this.#template = new Template(template_id)
+        this.#template = new Block(template_id)
         let loader = Animation.#loader
 
         if (/*this.#template.animate() && */loader) {
@@ -49,7 +48,7 @@ class Animation {
     static loaded(arg) {
 
         let template_id = (arg instanceof Event) ? arg.template.ID : arg
-        this.#template = new Template(template_id)
+        this.#template = new Block(template_id)
         let loader = Animation.#loader
 
         if (/*this.#template.animate() &&*/ loader) {
@@ -61,7 +60,7 @@ class Animation {
 
     static unloading(arg) {
         let template_id = (arg instanceof Event) ? arg.template.ID : arg
-        this.#template = new Template(template_id)
+        this.#template = new Block(template_id)
         let loader = Animation.#loader
 
         if (/*this.#template.animate() &&*/ loader) {

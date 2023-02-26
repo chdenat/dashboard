@@ -1,19 +1,18 @@
-/***********************************************************************************************************************
- *
- * Project : supervix4
- * file : Modal.js
- *
- * @author  Christian Denat
- * @email contact@noleam.fr
- * --
- *
- * updated on :  6/3/22, 4:09 PM
- *
- * @copyright (c) 2022 noleam.fr
- *
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : Modal.js                                                                                                    *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 26/02/2023  10:46                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
  **********************************************************************************************************************/
 
-import {Template} from "Template";
+import {Block} from "Block";
 
 class Modal {
 
@@ -67,7 +66,7 @@ class Modal {
      * @param event
      */
     loaded_event = (event) => {
-        Template.load_all_templates(this.#dom_modal)
+        Block.importChildren(this.#dom_modal)
     }
 
     /**
@@ -130,7 +129,7 @@ class Modal {
             return response.text();
         }).then(function (html) {
             self.message(html);
-            Template.load_all_templates(self.#dom_modal)
+            Block.importChildren(self.#dom_modal)
 
             return true;
         }).catch((error) => {

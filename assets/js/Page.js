@@ -1,17 +1,16 @@
-/*******************************************************************************************************************
- * Project : shelteradmin
- * file       : Page.js
- *
- * @author : Christian Denat
- * @email   : contact@noleam.fr
- *
- * --
- *
- * updated on:  2/8/23, 7:36 PM
- *
- * @copyright (c) 2023 noleam.fr
- *
- ******************************************************************************************************************/
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : Page.js                                                                                                     *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 26/02/2023  10:46                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
 import {Animation} from "Animation";
 import {dsb} from "dsb";
 
@@ -32,7 +31,7 @@ export class Page {
     /**
      * template getter
      *
-     * @return {Template|null}
+     * @return {Block|null}
      */
     get template() {
         return this.#template
@@ -57,7 +56,7 @@ export class Page {
      *      - call attachEvents                  // call in Dashboard class
      *      - load Page                          // in Dashboard class
      *
-     *      - call pageInitialisation            // call in Template
+     *      - call pageInitialisation            // call in Block
 
      * This is a  static method used to make some global initialisation
 

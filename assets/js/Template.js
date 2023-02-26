@@ -19,7 +19,7 @@ import {Bus as TemplateEvent} from 'Bus';
 
 let blocksList = [];
 
-class Template {
+class Block {
 
     static #HOME = ''
     static #EXCEPTIONS = []
@@ -76,7 +76,7 @@ class Template {
                 element.setAttribute('data-template', file)
             }
 
-            // Template file could be
+            // Block file could be
             //      'xxxx/yyyyy'                => we check this as template file
             //      'xxxx/yyyyy[variable]       =>
 
@@ -127,15 +127,15 @@ class Template {
      */
     get children() {
         let parent = this.#dom.container ?? document.body
-        Template.getBlocksParent(parent).forEach(child => {
-            let tmp = new Template(child)
-            Template.addBlockToList(tmp)
+        Block.getBlocksParent(parent).forEach(child => {
+            let tmp = new Block(child)
+            Block.addBlockToList(tmp)
             this.#children.push(tmp);
         })
     }
 
     get is_reserved() {
-        return Template.#reserved.includes(this.ID.replace(/#/g, '',))
+        return Block.#reserved.includes(this.ID.replace(/#/g, '',))
     }
 
     get is_content() {
@@ -242,19 +242,19 @@ class Template {
     }
 
     static setHome(home) {
-        Template.#HOME = home
+        Block.#HOME = home
     }
 
     static getHome() {
-        return Template.#HOME
+        return Block.#HOME
     }
 
     static set_exceptions(list) {
-        Template.#EXCEPTIONS = list
+        Block.#EXCEPTIONS = list
     }
 
     static get_exceptions() {
-        return Template.#EXCEPTIONS
+        return Block.#EXCEPTIONS
     }
 
     static _check_link = (link) => {
@@ -268,24 +268,24 @@ class Template {
      * @param url
      */
     static page404 = (template_id, url) => {
-        let t = new Template(document.querySelector(`[data-template-id="${template_id}"]`))
+        let t = new Block(document.querySelector(`[data-template-id="${template_id}"]`))
 
-        if (t.is_content && !Template.#use404) {
+        if (t.is_content && !Block.#use404) {
             return
         }
 
         t.checkLink4Tab(`${t.#page_path}404`)
         t.load(true, {url: url})
-        Template.use404();
+        Block.use404();
 
     }
 
     static use404 = (use = true) => {
-        Template.#use404 = use
+        Block.#use404 = use
     }
 
     static doWeUse404 = () => {
-        return Template.#use404
+        return Block.#use404
     }
 
     /**
@@ -301,7 +301,7 @@ class Template {
         for (const item in event.currentTarget.dataset) {
             if (this.#reserved.includes(item)) {
                 // If it s the case, lets'go
-                let template = Template.getBlock(`#${item}#`)
+                let template = Block.getBlock(`#${item}#`)
 
                 if (undefined !== template) {
 
@@ -346,12 +346,12 @@ class Template {
      * @param parent root (document by default)
      */
     static importChildren = async function (parent = document) {
-        let blocks = Template.getBlocksParent(parent);
+        let blocks = Block.getBlocksParent(parent);
         let children = []
         for (const block of blocks) {
             if (block.dataset?.blockId !== '#popcont#') {
-                let element = Template.addBaseToTemplate(block)
-                let item = new Template(element)
+                let element = Block.addBaseToTemplate(block)
+                let item = new Block(element)
                 children.push(item)
             }
         }
@@ -399,7 +399,7 @@ class Template {
      * @since 1.0
      *
      */
-    static getBlocksParent = (node = document, tag = Template.#TAG) => {
+    static getBlocksParent = (node = document, tag = Block.#TAG) => {
         return node.querySelectorAll(`${tag}:first-of-type:not(${tag} *)`)
     }
 
@@ -419,7 +419,7 @@ class Template {
      */
     static removeBlockFromList = (key = this) => {
         let id = key
-        if (key instanceof Template) {
+        if (key instanceof Block) {
             id = key.ID
         }
         blocksList.forEach((item, index) => {
@@ -440,16 +440,16 @@ class Template {
     }
 
     static async reloadPage() {
-        let t = new Template(document.querySelector('[data-template-id="#content#"]'))
+        let t = new Block(document.querySelector('[data-template-id="#content#"]'))
         t.loading_animation()
         await t.load(true)
-        // await Template.importChildren(t.container)
+        // await Block.importChildren(t.container)
         t.loaded_animation()
     }
 
     static reload_page(soft = true) {
         if (soft) {
-            Template.importChildren()
+            Block.importChildren()
             return
         }
         location.reload()
@@ -460,7 +460,7 @@ class Template {
      */
     importDeferBlocks = async () => {
         for (const block of this.container.querySelectorAll("[defer]")) {
-            let template = new Template(block)
+            let template = new Block(block)
             template.defer = false
             await template.load(true)
         }
@@ -491,7 +491,7 @@ class Template {
      */
     #isException = (text) => {
         let is_exception = false;
-        for (let exception in Template.get_exceptions()) {
+        for (let exception in Block.get_exceptions()) {
             if (text.includes(exception)) {
                 is_exception = true
                 break
@@ -528,7 +528,7 @@ class Template {
         let value = true
         // Load the link content in the right template
         if (this.is_content && !this.#nofile) {
-            Template.importPageController(this)
+            Block.importPageController(this)
                 .then(result => {
                     // Once the page  has been loaded, it's time to initalise the page,
                     // if the required method exists
@@ -611,7 +611,7 @@ class Template {
     /**
      * Load a template by Ajax in any DOM element that contains the right data-template attribute
      *
-     * Template are loaded only if
+     * Block are loaded only if
      *    - data-template-forced is false or not defined
      *    - force = false (ie defaults)
      *
@@ -714,13 +714,13 @@ class Template {
                     dsb.ui.show_tab(current.tab)
                 }
             } else {
-                Template.page404(current.container?.dataset?.templateId, this.file)
+                Block.page404(current.container?.dataset?.templateId, this.file)
             }
             current.loaded = true
 
-            await Template.importChildren(current.container)
+            await Block.importChildren(current.container)
 
-            Template.addBlockToList(current)
+            Block.addBlockToList(current)
 
         }).catch((error) => {
             console.error('Error:', error);                     // Print or not print ?
@@ -774,10 +774,10 @@ class Template {
                     // Redirection to /pages/xxxx
                     this.checkLink4Tab(pathname)
                 } else if (pathname.includes('/home')) {
-                    this.checkLink4Tab(Template.getHome())
+                    this.checkLink4Tab(Block.getHome())
                 } else {
                     // Redirection to home
-                    this.checkLink4Tab(Template.getHome())
+                    this.checkLink4Tab(Block.getHome())
                 }
 
             }
@@ -790,11 +790,11 @@ class Template {
         let generic_event = new Event(`${type}`)
         generic_event.template = this;
         document.dispatchEvent(generic_event)
-        Template.event.emit(type, this);
+        Block.event.emit(type, this);
 
         // template event if it is a reserved template
         if (this.is_reserved) {
-            Template.event.emit(`${type}/${this.ID}`, this);
+            Block.event.emit(`${type}/${this.ID}`, this);
             let load_event = new Event(`${type}/${this.ID}`)
             load_event.template = this
             document.dispatchEvent(load_event)
@@ -812,7 +812,7 @@ class Template {
         let load_event = new Event(`${type}/${file}`)
         load_event.template = this
         document.dispatchEvent(load_event)
-        Template.event.emit(`${type}/${file}`, this);
+        Block.event.emit(`${type}/${file}`, this);
 
     }
 
@@ -872,4 +872,4 @@ class Template {
 
 }
 
-export {Template}
+export {Block}
