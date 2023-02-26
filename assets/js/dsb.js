@@ -6,18 +6,19 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/02/2023  10:46                                                                                *
+ * Last updated on : 26/02/2023  19:12                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 import {customAlphabet} from 'nanoid'
-import {Bus as DSBEvent} from 'Bus';
-import {LocalDB} from 'LocalDB';
-import {Dashboard} from 'Dashboard';
+import {Bus as DSBEvent} from 'Bus'
+import {LocalDB} from 'LocalDB'
+import {Dashboard} from 'Dashboard'
 import * as bootstrap from 'bootstrap'
 import {Block} from 'Block'
-import {Toaster} from 'Toaster';
+import {Toaster} from 'Toaster'
+import {Transient} from 'Transient'
 
 await import ('sprintf');
 
@@ -2373,8 +2374,10 @@ var dsb = {
             dsb.ui.new_lang = false
             const cookie = dsb.ui.get_lang_cookie()
 
+            let transient = new Transient(cookie.name)
+
             // it's better to read content from transients
-            let content = await dsb.db.get(cookie.name, 'transients')
+            let content = await transient.read()
 
             if (cookie && content?.change) {
                 // it's a new lang, ok we sync the cookie content
@@ -2403,7 +2406,7 @@ var dsb = {
             }
 
             // update transient TTL
-            await dsb.db.set(cookie.name, content, 'transients', YEAR)
+            await transient.update(content, YEAR / SECOND)
 
             dsb.ui.check_lang = true
         }
