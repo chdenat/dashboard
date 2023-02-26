@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Project : dashboard                                                                                                *
- * File : Template.js                                                                                                 *
+ * File : Block.js                                                                                                    *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/02/2023  10:46                                                                                *
+ * Last updated on : 26/02/2023  10:51                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -14,7 +14,7 @@
 
 import {nanoid} from 'nanoid'
 import {Animation} from 'Animation';
-import {Bus as TemplateEvent} from 'Bus';
+import {Bus as BlockEvent} from 'Bus';
 
 
 let blocksList = [];
@@ -25,7 +25,7 @@ class Block {
     static #EXCEPTIONS = []
     static #reserved = ['menu', 'content', 'pop-content']    // Special templates
     static #use404 = false
-    static event = TemplateEvent
+    static event = BlockEvent
     static #TAG = 'BLOCK'
     #ID = null
     #file = ''

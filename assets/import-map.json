@@ -2,6 +2,7 @@
   "imports": {
     "@popperjs/core": "/dashboard/assets/vendor/popper/popper.js",
     "Animation": "/dashboard/assets/js/Animation.js",
+    "Block": "/dashboard/assets/js/Block.js",
     "bootstrap": "/dashboard/assets/vendor/bootstrap/js/bootstrap.esm.js",
     "DateTime": "/dashboard/assets/vendor/luxon.min.js",
     "Dashboard": "/dashboard/assets/js/Dashboard.js",
@@ -17,7 +18,6 @@
     "Transient": "/dashboard/assets/js/db/Transient.js",
     "nanoid": "/dashboard/assets/vendor/nanoid.js",
     "sprintf": "/dashboard/assets/vendor/sprintf.min.js",
-    "Template": "/dashboard/assets/js/Template.js",
     "Toaster": "/dashboard/assets/vendor/Toaster.js"
   }
 }
