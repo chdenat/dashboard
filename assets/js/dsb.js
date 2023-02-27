@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/02/2023  19:12                                                                                *
+ * Last updated on : 27/02/2023  16:51                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -2406,7 +2406,7 @@ var dsb = {
             }
 
             // update transient TTL
-            await transient.update(content, YEAR / SECOND)
+            await transient.update(content, YEAR)
 
             dsb.ui.check_lang = true
         }
