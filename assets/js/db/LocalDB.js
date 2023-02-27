@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/02/2023  19:11                                                                                *
+ * Last updated on : 27/02/2023  16:46                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -17,7 +17,6 @@
  */
 import {openDB} from 'idb';
 import {DateTime} from 'luxon'
-import {SECOND} from 'dsb'
 
 let millis = 1000
 
@@ -29,6 +28,7 @@ export class LocalDB {
     #name = 'mydb'
 
     #transients = 'transients'
+    #content;
 
     constructor({
                     name = this.#name,
@@ -87,6 +87,8 @@ export class LocalDB {
             return null
         }
 
+        this.#content = data
+
         // If we need ttl, we return the full object
         if (full) {
             return data
@@ -98,30 +100,56 @@ export class LocalDB {
     /**
      * Add a key/value with optional ttl
      *
+     * We take into account if the transient already exist.
+     * In this case, we update it
+     *
      *
      * @param key
      * @param value         any kind of value
      * @param store
-     * @param ttl           in milliseconds
+     * @param ttl           in milliseconds  null = no change
      *
-     * @return {Promise<*>}
+     * @return the content saved
      */
-    set = async (key, value, store,ttl = 0) => {
+    put = async (key, value, store, ttl = null) => {
 
-        let data = {
-            value: value
+        let now = DateTime.now()
+        let old = await this.get(key, store, true)
+        let content = {_iso_: {}}
+
+        content.value = value                                               // Information to save
+
+        // Do not change creation time if it is an update
+        content._ct_ = old ? old._ct_ : now.toMillis()                      // Creation time in millis
+        content._iso_._ct_ = DateTime.fromMillis(content._ct_).toISO()       // same in ISO
+
+        content._mt_ = now.toMillis()                                       // Last modification time in millis
+        content._iso_._mt_ = now.toISO()                                    // same in ISO
+
+        // if there is no one existing nor ttl
+        if (!old || (ttl !== null && ttl > 0)) {
+            this.setTTL(content, ttl)
         }
 
-        data._ct_ = DateTime.now().toMillis()
+        (await this.#db).put(store, content, key);
 
+        this.#content = content;
+        return this.#content
+
+    }
+
+    /**
+     * Add the object ttl if required
+     * @param ttl
+     */
+    setTTL = (content, ttl) => {
         if (ttl > 0) {
-            data._ttl_ = ttl * millis
-            data._dt_ = data._ct_ + data._ttl_
-            data._iso_ = DateTime.now().toISO()
+            content.ttl = {
+                duration: ttl,                                      // ttl in millis
+                end: content._ct_ + ttl,                              // end in millis
+            }
+            content._iso_.ttl = DateTime.fromMillis(content._ct_ + ttl).toISO()
         }
-
-        return (await this.#db).put(store, data, key);
-
     }
 
     /**
@@ -133,15 +161,9 @@ export class LocalDB {
      * @param ttl       in milliseconds
      * @return {Promise<*>}
      */
-    update = async (key,value,store,ttl = 0) => {
-        const old = await this.get(key, store, true)
-        if (old) {
-            await this.delete(key, store)
-            if (ttl === 0) {
-                ttl = old._ttl_ / SECOND
-            }
-        }
-        return await this.set(key,value,store,ttl);
+    update = async (key, value, store, ttl = 0) => {
+        return this.put(key, value, store, ttl);
+
     }
 
     /**
@@ -151,7 +173,7 @@ export class LocalDB {
      * @param store
      * @return {Promise<*>}
      */
-    delete=async (key,store) => {
+    delete = async (key, store) => {
         return (await this.#db).delete(store, key);
     }
 
@@ -160,7 +182,7 @@ export class LocalDB {
      *
      * @return {Promise<*>}
      */
-   clear =  async (store)=>  {
+    clear = async (store) => {
         return (await this.#db).clear(store);
     }
 
