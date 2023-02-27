@@ -6,12 +6,12 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/02/2023  19:12                                                                                *
+ * Last updated on : 27/02/2023  16:48                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {dsb, SECOND} from 'dsb'
+import {dsb, MINUTE} from 'dsb'
 import {DateTime} from 'luxon'
 
 class Transient {
@@ -19,7 +19,7 @@ class Transient {
     #key
     #dataBase
     return
-    null
+    #content
 
     constructor(transientName, dataBase = dsb.db) {
         this.#key = transientName
@@ -39,13 +39,13 @@ class Transient {
      * Create the transient
      *
      * @param value
-     * @param duration in seconds (default to 600, ie 10 minutes)
+     * @param duration in seconds (10 minutes)
      *
      *
      */
-    create = async (value, duration = 600) => {
+    create = async (value, duration = 10 * MINUTE) => {
         if (value !== undefined) {
-            await dsb.db.set(this.#key, value, this.#store, duration * SECOND)
+            await dsb.db.put(this.#key, value, this.#store, duration)
         }
     }
 
@@ -61,11 +61,15 @@ class Transient {
     read = async (full = false) => {
 
         let data = await dsb.db.get(this.#key, this.#store, true)
-        if (data)
-            if ((data._ct_ + data._ttl_) < DateTime.now().toMillis) {
+
+        if (data) {
+            if (data?.ttl.end < DateTime.now().toMillis) {
                 return null
             }
-        return full ? data : data.value
+
+            return full ? data : data?.value
+        }
+        return null
     }
 
     /**
@@ -77,7 +81,7 @@ class Transient {
      */
     update = async (value, duration = 0) => {
         if (value !== undefined) {
-            return await dsb.db.update(this.#key, value, this.#store, duration * SECOND)
+            return await dsb.db.update(this.#key, value, this.#store, duration)
         }
     }
     /**
