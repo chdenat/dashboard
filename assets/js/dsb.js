@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/02/2023  16:51                                                                                *
+ * Last updated on : 27/02/2023  16:58                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -2341,7 +2341,7 @@ var dsb = {
                                 .then(response => response.json())
                                 .then(data => {
                                     //save transient
-                                    dsb.db.set(data.cookie.name, data.cookie.content, 'transients', YEAR)
+                                    new Transient(data.cookie.name).update(data.cookie.content, YEAR)
                                     location.reload()
                                 })
                                 .catch(error => {
