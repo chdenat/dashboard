@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/02/2023  10:51                                                                                *
+ * Last updated on : 27/02/2023  11:20                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -358,7 +358,7 @@ class Block {
         for (const block of children) {
             block.loadPage(true).then(async (ok) => {
                 if (ok) {
-                    await block.importDeferBlocks()
+                    await block.importDeferredBlock()
                 }
             })
         }
@@ -458,7 +458,7 @@ class Block {
     /**
      * Load all templates with tag defer
      */
-    importDeferBlocks = async () => {
+    importDeferredBlock = async () => {
         for (const block of this.container.querySelectorAll("[defer]")) {
             let template = new Block(block)
             template.defer = false
@@ -535,7 +535,7 @@ class Block {
                     if (result.success) {
                         this.load(force).then((ok) => {
                             if (ok) {
-                                this.importDeferBlocks().then((ok) => {
+                                this.importDeferredBlock().then((ok) => {
                                     if (ok) {
                                         if (!result.message && result.page['pageInitialisation']) {
                                             result.page.pageInitialisation()
@@ -557,7 +557,7 @@ class Block {
         } else {
             this.load(force).then((ok) => {
                 if (ok) {
-                    this.importDeferBlocks(ok => {
+                    this.importDeferredBlock(ok => {
                         value = ok
                     })
                 } else {
