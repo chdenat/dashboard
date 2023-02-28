@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : dashboard                                                                                                *
+ * Project : shelteradmin                                                                                             *
  * File : Transient.js                                                                                                *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/02/2023  20:12                                                                                *
+ * Last updated on : 28/02/2023  19:21                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -52,22 +52,21 @@ class Transient {
     /**
      * Read the transient
      * @param full      if true we'll return the full object, including time
-     *                  else only the transient value.
+     *                  else only the transient value property.
      *
      *                  If ttl expired, return null
+     +
      *
      * @return {Promise<*>}
      */
     read = async (full = false) => {
 
         let data = await dsb.db.get(this.#key, this.#store, true)
-
         if (data) {
             if (data?.ttl?.end < DateTime.now().toMillis) {
                 return null
             }
-
-            return full ? data : data?.value
+            return full ? data : {value: data?.value}
         }
         return null
     }
