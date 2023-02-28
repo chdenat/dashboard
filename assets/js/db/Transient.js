@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/02/2023  16:48                                                                                *
+ * Last updated on : 27/02/2023  20:12                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -63,7 +63,7 @@ class Transient {
         let data = await dsb.db.get(this.#key, this.#store, true)
 
         if (data) {
-            if (data?.ttl.end < DateTime.now().toMillis) {
+            if (data?.ttl?.end < DateTime.now().toMillis) {
                 return null
             }
 
