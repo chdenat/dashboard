@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/02/2023  16:46                                                                                *
+ * Last updated on : 27/02/2023  19:06                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -144,11 +144,12 @@ export class LocalDB {
      */
     setTTL = (content, ttl) => {
         if (ttl > 0) {
+            let end = content._mt_ + ttl
             content.ttl = {
                 duration: ttl,                                      // ttl in millis
-                end: content._ct_ + ttl,                              // end in millis
+                end: end,                              // end in millis
             }
-            content._iso_.ttl = DateTime.fromMillis(content._ct_ + ttl).toISO()
+            content._iso_.ttl = DateTime.fromMillis(end).toISO()
         }
     }
 
