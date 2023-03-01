@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 28/02/2023  19:21                                                                                *
+ * Last updated on : 01/03/2023  16:08                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -33,6 +33,22 @@ class Transient {
      */
     get name() {
         return this.#key
+    }
+
+    /**
+     *  Return if transient expired
+     */
+    get expired() {
+        dsb.db.get(this.#key, this.#store, true).then(data => {
+            if (data) {
+                return this.#expired(data)
+            }
+            return false
+        })
+    }
+
+    #expired = data => {
+        return (data?.ttl?.end >= DateTime.now().toMillis)
     }
 
     /**
@@ -63,7 +79,7 @@ class Transient {
 
         let data = await dsb.db.get(this.#key, this.#store, true)
         if (data) {
-            if (data?.ttl?.end < DateTime.now().toMillis) {
+            if (this.#expired(data)) {
                 return null
             }
             return full ? data : {value: data?.value}
@@ -83,11 +99,12 @@ class Transient {
             return await dsb.db.update(this.#key, value, this.#store, duration)
         }
     }
+
     /**
      * Delete the transient
      */
     delete = async () => {
-        await dsb.db.delete(this.#key, this.#store)
+        return await dsb.db.delete(this.#key, this.#store)
     }
 
 }
