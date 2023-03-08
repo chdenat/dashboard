@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 20/02/2023  20:13
+ * Last updated on : 08/03/2023  18:39
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -309,6 +309,9 @@ legend {
 /*******************************************************************************
  * Button animation
  */
+.btn {
+    pointer-events: auto;
+}
 
 .btn .animation.start {
     display: flex;
@@ -322,10 +325,12 @@ legend {
     background: var(--bs-warning);
     color: var(--bs-white);
     border-color: var(--bs-warning);
+    pointer-events: none;
 }
 
 .btn .animation.reset {
     display: none;
+    pointer-events: auto;
 }
 
 /**************************************************************************************************************************************************
