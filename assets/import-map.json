@@ -6,6 +6,7 @@
     "bootstrap": "/dashboard/assets/vendor/bootstrap/js/bootstrap.esm.js",
     "DateTime": "/dashboard/assets/vendor/luxon.min.js",
     "Dashboard": "/dashboard/assets/js/Dashboard.js",
+    "DashboardUI": "/dashboard/assets/js/DashboardUI.js",
     "Page": "/dashboard/assets/js/Page.js",
     "luxon": "/dashboard/assets/vendor/luxon.min.js",
     "dsb": "/dashboard/assets/js/dsb.js",
