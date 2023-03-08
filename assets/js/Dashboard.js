@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/02/2023  10:46                                                                                *
+ * Last updated on : 07/03/2023  14:51                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -25,7 +25,11 @@ class Dashboard {
         this.#dir = `${dir}/`
     }
 
-    get current_page() {
+    /**
+     * Return the current page
+     *
+     */
+    get page() {
         //assume pathname = /pages/<page>
 
         // We 1st set current to home (can contains #)
@@ -37,6 +41,16 @@ class Dashboard {
         }
         return current
     }
+
+    /**
+     * Alias for page
+     *
+     * @deprecated
+     */
+    get current_page() {
+        return this.page
+    }
+
 
     /**
      * Import page controller.
