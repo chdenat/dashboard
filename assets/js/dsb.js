@@ -6,21 +6,22 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/02/2023  16:58                                                                                *
+ * Last updated on : 11/03/2023  18:40                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {customAlphabet} from 'nanoid'
-import {Bus as DSBEvent} from 'Bus'
-import {LocalDB} from 'LocalDB'
-import {Dashboard} from 'Dashboard'
-import * as bootstrap from 'bootstrap'
-import {Block} from 'Block'
-import {Toaster} from 'Toaster'
-import {Transient} from 'Transient'
+import {Block}              from 'Block'
+import * as bootstrap       from 'bootstrap'
+import {Bus as DSBEvent}    from 'Bus'
+import {Dashboard}          from 'Dashboard'
+import {DashboardWCManager} from 'DashboardWCManager'
+import {LocalDB}            from 'LocalDB'
+import {customAlphabet}     from 'nanoid'
+import {Toaster}            from 'Toaster'
+import {Transient}          from 'Transient'
 
-await import ('sprintf');
+await import ('sprintf')
 
 const nanoid = customAlphabet('1234567890', 6)
 
@@ -2251,9 +2252,15 @@ var dsb = {
             document.querySelector(`[name="${name}"][value="${value}"]`).checked = true
         },
 
+        initialised: false,
         init: async (parent = document) => {
 
             dsb.ui.lists = []
+
+            if (!dsb.ui.initialised) {
+                // Attach web components
+                new DashboardWCManager()
+            }
 
             // Create all selection lists (except thos who use not-auto-choices)
             parent.querySelectorAll('select:not(.not-auto-choices)').forEach(select => {
@@ -2359,7 +2366,11 @@ var dsb = {
 
             // Add scrolling
             dsb.ui.add_scrolling(parent)
+
+            dsb.ui.initialised = true
+
         }
+
 
     },
 
