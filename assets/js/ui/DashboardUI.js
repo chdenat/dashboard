@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 08/03/2023  16:06                                                                                *
+ * Last updated on : 11/03/2023  18:01                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -14,7 +14,6 @@
 
 
 export class DashboardUI {
-
     /**
      * For all elements that have the class alert-support-access, we change the criteria (primary, secondary...)
      *
