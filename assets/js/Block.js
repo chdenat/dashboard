@@ -6,15 +6,15 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/02/2023  11:20                                                                                *
+ * Last updated on : 11/03/2023  11:33                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-import {nanoid} from 'nanoid'
-import {Animation} from 'Animation';
-import {Bus as BlockEvent} from 'Bus';
+import {Animation}         from 'Animation'
+import {Bus as BlockEvent} from 'Bus'
+import {nanoid}            from 'nanoid'
 
 
 let blocksList = [];
@@ -50,7 +50,8 @@ class Block {
      *
      * @param variable add to template file.
      *                when the template file is 'xxxx/yyyyy'        ==> we check this as template file, no variable
-     *                when the template file is 'xxxx/yyyyy[zzz]'   ==> we check 'xxxx/yyyyy' as template file, zzz as variable
+     *                when the template file is 'xxxx/yyyyy[zzz]'   ==> we check 'xxxx/yyyyy' as template file, zzz as
+     *     variable
      * @param file    force a file instead the defind in data-template
      *
      * @since 1.0.0
@@ -64,7 +65,7 @@ class Block {
             element = document.querySelector(`[data-template-id="${element}"]`)
         }
 
-        if (element) {
+        if (element && element.dataset.template !== undefined) {
             this.#ID = element.dataset.templateId ?? '#' + nanoid()
             this.#defer = (element.getAttribute('defer') != undefined)
 
@@ -127,10 +128,10 @@ class Block {
      */
     get children() {
         let parent = this.#dom.container ?? document.body
-        Block.getBlocksParent(parent).forEach(child => {
+        Block.getFirstLevelEmbeddedBlocks(parent).forEach(child => {
             let tmp = new Block(child)
             Block.addBlockToList(tmp)
-            this.#children.push(tmp);
+            this.#children.push(tmp)
         })
     }
 
@@ -346,7 +347,7 @@ class Block {
      * @param parent root (document by default)
      */
     static importChildren = async function (parent = document) {
-        let blocks = Block.getBlocksParent(parent);
+        let blocks = Block.getFirstLevelEmbeddedBlocks(parent)
         let children = []
         for (const block of blocks) {
             if (block.dataset?.blockId !== '#popcont#') {
@@ -394,13 +395,16 @@ class Block {
      * @param tag   the tag to search on (#TAG by default)
      *
      *
-     * @returns {NodeListOf<Element> | NodeListOf<SVGElementTagNameMap[keyof SVGElementTagNameMap]> | NodeListOf<HTMLElementTagNameMap[keyof HTMLElementTagNameMap]>}
+     * @returns {NodeListOf<Element> | NodeListOf<SVGElementTagNameMap[keyof SVGElementTagNameMap]> |
+     *     NodeListOf<HTMLElementTagNameMap[keyof HTMLElementTagNameMap]>}
      *
-     * @since 1.0
+     * @since 1.6
      *
      */
-    static getBlocksParent = (node = document, tag = Block.#TAG) => {
-        return node.querySelectorAll(`${tag}:first-of-type:not(${tag} *)`)
+    static getFirstLevelEmbeddedBlocks = (node = document, tag = Block.#TAG) => {
+        const all = node.querySelectorAll(`:scope ${tag}`)
+        const parents = node.querySelectorAll(`:scope ${tag} ${tag}`)
+        return Array.from(all).filter(x => !Array.from(parents).includes(x))
     }
 
     /**
