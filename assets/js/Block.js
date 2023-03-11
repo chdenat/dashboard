@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 11/03/2023  11:33                                                                                *
+ * Last updated on : 11/03/2023  16:43                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -199,7 +199,7 @@ class Block {
         return this.#old
     }
 
-    get same_file() {
+    get sameFile() {
         return this.#file === this?.#old
     }
 
@@ -250,11 +250,11 @@ class Block {
         return Block.#HOME
     }
 
-    static set_exceptions(list) {
+    static setExceptions(list) {
         Block.#EXCEPTIONS = list
     }
 
-    static get_exceptions() {
+    static getExceptions() {
         return Block.#EXCEPTIONS
     }
 
@@ -315,11 +315,11 @@ class Block {
 
                     let force = true
                     // Same file  : De we force a loading?
-                    if (template.same_file) {
+                    if (template.sameFile) {
                         force = event.target.dataset.forceReload ?? false
                         // If reload not forced, we do nothing and say bye
                         if (!force) {
-                            template.loaded = true;
+                            template.loaded = true
                         }
                     }
 
@@ -445,10 +445,10 @@ class Block {
 
     static async reloadPage() {
         let t = new Block(document.querySelector('[data-template-id="#content#"]'))
-        t.loading_animation()
+        t.loadingAnimation()
         await t.load(true)
         // await Block.importChildren(t.container)
-        t.loaded_animation()
+        t.loadedAnimation()
     }
 
     static reload_page(soft = true) {
@@ -495,7 +495,7 @@ class Block {
      */
     #isException = (text) => {
         let is_exception = false;
-        for (let exception in Block.get_exceptions()) {
+        for (let exception in Block.getExceptions()) {
             if (text.includes(exception)) {
                 is_exception = true
                 break
@@ -671,10 +671,11 @@ class Block {
         this.observeLoadStatus()
 
         /**
-         * We get the actual '#content#' template in order to apply unload event
+         * We get the actual '#content#' template in order to apply the unload event
          */
-        if (!this.same_file) {
-            this.unload_animation(true)
+        if (!this.sameFile) {
+            this.unloadAnimation(true)
+            Block.event.emit(`template/unload/${this?.#old}`.replace('//', '/'))
         }
 
         /**
@@ -683,7 +684,7 @@ class Block {
          */
 
         // Step 1 : Dispatch loading event
-        this.loading_animation(true)
+        this.loadingAnimation(true)
 
 
         // Step 2 : run animation
@@ -730,7 +731,7 @@ class Block {
             console.error('Error:', error);                     // Print or not print ?
         })
 
-        this.loaded_animation(true)
+        this.loadedAnimation(true)
         this.#resetDefer()
 
         return true
@@ -845,7 +846,7 @@ class Block {
      * Start the animation for this template (if there is one)
      *
      */
-    loading_animation = () => {
+    loadingAnimation = () => {
         this.container.setAttribute('data-load-status', Animation.classes.loading)
         if (this.animate()) {
             this.animation.loading(this.ID)
@@ -856,7 +857,7 @@ class Block {
      * Stop the animation for this template  (if there is one)
      *
      */
-    loaded_animation = () => {
+    loadedAnimation = () => {
         this.container.setAttribute('data-load-status', Animation.classes.loaded)
         if (this.animate()) {
             this.animation.loaded(this.ID)
@@ -867,7 +868,7 @@ class Block {
      * Stop the animation for this template  (if there is one)
      *
      */
-    unload_animation = () => {
+    unloadAnimation = () => {
         this.container.setAttribute('data-load-status', Animation.classes.unload)
         if (this.animate()) {
             this.animation.unloading(this.ID)
