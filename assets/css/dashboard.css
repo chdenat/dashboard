@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 11/03/2023  12:45
+ * Last updated on : 11/03/2023  17:05
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -58,6 +58,7 @@
     --dsb-main-font-family: Arial, Helvetica, sans-serif;
     --dsb-main-font-size: 0.9rem;
     --dsb-middle-font-size: 1.1rem;
+    --dsb-alert-icon-size: 1.3rem;
     --dsb-big-font-size: 1.4rem;
     --dsb-small-font-size: 0.8rem;
     --dsb-xsmall-font-size: 0.6rem;
@@ -100,6 +101,7 @@ body {
 .alert i {
     align-self: baseline;
     margin-top: var(--dsb-xs-gutter);
+    font-size: var(--dsb-alert-icon-size);
 }
 
 /***************************************
