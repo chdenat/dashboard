@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 12/03/2023  11:08                                                                                *
+ * Last updated on : 12/03/2023  14:42                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -491,8 +491,6 @@ var dsb = {
              *
              */
             template.container.querySelectorAll('select:not(.not-auto-choices)').forEach(select => {
-                console.log(select)
-
                 if (!select.hasAttribute('id')) {
                     select.id = nanoid()
                 }
@@ -500,7 +498,7 @@ var dsb = {
                 let limit = select.dataset.limit ?? -1
                 let search = select.dataset.search ?? false
 
-                new Choices(select, {
+                dsb.ui.lists[select.id] = new Choices(select, {
                     itemSelectText: '',
                     silent: true,
                     allowHTML: true,
@@ -533,7 +531,7 @@ var dsb = {
                     } title="${data.label}"><i lang="${data.value}" class="fi fis fi-${CC}"></i></div>`)
                 }
 
-                new Choices(select, {
+                dsb.ui.lists[select.id] = new Choices(select, {
                         searchEnabled: false,
                         allowHTML: true,
 
@@ -2334,6 +2332,7 @@ var dsb = {
         },
 
         INITIALISED: false,
+        lists: [],
         init: () => {
             if (!dsb.ui.INITIALISED) {
                 // Attach web components
