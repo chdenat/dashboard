@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 11/03/2023  16:43                                                                                *
+ * Last updated on : 12/03/2023  10:22                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -15,7 +15,6 @@
 import {Animation}         from 'Animation'
 import {Bus as BlockEvent} from 'Bus'
 import {nanoid}            from 'nanoid'
-
 
 let blocksList = [];
 
@@ -276,8 +275,8 @@ class Block {
         }
 
         t.checkLink4Tab(`${t.#page_path}404`)
-        t.load(true, {url: url})
-        Block.use404();
+        t.load(true, {url: url}).then(() => Block.use404())
+
 
     }
 
@@ -328,7 +327,7 @@ class Block {
                         Animation.loading('#content#')
                     }
 
-                    template.loadPage(force)
+                    await template.loadPage(force)
 
                     // save file information
                     template.#dom.container.setAttribute('data-template', template.file)
