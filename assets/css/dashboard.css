@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 12/03/2023  11:12
+ * Last updated on : 15/03/2023  11:20
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -29,7 +29,7 @@
  * main elements
  */
 :root {
-    --bs-gutter-x: 1rem;
+    --bs-gutter-x: 0.8rem;
     --bs-gutter-y: var(--bs-gutter-x);
 
     --bs-warning: var(--bs-orange);
@@ -56,17 +56,17 @@
     --dsb-menu-transition: 0.4s ease;
 
     --dsb-main-font-family: Arial, Helvetica, sans-serif;
-    --dsb-main-font-size: 0.9rem;
-    --dsb-middle-font-size: 1.1rem;
-    --dsb-alert-icon-size: 1.3rem;
+    --dsb-main-font-size: 0.85rem;
+    --dsb-middle-font-size: 1rem;
+    --dsb-alert-icon-size: 1.2rem;
     --dsb-big-font-size: 1.4rem;
-    --dsb-small-font-size: 0.8rem;
-    --dsb-xsmall-font-size: 0.6rem;
+    --dsb-small-font-size: 0.65rem;
+    --dsb-xsmall-font-size: 0.55rem;
     --dsb-xxsmall-font-size: 0.45rem;
 
     --dsb-form-font-family: verdana, sans-serif;
     --dsb-form-font-size: 0.8rem;
-    --dsb-log-font-size: 0.8rem;
+    --dsb-log-font-size: 0.7rem;
 
     --elevation: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
     --input-shadow: inset rgba(0, 0, 0, 0.15) 0px 2px 8px;
@@ -819,6 +819,7 @@ body:not(.logged-in) #user-dropdown:hover {
 
 .nav-pills, .nav-pills .nav-link {
     display: flex;
+    align-items: center;
 }
 
 /*****************************************************************************************************************************************************
@@ -1083,6 +1084,10 @@ footer {
 
 .dsb-show-inline-block {
     display: inline-block !important;
+}
+
+.dsb-show-table-row {
+    display: table-row !important;
 }
 
 .dsb-no-opacity {
