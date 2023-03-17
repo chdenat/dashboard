@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 12/03/2023  14:42                                                                                *
+ * Last updated on : 15/03/2023  11:23                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -1753,6 +1753,7 @@ var dsb = {
                 element.classList.remove('dsb-show-flex')
                 element.classList.remove('dsb-show-inline-block')
                 element.classList.remove('dsb-show-inline-flex')
+                element.classList.remove('dsb-show-table-row')
             }
             return dsb.ui
         },
@@ -1780,6 +1781,7 @@ var dsb = {
             if (element !== null) {
                 dsb.ui.show(element, false)
             }
+            return dsb.ui
         },
 
         show_inline: (element, flex = true) => {
@@ -1791,8 +1793,16 @@ var dsb = {
                     element.classList.add('dsb-show-inline-flex')
                 }
             }
+            return dsb.ui
         },
 
+        show_table_row: (element) => {
+            if (element !== null) {
+                element.classList.remove('dsb-hide')
+                element.classList.add('dsb-show-table-row')
+            }
+            return dsb.ui
+        },
 
         disable: (element) => {
             if (element !== null) {
