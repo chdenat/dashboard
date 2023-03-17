@@ -1,17 +1,16 @@
-/***********************************************************************************************************************
+/*
  *
- * Project : supervix4
- * file : theme.css
+ * Project : dashboard
+ * File : theme.css
  *
- * @author  Christian Denat
- * @email contact@noleam.fr
- * --
+ * @author: Christian Denat
+ * @email: contact@noleam.fr
  *
- * updated on :  1/18/22, 11:19 AM
+ * Last updated on : 17/03/2023  18:41
  *
- * @copyright (c) 2022 noleam.fr
+ * Copyright (c) 2023 - noleam.fr
  *
- **********************************************************************************************************************/
+ */
 
 @import '../vendor/choices/choices.min.css';
 
@@ -100,7 +99,11 @@
     --form-font-size: 0.8rem;
 
     --log-font-size: 0.7rem;
+}
 
+.accordion {
+    --bs-accordion-body-padding-x: var(--dsb-md-gutter);
+    --bs-accordion-body-padding-y: var(--dsb-md-gutter);
 }
 
 table {
