@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 15/03/2023  11:20
+ * Last updated on : 18/03/2023  11:00
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -313,8 +313,8 @@ legend {
 }
 
 .form-switch .form-check-input {
-    width: calc(3 * var(--dsb-md-gutter));
-    margin-left: calc(-3 * var(--dsb-md-gutter) - 0.3em);
+    width: calc(4 * var(--dsb-md-gutter));
+    margin-left: calc(-4 * var(--dsb-md-gutter) - 0.3em);
 }
 
 .switch-field {
