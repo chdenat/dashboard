@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 13/04/2023  17:41
+ * Last updated on : 13/04/2023  20:08
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -424,6 +424,21 @@ legend {
     cursor: pointer;
 }
 
+.simple-accordion:before {
+    font: var(--fa-font-regular);
+    content: "\f106";
+    width: unset;
+    height: unset;
+    transition: all .2s ease-in-out;
+    transform: rotate(90deg);
+    margin-right: var(--dsb-md-gutter);
+    margin-bottom: 0;
+}
+
+.simple-accordion[aria-expanded="true"]:before {
+    transform: rotate(180deg);
+    margin-bottom: 3px;
+}
 
 /**************************************************************************************************************************************************
 * Body wrapper
