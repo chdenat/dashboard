@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 13/04/2023  18:04                                                                                *
+ * Last updated on : 13/04/2023  19:48                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -14,6 +14,9 @@
 
 
 export class DashboardUI {
+    
+    static BACKDROP_ELEMENT = document.getElementById('dsb-backdrop')
+    
     /**
      * For all elements that have the class alert-support-access, we change the criteria (primary, secondary...)
      *
@@ -34,14 +37,14 @@ export class DashboardUI {
     static resetElementType(element, prefix = DashboardUI.DEFAULT_PREFIX) {
         DashboardUI.setElementType(element, prefix)
     }
-
+    
     /**
      * Change all classes that are used to type an element (ie primary, secondary, success ...
      * in other words change all that are matching <prefix>-<something> by <prefix>-<criteria>
      *
      * If there is <prefix> class but no <prefix>-<something>,we add <prefix>-<criteria> class
      *
-     * @param element {HTMLElement|string}
+     * @param elements
      * @param prefix {string}
      * @param criteria  {string} if null, all <prefix>-<something> classes are removed
      *
@@ -87,16 +90,27 @@ export class DashboardUI {
             item.addEventListener('click', this.togglePassword)
         })
     }
-
+    
     static togglePassword = (event) => {
         const eye = event.currentTarget
         const password = document.querySelector(`[name="${event.currentTarget.dataset.password}"]`)
         const type = password.getAttribute('type') === 'password' ? 'text' : 'password'
-
+        
         password.setAttribute('type', type)
         eye.querySelector('.show-password').classList.toggle('dsb-hide')
         eye.querySelector('.hide-password').classList.toggle('dsb-hide')
     }
-
-
+    
+    
+    static showOverlay = (opacity) => {
+        this.BACKDROP_ELEMENT.classList.add('show')
+        if (opacity) {
+            this.BACKDROP_ELEMENT.style.opacity = opacity
+        }
+    }
+    static hideOverlay = () => {
+        this.BACKDROP_ELEMENT.classList.remove('show')
+    }
+    
+    
 }
