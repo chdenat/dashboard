@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 11/03/2023  18:01                                                                                *
+ * Last updated on : 13/04/2023  18:04                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -79,6 +79,23 @@ export class DashboardUI {
             element.className = _new.join(' ')
         })
         return DashboardUI
+    }
+
+
+    static managePassword = () => {
+        document.querySelectorAll('.input-group.password .toggle-password').forEach(item => {
+            item.addEventListener('click', this.togglePassword)
+        })
+    }
+
+    static togglePassword = (event) => {
+        const eye = event.currentTarget
+        const password = document.querySelector(`[name="${event.currentTarget.dataset.password}"]`)
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password'
+
+        password.setAttribute('type', type)
+        eye.querySelector('.show-password').classList.toggle('dsb-hide')
+        eye.querySelector('.hide-password').classList.toggle('dsb-hide')
     }
 
 
