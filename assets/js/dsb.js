@@ -6,20 +6,21 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 15/03/2023  11:23                                                                                *
+ * Last updated on : 13/04/2023  18:05                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {Block}              from 'Block'
-import * as bootstrap       from 'bootstrap'
-import {Bus as DSBEvent}    from 'Bus'
-import {Dashboard}          from 'Dashboard'
+import {Block} from 'Block'
+import * as bootstrap from 'bootstrap'
+import {Bus as DSBEvent} from 'Bus'
+import {Dashboard} from 'Dashboard'
 import {DashboardWCManager} from 'DashboardWCManager'
-import {LocalDB}            from 'LocalDB'
-import {customAlphabet}     from 'nanoid'
-import {Toaster}            from 'Toaster'
-import {Transient}          from 'Transient'
+import {LocalDB} from 'LocalDB'
+import {customAlphabet} from 'nanoid'
+import {Toaster} from 'Toaster'
+import {Transient} from 'Transient'
+import {User} from "User"
 
 await import ('sprintf')
 
@@ -142,6 +143,7 @@ var dsb = {
         pathname: null,
         current_roles: [],
         json: null,
+        openClass: 'openItem',
 
         change_id: (new_id) => {
             dsb.menu.template_id = new_id
@@ -185,7 +187,7 @@ var dsb = {
                             break
                         }
 
-                    } else if (!dsb.user.session.active()) {
+                    } else if (!dsb.session.active()) {
                         // Nothing... May be the user need to be logged in to see this item in the menu ...
                         found_with_role = dsb.menu.find_items_with_roles(dsb.menu.json.menu, 'href', pathname, dsb.menu.all_roles(), true).length > 0
 
@@ -303,7 +305,7 @@ var dsb = {
 
         /**
          * Click on a menu item (in cascade, ie it opens all the hierarchy menu)
-         * - mark it opened
+         * - mark it open
          * - display the url in the history
          *
          * @param item
@@ -314,18 +316,16 @@ var dsb = {
          */
         click: (item, historize = false) => {
             // it's the link ?  Manage history (and add url in the browser bar)
-            if (item?.dataset?.level) {
-                // Mark new menu item opened
-                document.querySelector(`.opened[href]`)?.classList.remove('opened')
-                item.classList.add('opened')
+            if (item?.dataset?.level && !item.classList.contains(dsb.menu.openClass)) {
+                // Mark new menu item open
+                document.querySelector(`.${dsb.menu.openClass}[href]`)?.classList.remove(dsb.menu.openClass)
+                item.classList.add(dsb.menu.openClass)
                 // change title
                 dsb.page.set_title(dsb.menu.item_text(item)) //TODO change
 
                 if (historize) {
                     dsb.page.add_to_history_from_menu(item)
                 }
-
-
             }
             return false
         },
@@ -364,7 +364,7 @@ var dsb = {
         },
 
         update: () => {
-            let id = dsb.user.session.context?.referrer
+            let id = dsb.session.context?.referrer
             if (id) {
                 let item = id.split(/(level-[0-9]+)/gm)
             }
@@ -434,12 +434,6 @@ var dsb = {
             })
             dsb.menu.update()
 
-
-            /**
-             * Call synchronize when menu has been loaded
-             */
-            dsb.menu.synchronize(block, dsb.menu.pathname)
-
         },
     },
 
@@ -449,7 +443,7 @@ var dsb = {
     template: {
 
         init: () => {
-            // During the init phase, we do not use teh 404 redirection
+            // During the init phase, we do not use the 404 redirection
             Block.use404(false)
 
             // When a template has been loaded, we register specific actions
@@ -577,7 +571,7 @@ var dsb = {
          * @param delay        Default to 3 seconds, To set it to permanent use 0
          * @param hide          autohide = true, permanent = false
          *
-         * @return void
+         * @return HTMLElement
          * @since 1.0
          *
          */
@@ -629,39 +623,8 @@ var dsb = {
             options.buttons = html
             options.template = template
 
-            dsb.toast.toaster.create(title, message, options)
-
-
-            // element.querySelector('.toast-header span').innerHTML = '<i class="' + icon + '"></i>' + title
-            // element.querySelector('.toast-body .toast-message').innerHTML = message
-            // let btn = element.querySelector('.toast-body .btn')
-            //
-            // if (button !== null) {
-            //     btn.innerHTML = button.text
-            //     btn.href = button.href
-            //     btn.id = button.id
-            //     btn.classList.add('btn-' + type)
-            //     dsb.ui.show(btn)
-            // } else {
-            //     dsb.ui.hide(btn)
-            // }
-            //
-            // // remove existing type information in case it has not been hidden yet.
-            // let classes = element.classList
-            // classes.forEach(item => {
-            //     if (item.startsWith('bg-')) {
-            //         element.classList.remove(item)
-            //     }
-            // })
-            // element.classList.remove('bg-success', 'bg-danger', 'bg-warning')
-            // element.classList.add('bg-' + type)
-            //
-            //
-            //toast._instance.show()
-        }
-
-
-        ,
+            return dsb.toast.toaster.create(title, message, options)
+        },
 
 
         /**
@@ -847,542 +810,332 @@ var dsb = {
     ,
 
     /**
-     * User management
+     * User session management
+     *
+     * @since 1.0
+     *
      */
-    user: {
-
-        referrer: {}
-        ,
-        activity_events: ['click', 'keydown', 'mousedown', 'mousemove', 'scroll', 'touchstart'],
-
+    session: {
         /**
-         * Events are used to maintain DSB on specific events
+         * context is used to have a lot of information from PHP
+         *
+         * @since 1.0
          */
-        events: {
-            /**
-             * Login event, when the login is successful or at load when a session is active
-             *
-             * @since 1.0
-             *
-             */
-            dsb_login: new Event('dsb-login', {}),
-            login: (event) => {
-                document.body.classList.add('logged-in')
-                document.body.classList.add(dsb.user.session.context.user)
+        context: {},
 
-                dsb.user.session.init()
+        // Main session timer
+        end_timer: 0,
+        END_TIMER: 15 * MINUTE,
 
-                // As some parts depends on user session, we relead all the page content
-                Block.importChildren()
+        //Final countdown
+        final_timer: 0,
+        FINAL_TIMER: 2 * MINUTE,
 
-                dsb.user.events.loaded()
-                event.preventDefault()
-            },
+        // Timer before the final countdown
+        soon_timer: 0,
+        SOON_TIMER: 0, //later
 
-            /**
-             * Logout event, when the logout is successful or at load when there is no session
-             *
-             * @since 1.0
-             *
-             */
-            dsb_logout: new Event('dsb-logout'),
-            logout: (event) => {
-                document.body.classList.remove('logged-in')
-                if ('' !== dsb.user.session.context.user) {                // user not specified... ie from PHP, not ajax
-                    document.body.classList.remove(dsb.user.session.context.user)
-                }
-
-                dsb.user.session.clear_timers()
-                dsb.user.session.remove_modals()
-                dsb.user.session.clear_context()
-
-                event.preventDefault()
-            },
-            loaded: () => {
-            }
-
-        }
-        ,
         /**
-         * User session management
+         * We launch 2 timers,
+         * one for the end of session and one that ends before, to warn the user the session will expire soon
          *
          * @since 1.0
          *
          */
-        session: {
-            /**
-             * context is used to have a lot of information from PHP
-             *
-             * @since 1.0
-             */
-            context: {},
-
-            // Main session timer
-            end_timer: 0,
-            END_TIMER: 15 * MINUTE,
-
-            //Final countdown
-            final_timer: 0,
-            FINAL_TIMER: 2 * MINUTE,
-
-            // Timer before the final countdown
-            soon_timer: 0,
-            SOON_TIMER: 0, //later
+        check_expiration: () => {
 
             /**
-             * We launch 2 timers,
-             * one for the end of session and one that ends before, to warn the user the session will expire soon
-             *
-             * @since 1.0
-             *
+             * Bail early if we are in a permanent session
              */
-            check_expiration: () => {
+            if (dsb.session.get_permanent()) {
+                return
+            }
 
-                /**
-                 * Bail early if we are in a permanent session
-                 */
-                if (dsb.user.session.get_permanent()) {
-                    return
-                }
-
-                dsb.user.session.SOON_TIMER = dsb.user.session.END_TIMER - dsb.user.session.FINAL_TIMER
-
-
-                /**
-                 * Countdowns start...
-                 */
-
-                // The master one, used for session end
-                dsb.user.session.end_timer = setTimeout(() => {
-                        let session_event = new Event('session-exit')
-                        session_event.session = dsb.user.session.name
-                        document.dispatchEvent(session_event)
-                    },
-                    dsb.user.session.END_TIMER
-                )
-                // Another one, used to warn that the session will end soon
-                dsb.user.session.soon_timer = setTimeout(() => {
-                        let session_event = new Event('session-soon-exit')
-                        session_event.session = dsb.user.session.name
-                        document.dispatchEvent(session_event)
-                    },
-                    dsb.user.session.SOON_TIMER
-                )
-            },
-
-            /**
-             * The session is closed, we launch the required modal to invite user
-             * to login or to stay unlogged
-             *
-             * @since 1.0
-             *
-             */
-            close: () => {
-                dsb.user.session.pause_activity()
-
-                clearTimeout(dsb.user.session.soon_timer)
-                clearInterval(dsb.user.session.final_timer)
-                dsb.modal.load('end-session')
-                dsb.modal.show()
-
-                //  (new Modal ({action:'end-session'})).show()
-
-
-            },
-
-            /**
-             * The session will close soon,we launch the required modal to invite user
-             * to stay logged in or to log out
-             *
-             * @since 1.0
-             *
-             */
-            close_soon: async () => {
-                dsb.user.session.pause_activity()
-
-                await dsb.modal.load('end-session-soon')
-
-                clearInterval(dsb.user.session.final_timer)
-                dsb.user.session.final_timer = setInterval(dsb.user.session.countdown_before_session_end, dsb.user.session.FINAL_TIMER)
-                dsb.modal.show()
-            },
-
-            /**
-             * Relaunch the login modal fro a modal
-             *
-             * @return {Promise<void>}
-             *
-             * @since 1.0
-             *
-             */
-            relog: async () => {
-                await dsb.modal.load('login-form')
-            },
-
-            /**
-             * The session continues (after an activity event.
-             * We reinitiate some data
-             *
-             * @since 1.0
-             *
-             */
-            continues: () => {
-                dsb.user.session.clear_timers()
-                dsb.user.session.check_expiration()
-            },
-
-            /**
-             * Clear all the timers we use for the session management
-             *
-             * @since 1.0
-             *
-             */
-            clear_timers: () => {
-                clearTimeout(dsb.user.session.end_timer)
-                clearTimeout(dsb.user.session.soon_timer)
-                clearInterval(dsb.user.session.final_timer)
-            },
-
-            /**
-             * Show the countdown of time befoer the end of the session
-             *
-             * @since 1.0
-             *
-             */
-            countdown_before_session_end: () => {
-                let show_time = document.getElementById('end-session-timer')
-                if (show_time !== null) {
-                    if (show_time.innerHTML === '') {
-                        show_time.innerHTML = dsb.user.session.end_timer - dsb.user.session.SOON_TIMER * 1000
-                    } else {
-                        show_time.innerHTML = show_time.innerHTML - 1
-                    }
-                }
-            },
-
-            /**
-             * Trapping activity events
-             *
-             * @since 1.0
-             *
-             */
-            trap_activity: () => {
-                dsb.user.activity_events.forEach(event => {
-                    document.addEventListener(event, dsb.user.session.continues)
-                })
-            },
-
-            /**
-             * Pause trapping of activity events
-             *
-             * @since 1.0
-             *
-             */
-            pause_activity: () => {
-                dsb.user.activity_events.forEach(event => {
-                    document.removeEventListener(event, dsb.user.session.continues)
-                })
-            },
-            /**
-             * Prepare modals, ie activate the required events
-             * of stop the events to avoid modal
-             *
-             * @param prepare true add events else stop them
-             *
-             * @since 1.0
-             *
-             */
-            prepare_modals: (prepare = true) => {
-                if (prepare) {
-                    document.addEventListener('session-exit', dsb.user.session.close)
-                    document.addEventListener('session-soon-exit', dsb.user.session.close_soon)
-                } else {
-                    document.removeEventListener('session-exit', dsb.user.session.close)
-                    document.removeEventListener('session-soon-exit', dsb.user.session.close_soon)
-                }
-            },
-
-            /**
-             * Shortcut to prepare_modals(false)
-             *
-             * @since 1.0
-             *
-             */
-            remove_modals: () => {
-                dsb.user.session.prepare_modals(false)
-            },
-
-            /**
-             * Get the user session context defined in PHP by doing an Ajax request.
-             *
-             * @return {Promise<void>}
-             *
-             * @since 1.0
-             *
-             */
-            set_context: async () => {
-
-                /**
-                 * User context is based on session information
-                 */
-                await fetch(dsb_ajax.get + '?' + new URLSearchParams({
-                    action: 'get-session',
-                })).then(response => {
-                       if (!response.ok) {
-                           throw Error(response.statusText)
-                       }
-                       return response
-                   })
-                   .then(response => response.json())
-                   .then(session => {
-                       dsb.user.session.context = session
-                   })
-
-            },
-
-            /**
-             * Clear the user session context content  locally (session marked as logged out)
-             *
-             * @since 1.0
-             *
-             */
-            clear_context: () => {
-                dsb.user.session.context = {
-                    logged: false,
-                    user: '',
-                    roles: [],
-                    lifetime: '',
-                    connection: 0,
-                    activity: 0,
-                    permanent: false
-                }
-
-            },
-
-            /**
-             * Set permanent (ie no session lifetime tracking) or not (default)
-             *
-             * @param permanent  default to false
-             *
-             * @since 1.0
-             */
-            set_permanent: (permanent = false) => {
-                dsb.user.session.context.permanent = permanent
-            },
-
-            /**
-             * Get permanent user context value
-             *
-             * @since 1.0
-             *
-             */
-            get_permanent: () => {
-                return dsb.user.session.context.permanent
-            },
-
-            /**
-             * Return true if session is active, else false.
-             *
-             * @return {boolean}
-             */
-            active: () => {
-                return dsb.user.session.context.logged ?? false
-            },
+            dsb.session.SOON_TIMER = dsb.session.END_TIMER - dsb.session.FINAL_TIMER
 
 
             /**
-             * User session initialisation
-             *
-             * @since 1.0
+             * Countdowns start...
              */
-            init: async () => {
 
-                // If the user is logged in, we starts timer for managing the session elapsed time
-                // and prepare to display some modals ('session about to exit' and 'session exited')
-
-                await dsb.user.session.set_context()
-
-                if (dsb.user.session.context.logged) {
-                    dsb.user.session.end_timer = dsb.user.session.context.lifetime * 1000
-                    dsb.user.session.SOON_TIMER = dsb.user.session.end_timer - dsb.user.session.FINAL_TIMER
-                    dsb.user.session.prepare_modals()
-                    dsb.user.session.continues()
-                    dsb.user.session.trap_activity()
-                }
-            },
-        }
-        ,
+            // The master one, used for session end
+            dsb.session.end_timer = setTimeout(() => {
+                    let session_event = new Event('session-exit')
+                    session_event.session = dsb.session.name
+                    document.dispatchEvent(session_event)
+                },
+                dsb.session.END_TIMER
+            )
+            // Another one, used to warn that the session will end soon
+            dsb.session.soon_timer = setTimeout(() => {
+                    let session_event = new Event('session-soon-exit')
+                    session_event.session = dsb.session.name
+                    document.dispatchEvent(session_event)
+                },
+                dsb.session.SOON_TIMER
+            )
+        },
 
         /**
-         * Login process
-         *
-         * @returns {boolean}
+         * The session is closed, we launch the required modal to invite user
+         * to login or to stay unlogged
          *
          * @since 1.0
          *
          */
-        login: function () {
+        close: () => {
+            dsb.session.pause_activity()
 
-            const form = document.getElementById('login')
-            const form_data = {
-                headers: {'Content-Type': 'multipart/form-data'},
-                user: form.user.value,
-                password: form.password.value,
-                action: 'login'
-            }
-            dsb.user.session.context.user = form.user.value
-            fetch(dsb_ajax.post, {
-                method: 'POST',
-                body: JSON.stringify(form_data)
-            }).then(response => {
-                  if (!response.ok) {
-                      throw Error(response.statusText)
-                  }
-                  return response
-              })
-              .then(response => response.json())
-              .then(data => {
-                  if (data.authorization) {
-                      dsb.modal.hide()
-                      dsb.toast.message({
-                          title: dsb.ui.get_text_i18n('user/log-in', 'title'),
-                          message: sprintf(dsb.ui.get_text_i18n('user/log-in', 'text'), `<strong>${form.user.value}</strong>`),
-                          type: 'success'
-                      })
-                      document.dispatchEvent(dsb.user.events.dsb_login)
-                      return true
-                  }
-              })
-              .catch(error => {
-                      dsb.error.init('form .alert').message(error)
-                      return false
-                  }
-              )
-        }
-        ,
+            clearTimeout(dsb.session.soon_timer)
+            clearInterval(dsb.session.final_timer)
+            dsb.modal.load('end-session')
+            dsb.modal.show()
+
+            //  (new Modal ({action:'end-session'})).show()
+
+
+        },
 
         /**
-         * Logout process
+         * The session will close soon,we launch the required modal to invite user
+         * to stay logged in or to log out
          *
-         * @param event Event  (null)
-         * @param button clicked button (null)
-         * @param redirection (null)
+         * @since 1.0
+         *
+         */
+        close_soon: async () => {
+            dsb.session.pause_activity()
+
+            await dsb.modal.load('end-session-soon')
+
+            clearInterval(dsb.session.final_timer)
+            dsb.session.final_timer = setInterval(dsb.session.countdown_before_session_end, dsb.session.FINAL_TIMER)
+            dsb.modal.show()
+        },
+
+        /**
+         * Relaunch the login modal fro a modal
          *
          * @return {Promise<void>}
          *
          * @since 1.0
          *
          */
-        logout: async (event = null, button = null, redirection = null) => {
+        relog: async () => {
+            await dsb.modal.load('login-form')
+        },
 
-            // if redirection is null, we try to get it from button, ie in data-logout-redirection
-            if (null === redirection) {
-                if (button) {
-                    redirection = button.dataset.logoutRedirection ?? null
+        /**
+         * The session continues (after an activity event.
+         * We reinitiate some data
+         *
+         * @since 1.0
+         *
+         */
+        continues: () => {
+            dsb.session.clear_timers()
+            dsb.session.check_expiration()
+        },
+
+        /**
+         * Clear all the timers we use for the session management
+         *
+         * @since 1.0
+         *
+         */
+        clear_timers: () => {
+            clearTimeout(dsb.session.end_timer)
+            clearTimeout(dsb.session.soon_timer)
+            clearInterval(dsb.session.final_timer)
+        },
+
+        /**
+         * Show the countdown of time befoer the end of the session
+         *
+         * @since 1.0
+         *
+         */
+        countdown_before_session_end: () => {
+            let show_time = document.getElementById('end-session-timer')
+            if (show_time !== null) {
+                if (show_time.innerHTML === '') {
+                    show_time.innerHTML = dsb.session.end_timer - dsb.session.SOON_TIMER * 1000
+                } else {
+                    show_time.innerHTML = show_time.innerHTML - 1
                 }
             }
-            const form = document.getElementById('logout-confirm')
-            const from_session_modal = (null === form) // if false, we don not use a modal
-            let form_data = {}
+        },
 
-            if (from_session_modal) {
-                // call from the exit session soon modal
-                form_data = {
-                    user: dsb.user.session.context.user,
-                    action: 'logout'
-                }
+        /**
+         * Trapping activity events
+         *
+         * @since 1.0
+         *
+         */
+        trapActivity: () => {
+            User.activityEvents.forEach(event => {
+                document.addEventListener(event, dsb.session.continues)
+            })
+        },
+
+        /**
+         * Pause trapping of activity events
+         *
+         * @since 1.0
+         *
+         */
+        pause_activity: () => {
+            User.activityEvents.forEach(event => {
+                document.removeEventListener(event, dsb.session.continues)
+            })
+        },
+        /**
+         * Prepare modals, ie activate the required events
+         * of stop the events to avoid modal
+         *
+         * @param prepare true add events else stop them
+         *
+         * @since 1.0
+         *
+         */
+        prepare_modals: (prepare = true) => {
+            if (prepare) {
+                document.addEventListener('session-exit', dsb.session.close)
+                document.addEventListener('session-soon-exit', dsb.session.close_soon)
             } else {
-                // call from the 'normal' logout modal
-                form_data = {
-                    headers: {'Content-Type': 'multipart/form-data'},
-                    user: form.user.value,
-                    action: 'logout'
+                document.removeEventListener('session-exit', dsb.session.close)
+                document.removeEventListener('session-soon-exit', dsb.session.close_soon)
+            }
+        },
+
+        /**
+         * Shortcut to prepare_modals(false)
+         *
+         * @since 1.0
+         *
+         */
+        remove_modals: () => {
+            dsb.session.prepare_modals(false)
+        },
+
+        /**
+         * Get the user session context defined in PHP by doing an Ajax request.
+         *
+         * @return {Promise<void>}
+         *
+         * @since 1.0
+         *
+         */
+        set_context: async () => {
+
+            /**
+             * User context is based on session information
+             */
+            await fetch(dsb_ajax.get + '?' + new URLSearchParams({
+                action: 'get-session',
+            })).then(response => {
+                if (!response.ok) {
+                    throw Error(response.statusText)
                 }
-            }
+                return response
+            })
+                .then(response => response.json())
+                .then(session => {
+                    dsb.session.context = session
+                })
 
-            await fetch(dsb_ajax.post, {
-                method: 'POST',
-                body: JSON.stringify(form_data)
-            }).then(response => {
-                  if (!response.ok) {
-                      throw Error(response.statusText)
-                  }
-                  return response
-              })
-              .then(response => response.json())
-              .then(data => {
-                  if (data.logout) {
-                      if (!from_session_modal) {
-                          dsb.modal.hide()
-                      }
-                      dsb.toast.message({
-                          title: dsb.ui.get_text_i18n('user/log-out', 'title'),
-                          message: sprintf(dsb.ui.get_text_i18n('user/log-out', 'text'), `<strong>${dsb.user.session.context.user}</strong>`),
-                          type: 'success'
-                      })
-                      document.dispatchEvent(dsb.user.events.dsb_logout)
-
-                      if (redirection) {
-                          let t = new Block('#content#', null, redirection)
-                          t.load(true)
-                          Block.reload_page()
-                      } else {
-                          Block.reload_page(false)
-                      }
-
-                  }
-              })
-              .catch(error => {
-                      dsb.error.init('form .alert').message(error)
-                  }
-              )
-        },
-        change_password: function () {
-            const form = document.getElementById('change-password')
-            const form_data = {
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                new: document.getElementById('new-password').value,
-                confirm: document.getElementById('confirm-password').value,
-                old: document.getElementById('old-password').value,
-                user: form.user?.value,
-                action: 'confirm'
-            }
-            dsb.user.session.context.user = form.user.value
-
-            fetch(dsb_ajax.post, {
-                method: 'POST',
-                body: JSON.stringify(form_data)
-            }).then(response => {
-                  if (!response.ok) {
-                      throw Error(response.statusText)
-                  }
-                  return response
-              })
-              .then(response => response.json())
-              .then(data => {
-                  if (data.changed) {
-                      dsb.modal.hide()
-                      document.dispatchEvent(dsb.user.events.dsb_logout)
-                      dsb.toast.message({
-                          title: dsb.ui.get_text_i18n('user/new-password', 'title'),
-                          message: sprintf(dsb.ui.get_text_i18n('user/new-password', 'text'), dsb.user.session.context.user),
-                          type: 'success'
-                      })
-                      Block.reload_page()
-
-                  }
-              })
-              .catch(error => {
-                      dsb.error.init('form .alert').message(error)
-                  }
-              )
         },
 
-        init: function () {
-            dsb.user.session.init()
+        /**
+         * Clear the user session context content  locally (session marked as logged out)
+         *
+         * @since 1.0
+         *
+         */
+        clear_context: () => {
+            dsb.session.context = {
+                logged: false,
+                user: '',
+                roles: [],
+                lifetime: '',
+                connection: 0,
+                activity: 0,
+                permanent: false
+            }
+
+        },
+
+        /**
+         * Set permanent (ie no session lifetime tracking) or not (default)
+         *
+         * @param permanent  default to false
+         *
+         * @since 1.0
+         */
+        set_permanent: (permanent = false) => {
+            dsb.session.context.permanent = permanent
+        },
+
+        /**
+         * Get permanent user context value
+         *
+         * @since 1.0
+         *
+         */
+        get_permanent: () => {
+            return dsb.session.context.permanent
+        },
+
+        /**
+         * Return true if session is active, else false.
+         *
+         * @return {boolean}
+         */
+        active: () => {
+            return dsb.session.context.logged ?? false
+        },
+
+
+        /**
+         * User session initialisation
+         *
+         * @since 1.0
+         */
+        init: async () => {
+
+            // If the user is logged in, we starts timer for managing the session elapsed time
+            // and prepare to display some modals ('session about to exit' and 'session exited')
+
+            await dsb.session.set_context()
+
+            if (dsb.session.context.logged) {
+                dsb.session.end_timer = dsb.session.context.lifetime * 1000
+                dsb.session.SOON_TIMER = dsb.session.end_timer - dsb.session.FINAL_TIMER
+                dsb.session.prepare_modals()
+                dsb.session.continues()
+                dsb.session.trapActivity()
+            }
+        },
+    },
+
+
+    /**
+     * User management
+     */
+    user: {
+        init: async function () {
+            dsb.user.person = new User()
+            await dsb.session.init()
             document.addEventListener('modal/loaded/login-form', dsb.ui.manage_password)
             document.addEventListener('modal/loaded/change-password', dsb.ui.manage_password)
+        },
+        logout: () => {
+            dsb.user.person.logout()
+        },
+        login: () => {
+            dsb.user.person.login()
         }
+
 
     },
 
@@ -1717,14 +1470,14 @@ var dsb = {
                 action: 'file-exists',
                 file: file
             })).then(response => {
-                   if (!response.ok) {
-                       throw Error(response.statusText)
-                   }
-                   return response
-               })
-               .then(response => response.json())
-               .then(data => data.exist)
-               .catch(exception => undefined)
+                if (!response.ok) {
+                    throw Error(response.statusText)
+                }
+                return response
+            })
+                .then(response => response.json())
+                .then(data => data.exist)
+                .catch(exception => undefined)
         },
     },
     /**
@@ -1893,8 +1646,8 @@ var dsb = {
                         let pathname = url.split(window.location.origin)[1]
                         dsb.page.add_to_history(document.title, url, pathname)
                         // change menu info to corresponding item
-                        document.querySelector(`.opened[href]`)?.classList.remove('opened')
-                        document.querySelector(`[href="${pathname}"]`)?.classList.add('opened')
+                        document.querySelector(`.${dsb.menu.openClass}[href]`)?.classList.remove(dsb.menu.openClass)
+                        document.querySelector(`[href="${pathname}"]`)?.classList.add(dsb.menu.openClass)
                     }
                 })
 
@@ -2456,23 +2209,19 @@ var dsb = {
         dsb.error.init()
         dsb.toast.init()
 
-        /**
-         *  Add login-logout events
-         */
-        document.addEventListener('dsb-login', dsb.user.events.login)
-        document.addEventListener('dsb-logout', dsb.user.events.logout)
-
         // Add some body classes at loading if the user is already logged in.
-        if (dsb.user.session.context.logged) {
+        if (dsb.session.context.logged) {
             document.body.classList.add('logged-in')
-            document.body.classList.add(dsb.user.session.context.user)
+            document.body.classList.add(dsb.session.context.user)
         }
 
         /**
          * Once menu has been loaded, we initialise some functionalities
          */
-        Block.event.once('template/loaded/blocks/menu', (block) => {
-            dsb.menu.init(block)
+        Block.event.on('template/loaded/blocks/menu', (block) => {
+            dsb.menu.init(block).then(() => {
+                dsb.menu.synchronize(block, dsb.menu.pathname)
+            })
         })
 
         /**
