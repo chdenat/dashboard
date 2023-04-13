@@ -1,3 +1,17 @@
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : Toaster.js                                                                                                  *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 13/04/2023  10:43                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
 import {Toast} from "bootstrap"
 
 
@@ -283,6 +297,9 @@ export class Toaster {
      * @param title
      * @param text
      * @param options
+     *
+     * @return toast
+     *
      */
     create(
         title,
@@ -338,6 +355,8 @@ export class Toaster {
 
         //Render the toast
         this.#render(toastNode)
+
+        return toastNode
     }
 
 
