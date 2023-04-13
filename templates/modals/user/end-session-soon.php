@@ -1,23 +1,20 @@
 <?php
 	
-	/***********************************************************************************************************************
-	 *
-	 * Project : supervix4
-	 * file : end-session.php
-	 *
-	 * @author        Christian Denat
-	 * @email contact@noleam.fr
-	 * --
-	 *
-	 * updated on :  4/26/22, 7:54 PM
-	 *
-	 * @copyright (c) 2022 noleam.fr
-	 *
-	 **********************************************************************************************************************/
-	
-	use dashboard\user\SessionManager;
-	
-	//SessionManager::instance()->start();
+	/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : end-session-soon.php                                                                                        *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 13/04/2023  18:06                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+//SessionManager::instance()->start();
 ?>
 <form id="login-after-session" name="login-after-session" action="<?= D_AJAX_POST ?>" enctype="multipart/form-data">
     <div class="modal-header">
@@ -38,7 +35,7 @@
         <button type="button" data-bs-dismiss="modal"  data-action="dsb.user.logout" class="btn btn-outline-primary">
             <?= _( 'Log out' ) ?>
         </button>
-        <button type="button" data-bs-dismiss="modal" data-action = "dsb.user.session.trap_activity" class="btn
+        <button type="button" data-bs-dismiss="modal" data-action="dsb.session.trapActivity" class="btn
         btn-primary">
             <i class="fas fa-user-circle"></i><?= _( 'Stay Logged in' ) ?>
         </button>
