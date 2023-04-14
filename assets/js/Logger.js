@@ -2,20 +2,19 @@
  *                                                                                                                    *
  * Project : dashboard                                                                                                *
  * File : Logger.js                                                                                                   *
- * Class : Logger.js                                                                                                  *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 18/02/2023  12:18                                                                                *
+ * Last updated on : 14/04/2023  15:42                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {LogContext} from 'LogContext'
-import {DSBConsole} from 'DSBConsole'
-import {dsb} from "dsb";
-import {Bus as LoggerEvent} from 'Bus';
+import {Bus as LoggerEvent} from 'Bus'
+import {dsb}                from 'dsb'
+import {DSBConsole}         from 'DSBConsole'
+import {LogContext}         from 'LogContext'
 
 class Logger {
 
@@ -316,7 +315,7 @@ class Logger {
                     Logger.event.emit(`log/running/${this.#id}`, {logger: this, json: json})
 
                     // Relaunch the reading in few seconds
-                    this.#clear_timers()
+                    this.#clearTimers()
                     if (!this.#once) {
                         this.context.timers.read = setTimeout(this.read, this.#delays.read)
                     }
@@ -356,7 +355,7 @@ class Logger {
      */
     stop = () => {
         this.context.status = 'end'
-        this.#clear_timers()
+        this.#clearTimers()
     }
 
     /**
@@ -364,7 +363,7 @@ class Logger {
      *
      * @param timers array of timers to clear (all,animate,read,wait)
      */
-    #clear_timers = (timers = ['all']) => {
+    #clearTimers = (timers = ['all']) => {
         if (timers.includes('all') || timers.includes('animate')) {
             clearTimeout(this.context.timers.animate)
         }
@@ -467,7 +466,7 @@ class Logger {
                 if (animation) {
                     this.context.timers.animate = setTimeout(anime[type], this.#delays.animate)
                 } else {
-                    this.#clear_timers('animate')
+                    this.#clearTimers('animate')
                 }
             }
         }
