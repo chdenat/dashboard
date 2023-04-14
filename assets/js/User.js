@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 13/04/2023  19:25                                                                                *
+ * Last updated on : 14/04/2023  15:28                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -91,7 +91,7 @@ export class User {
         document.body.classList.add('logged-in')
         document.body.classList.add(dsb.session.context.user)
         
-        await dsb.session.init()
+        dsb.session.init()
         
         // As some parts depends on user session, we reload all the page content
         await Block.importChildren()
@@ -192,9 +192,9 @@ export class User {
             document.body.classList.remove(dsb.session.context.user)
         }
         
-        dsb.session.clear_timers()
-        dsb.session.remove_modals()
-        dsb.session.clear_context()
+        dsb.session.clearAllTimers()
+        dsb.session.removeModals()
+        dsb.session.clearContext()
     }
     
     /**
