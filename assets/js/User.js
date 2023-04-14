@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 14/04/2023  15:28                                                                                *
+ * Last updated on : 14/04/2023  16:49                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -30,6 +30,10 @@ export class User {
         Block.event.emit('modal/loaded/login-form', dsb.ui.manage_password)
         Block.event.emit('modal/loaded/change-password', dsb.ui.manage_password)
         
+    }
+    
+    get event() {
+        return this.#event
     }
     
     /**
@@ -65,18 +69,18 @@ export class User {
                 if (data.authorization) {
                     dsb.modal.hide()
                     dsb.toast.message({
-                                          title: dsb.ui.get_text_i18n('user/log-in', 'title'),
-                                          message: sprintf(dsb.ui.get_text_i18n('user/log-in', 'text'), `<strong>${form.user.value}</strong>`),
-                                          type: 'success',
-                                      })
+                        title: dsb.ui.get_text_i18n('user/log-in', 'title'),
+                        message: sprintf(dsb.ui.get_text_i18n('user/log-in', 'text'), `<strong>${form.user.value}</strong>`),
+                        type: 'success',
+                    })
                     this.#event.emit(this.LOGIN_EVENT)
                     return true
                 }
             })
             .catch(error => {
-                       dsb.error.init('form .alert').message(error)
-                       return false
-                   },
+                    dsb.error.init('form .alert').message(error)
+                    return false
+                },
             )
     }
     
@@ -155,11 +159,11 @@ export class User {
                     UI.showOverlay()
                     
                     const toast = dsb.toast.message({
-                                                        title: dsb.ui.get_text_i18n('user/log-out', 'title'),
-                                                        message: sprintf(dsb.ui.get_text_i18n('user/log-out', 'text'), `<strong>${dsb.session.context.user}</strong>`),
-                                                        type: 'success',
-                                                        delay: this.LOGOUT_ANIMATION_DELAY,
-                                                    })
+                        title: dsb.ui.get_text_i18n('user/log-out', 'title'),
+                        message: sprintf(dsb.ui.get_text_i18n('user/log-out', 'text'), `<strong>${dsb.session.context.user}</strong>`),
+                        type: 'success',
+                        delay: this.LOGOUT_ANIMATION_DELAY,
+                    })
                     this.#event.emit(this.LOGOUT_EVENT)
                     
                     // Once toast has been hidden, we reload the page
@@ -175,8 +179,8 @@ export class User {
                 }
             })
             .catch(error => {
-                       dsb.error.init('form .alert').message(error)
-                   },
+                    dsb.error.init('form .alert').message(error)
+                },
             )
     }
     
@@ -227,17 +231,17 @@ export class User {
                     dsb.modal.hide()
                     this.#event.emit(this.LOGOUT_EVENT)
                     dsb.toast.message({
-                                          title: dsb.ui.get_text_i18n('user/new-password', 'title'),
-                                          message: sprintf(dsb.ui.get_text_i18n('user/new-password', 'text'), dsb.session.context.user),
-                                          type: 'success',
-                                      })
+                        title: dsb.ui.get_text_i18n('user/new-password', 'title'),
+                        message: sprintf(dsb.ui.get_text_i18n('user/new-password', 'text'), dsb.session.context.user),
+                        type: 'success',
+                    })
                     Block.reload_page()
                     
                 }
             })
             .catch(error => {
-                       dsb.error.init('form .alert').message(error)
-                   },
+                    dsb.error.init('form .alert').message(error)
+                },
             )
     }
     
