@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 14/04/2023  15:43                                                                                *
+ * Last updated on : 16/04/2023  19:07                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -773,6 +773,9 @@ var dsb = {
             generic.modal = dsb.modal
             generic.parameters = dsb.modal._parameters.keys
             document.dispatchEvent(generic)
+            
+            Block.event.emit(`modal/loading/${dsb.modal._parameters.action}`, dsb.modal)
+            
         },
         
         /**
@@ -792,6 +795,8 @@ var dsb = {
             specific.modal = dsb.modal
             specific.parameters = dsb.modal._parameters.keys
             document.dispatchEvent(specific)
+            
+            Block.event.emit(`modal/loaded/${dsb.modal._parameters.action}`, dsb.modal)
         },
         
         /**
