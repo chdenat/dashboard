@@ -1418,7 +1418,38 @@ console.pause console-menu button:hover {
     text-align: center;
 }
 
+/*******************************************************************************
+ * Responsive
+ */
+.dsb-row {
+    display: flex;
+    gap: var(--dsb-gutter);
+    flex-wrap: wrap;
+}
 
+.dsb-row.md-gap {
+    gap: var(--dsb-md-gutter);
+}
+
+.dsb-row.xs-gap {
+    gap: var(--dsb-xs-gutter);
+}
+
+.dsb-column {
+    flex-basis: 100%;
+    flex: 1;
+}
+
+.dsb-column.double {
+    flex: 2;
+}
+.dsb-column.triple {
+    flex: 3;
+}
+
+.dsb-column.break {
+    flex-basis: 100%;
+}
 /*******************************************************************************
  * Misc
  */
