@@ -6,22 +6,22 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/04/2023  19:07                                                                                *
+ * Last updated on : 28/04/2023  16:32                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {Block}              from 'Block'
-import * as bootstrap       from 'bootstrap'
-import {Bus as DSBEvent}    from 'Bus'
-import {Dashboard}          from 'Dashboard'
+import {Block} from 'Block'
+import * as bootstrap from 'bootstrap'
+import {Bus as DSBEvent} from 'Bus'
+import {Dashboard} from 'Dashboard'
 import {DashboardWCManager} from 'DashboardWCManager'
-import {LocalDB}            from 'LocalDB'
-import {customAlphabet}     from 'nanoid'
-import {Session}            from 'Session'
-import {Toaster}            from 'Toaster'
-import {Transient}          from 'Transient'
-import {User}               from 'User'
+import {LocalDB} from 'LocalDB'
+import {customAlphabet} from 'nanoid'
+import {Session} from 'Session'
+import {Toaster} from 'Toaster'
+import {Transient} from 'Transient'
+import {User} from 'User'
 
 await import ('sprintf')
 
@@ -1105,7 +1105,7 @@ var dsb = {
          * @since 1.0
          *
          */
-        niceBytes: (number, transform = 1000 /*1024*/) => {
+        niceBytes: (number, transform = 1024) => {
             const units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'] //TODO externalize for localisation
             let l = 0, n = parseInt(number, 10) || 0
             while (n >= transform && ++l) {
