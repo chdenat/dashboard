@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 28/04/2023  16:41
+ * Last updated on : 29/04/2023  12:13
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -31,14 +31,22 @@
  */
 :root {
 
-    /** Some bootstrap css modifications */
+    /***********************************
+     * Bootstrap CSS variable change
+     */
     --bs-gutter-x: 0.8rem;
     --bs-gutter-y: var(--bs-gutter-x);
-    --bs-warning: var(--bs-orange);
     --bs-warning-rgb: 253, 126, 20;
     --bs-text-opacity: 1;
 
-    /** Colors **/
+    /***********************************
+     * Common declarations
+     */
+    --dsb-border: 1px solid;
+
+    /***********************************
+     * Colors
+     */
 
     --dsb-gray-1: var(--bs-gray-100);
     --dsb-gray-2: var(--bs-gray-200);
@@ -46,6 +54,7 @@
     --dsb-gray-4: var(--bs-gray-400);
     --dsb-gray-5: var(--bs-gray-500);
     --dsb-gray-6: var(--bs-gray-600);
+    --dsb-gray-7: var(--bs-gray-700);
     --dsb-gray-8: var(--bs-gray-800);
     --dsb-gray-9: var(--bs-gray-900);
 
@@ -58,7 +67,7 @@
     --dsb-primary-color-rgb: var(--bs-primary-rgb);
     --dsb-primary-text-color: #084298;
     --dsb-primary-border-color: #b6d4fe;
-    --dsb-primary-border: 1px solid var(--dsb-primary-border-color);
+    --dsb-primary-border: var(--dsb-border) var(--dsb-primary-border-color);
     --dsb-primary-bg-color: #cfe2ff;
 
     --dsb-primary-color-2: #0a53be;
@@ -69,36 +78,41 @@
     --dsb-success-color-rgb: var(--bs-success-rgb);
     --dsb-success-text-color: #0f5132;
     --dsb-success-border-color: #badbcc;
-    --dsb-success-border: 1px solid var(--dsb-success-border-color);
+    --dsb-success-border: var(--dsb-border) var(--dsb-success-border-color);
     --dsb-success-bg-color: #d1e7dd;
 
     --dsb-warning-color: var(--bs-warning);
     --dsb-warning-color-rgb: var(--bs-warning-rgb);
     --dsb-warning-text-color: #664d03;
     --dsb-warning-border-color: #ffecb5;
-    --dsb-warning-border: 1px solid var(--dsb-warning-border-color);
+    --dsb-warning-border: var(--dsb-border) var(--dsb-warning-border-color);
     --dsb-warning-bg-color: #fff3cd;
 
     --dsb-danger-color: var(--bs-danger);
     --dsb-danger-color-rgb: var(--bs-danger-rgb);
     --dsb-danger-text-color: #842029;
     --dsb-danger-border-color: #f5c2c7;
-    --dsb-danger-border: 1px solid var(--dsb-danger-border-color);
+    --dsb-danger-border: var(--dsb-border) var(--dsb-danger-border-color);
     --dsb-danger-bg-color: #f8d7da;
 
     --dsb-body-color: var(--dsb-gray-8);
+    --dsb-text-color: var(--dsb-body-color);
     --dsb-main-bg-color: var(--dsb-gray-1);
     --dsb-link-color: var(--bs-link-color);
     --dsb-link-hover-color: var(--bs-link-hover-color);
 
-    /** Console **/
+    /***************************************************************************
+     * Console
+     */
     --dsb-console-bg-color: var(--dsb-gray-8);
     --dsb-console-pause-bg-color: var(--dsb-gray-6);
     --dsb-console-color: var(--dsb-gray-2);
     --dsb-console-scrollbar-color: var(--bs-gray-500);
     --dsb-console-scrollbar-hover-color: var(--dsb-console-color);
 
-    /** Table **/
+    /***************************************************************************
+     * Table
+     */
     --dsb-table-hover-color: #212529;
     --dsb-table-hover-bg-color: rgba(var(--dsb-primary-color-rgb), 0.5);
 
@@ -123,7 +137,6 @@
 
     --dsb-main-font-family: Arial, Helvetica, sans-serif;
     --dsb-main-font-size: 0.85rem;
-
     --dsb-middle-font-size: 1rem;
     --dsb-alert-icon-size: 1.2rem;
     --dsb-big-font-size: 1.4rem;
@@ -131,7 +144,9 @@
     --dsb-xsmall-font-size: 0.55rem;
     --dsb-xxsmall-font-size: 0.45rem;
 
-    /** Forms **/
+    /***************************************************************************
+     * Forms
+     */
     --dsb-form-font-family: verdana, sans-serif;
     --dsb-form-font-size: 0.8rem;
     --dsb-log-font-size: 0.7rem;
@@ -141,7 +156,7 @@
     --dsb-active-color: var(--dsb-gray-4);
     --dsb-inactive-color: var(--dsb-gray-2);
     --dsb-inactive-bg-color: var(--dsb-gray-5);
-    --dsb-inactive-border: 1px solid var(--dsb-inactive-color);
+    --dsb-inactive-border: var(--dsb-border) var(--dsb-inactive-color);
 
 
     --dsb-elevation: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
@@ -152,7 +167,9 @@
     --dsb-backdrop-color: var(--dsb-color-dark-rgb);
 
     --dsb-main-border-color: var(--dsb-gray-4);
-    --dsb-main-border: 1px solid var(--dsb-main-border-color);
+    --dsb-main-border: var(--dsb-border) var(--dsb-main-border-color);
+    --dsb-hover-border-color: var(--dsb-gray-7);
+    --dsb-hover-border: var(--dsb-border) var(--dsb-hover-border-color);
 
 
 }
@@ -272,7 +289,7 @@ form h5 {
 fieldset {
     margin-bottom: var(--dsb-gutter);
     padding: var(--dsb-gutter);
-    border: 1px solid var(--dsb-gray-4);
+    border: var(--dsb-border) var(--dsb-gray-4);
     border-radius: var(--dsb-xs-rounded);
     height: calc(100% - var(--dsb-gutter));
 }
@@ -314,7 +331,7 @@ fieldset .fade {
 }
 
 legend {
-    font-size: var(--main-font-size);
+    font-size: var(--dsb-main-font-size);
     font-weight: bold;
     width: auto;
     margin: 0;
@@ -448,7 +465,7 @@ legend {
     padding: 0;
     overflow-x: hidden;
     margin-bottom: var(--dsb-xs-gutter);
-    background-color: rgba(var(--dsb-primary-col-rgb), 0.5);
+    background-color: rgba(var(--dsb-primary-color-rgb), 0.5);
     font-size: var(--dsb-main-font-size);
     color: var(--dsb-color-light);
     width: 100%;
@@ -776,13 +793,13 @@ body:not(.logged-in) #user-dropdown:hover {
     padding: var(--dsb-xs-gutter);
     padding-left: 0;
     padding-right: 0;
-    border: 1px solid transparent;
+    border: var(--dsb-border) transparent;
     width: 100%;
 }
 
 #menu-container > ul li > a:hover {
     padding: var(--dsb-xs-gutter) 0;
-    border: 1px solid transparent;
+    border: var(--dsb-border) transparent;
 }
 
 #menu-container li > .openItem:not([data-bs-toggle]) {
@@ -804,12 +821,12 @@ body:not(.logged-in) #user-dropdown:hover {
     padding: var(--dsb-xs-gutter);
     background: var(--dsb-gray-2);
     border-radius: var(--dsb-xs-rounded);
-    border: 1px solid var(--dsb-gray-4);
+    border: var(--dsb-border) var(--dsb-gray-4);
 }
 
 #menu-container.show #menu-wrapper li > a[aria-expanded="true"] {
     background-color: var(--dsb-gray-3);
-    border: 1px solid var(--dsb-gray-5);
+    border: var(--dsb-border) var(--dsb-gray-5);
 }
 
 #menu-container > ul ul {
@@ -1114,7 +1131,7 @@ footer {
 }
 
 .modal .notice {
-    font-size: var(--small-font-size);
+    font-size: var(--dsb-small-font-size);
     display: flex;
     align-items: center;
     line-height: 1.1;
@@ -1202,37 +1219,58 @@ footer {
  */
 
 .stick-info {
-    height: var(--dsb-gutter);
     border-radius: var(--dsb-xs-rounded);
+    background-color: var(--dsb-gray-2);
     border: var(--dsb-main-border);
     max-width: 10rem;
     margin: var(--dsb-md-gutter) 0;
-    padding: 1px;
+    font-size: var(--dsb-small-font-size);
+    font-weight: normal;
 }
 
 .stick-info span {
     --stick-border-color: var(--dsb-primary-border-color);
     --stick-bg-color: var(--dsb-primary-bg-color);
+    --stick-color: var(--dsb-primary-text-color);
+
     display: block;
     height: 100%;
     border-radius: var(--dsb-xs-rounded);
-    border: 1px solid var(--stick-border-color);
-    max-width: 100%
+    border: var(--dsb-border) var(--stick-border-color);
+    background-color: var(--stick-bg-color);
+    color: var(--stick-color);
+    max-width: 100%;
+    text-align: end;
+    padding: 0 2px;
+    overflow: hidden;
 }
 
-.stick-info.success {
-    --stick-border-color: var(--dsb-primary-border-color);
-    --stick-bg-color: var(--dsb-primary-bg-color);
+.stick-info.success span {
+    --stick-border-color: var(--dsb-success-border-color);
+    --stick-bg-color: var(--dsb-success-bg-color);
+    --stick-color: var(--dsb-success-text-color);
 }
 
-.stick-info.warning {
+.stick-info.warning span {
     --stick-border-color: var(--dsb-warning-border-color);
     --stick-bg-color: var(--dsb-warning-bg-color);
+    --stick-color: var(--dsb-warning-text-color);
 }
 
-.stick-info.danger {
+.stick-info.danger span {
     --stick-border-color: var(--dsb-danger-border-color);
     --stick-bg-color: var(--dsb-danger-bg-color);
+    --stick-color: var(--dsb-danger-text-color);
+}
+
+.with-stick {
+    display: flex;
+    gap: var(--dsb-gutter);
+    align-items: center;
+}
+
+.with-stick .stick-info {
+    flex: 1;
 }
 
 /******************************************************************************/
@@ -1310,7 +1348,7 @@ console:hover console-menu {
 console-menu button {
     padding: 3px;
     border-radius: var(--dsb-xs-rounded);
-    border: var(--hover-border);
+    border: var(--dsb-hover-border);
     height: 1.2rem;
     width: 1.2rem;
     font-size: 11px
@@ -1350,7 +1388,7 @@ console.pause console-menu button:hover {
     justify-content: center;
     align-items: center;
     color: var(--dsb-primary-color) !important;
-    border-radius: var(--dsb-xs-rounded);
+    border-radius: var(--dsb-xxs-rounded);
     font-size: 1rem;
     width: 1.25rem;
     text-align: center;
@@ -1385,7 +1423,7 @@ console.pause console-menu button:hover {
 .choices__list--dropdown {
     padding: 2px;
     background-color: var(--dsb-main-bg-color);
-    border: 1px solid var(--dsb-gray-4);
+    border: var(--dsb-border) var(--dsb-gray-4);
     top: 100%;
     margin-top: -1px;
     border-bottom-left-radius: var(--dsb-xs-rounded);
@@ -1484,7 +1522,7 @@ console.pause console-menu button:hover {
     padding: .375rem .75rem;
     box-shadow: var(--dsb-input-shadow);
     margin: 5px !important;
-    border: 1px solid var(--bs-gray-400) !important;
+    border: var(--dsb-border) var(--bs-gray-400) !important;
     border-radius: var(--dsb-xs-rounded) !important;
     background: var(--dsb-main-bg-color);
     width: calc(100% - 10px) !important;
@@ -1608,7 +1646,7 @@ text-i18n {
     --tag-border: var(--dsb-primary-color);
 
     display: inline-block;
-    border: 1px solid var(--tag-border);
+    border: var(--dsb-border) var(--tag-border);
     color: var(--tag-color);
     background: var(--tag-background);
     padding: var(--dsb-xs-gutter) var(--dsb-md-gutter);

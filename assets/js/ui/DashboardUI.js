@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 13/04/2023  19:48                                                                                *
+ * Last updated on : 29/04/2023  12:13                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -100,8 +100,8 @@ export class DashboardUI {
         eye.querySelector('.show-password').classList.toggle('dsb-hide')
         eye.querySelector('.hide-password').classList.toggle('dsb-hide')
     }
-    
-    
+
+
     static showOverlay = (opacity) => {
         this.BACKDROP_ELEMENT.classList.add('show')
         if (opacity) {
@@ -111,6 +111,39 @@ export class DashboardUI {
     static hideOverlay = () => {
         this.BACKDROP_ELEMENT.classList.remove('show')
     }
-    
-    
+
+    /**
+     *
+     * @param stick {{HTMLElement:any}}
+     * @param value in percentage
+     * @param label text in stick
+     * @param type danger|warning|success,  default to primary
+     */
+    static setStickInfo = ({stick, value, label = '', type = 'primary'}) => {
+        if (stick !== null) {
+            if (!(stick instanceof HTMLElement)) {
+                stick = document.querySelector(stick)
+                if (stick === null) {
+                    return
+                }
+            }
+
+            const container = stick.querySelector('span')
+            container.style.minWidth = `${value}%`
+            if (value === 0 || value === 'NaN') {
+                container.innerHTML = '&nbsp;'
+                container.style.opacity = 0
+
+            } else {
+                container.innerHTML = label
+                container.style.opacity = 1
+
+                stick.classList.add(type)
+            }
+
+        }
+        return stick
+
+    }
+
 }
