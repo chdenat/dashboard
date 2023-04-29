@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 29/04/2023  12:13
+ * Last updated on : 29/04/2023  18:54
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -30,14 +30,6 @@
  * main elements
  */
 :root {
-
-    /***********************************
-     * Bootstrap CSS variable change
-     */
-    --bs-gutter-x: 0.8rem;
-    --bs-gutter-y: var(--bs-gutter-x);
-    --bs-warning-rgb: 253, 126, 20;
-    --bs-text-opacity: 1;
 
     /***********************************
      * Common declarations
@@ -171,6 +163,14 @@
     --dsb-hover-border-color: var(--dsb-gray-7);
     --dsb-hover-border: var(--dsb-border) var(--dsb-hover-border-color);
 
+    /***********************************
+     * Bootstrap CSS variable change
+     */
+    --bs-gutter-x: 0.8rem;
+    --bs-gutter-y: var(--bs-gutter-x);
+    --bs-warning-rgb: 253, 126, 20;
+    --bs-text-opacity: 1;
+
 
 }
 
@@ -195,6 +195,8 @@ body {
     gap: var(--dsb-gutter);
     align-items: center;
     margin: 0;
+    --bs-alert-padding-x: var(--dsb-gutter);
+    --bs-alert-padding-y: var(--dsb-gutter);
 }
 
 i.alert-icon {
