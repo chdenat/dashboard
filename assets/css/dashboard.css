@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 29/04/2023  18:54
+ * Last updated on : 30/04/2023  18:12
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -531,6 +531,14 @@ legend {
     cursor: pointer;
 }
 
+.simple-accordion {
+    display: inline-flex;
+    text-decoration: none;
+    width: 100%;
+    padding-bottom: var(--dsb-xs-gutter);
+    border: none;
+}
+
 .simple-accordion:before {
     font: var(--fa-font-regular);
     content: "\f106";
@@ -545,6 +553,25 @@ legend {
 .simple-accordion[aria-expanded="true"]:before {
     transform: rotate(180deg);
     margin-bottom: 3px;
+}
+
+.simple-accordion-wrapper > a {
+    display: inline-flex;
+    text-decoration: none;
+    width: 100%;
+    padding-bottom: var(--dsb-xs-gutter);
+    border: none;
+}
+
+.simple-accordion-wrapper > a[aria-expanded="true"] {
+    border-bottom: var(--dsb-primary-border);
+}
+
+
+.simple-accordion-wrapper.small-size {
+    padding-left: 2rem;
+    font-size: var(--dsb-form-font-size);
+    margin-top: -0.5rem;
 }
 
 /**************************************************************************************************************************************************
@@ -1683,4 +1710,47 @@ text-i18n {
     --tag-color: var(--dsb-danger-text-color);
     --tag-background: var(--dsb-danger-bg-color);
     --tag-border: var(--dsb-danger-color);
+}
+
+/*******************************************************************************
+ * Key/value data
+ */
+
+
+.key-value-parameter {
+    display: flex;
+}
+
+.key-value-parameter > div:not(.stick-info) {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.key-value-parameters {
+    display: flex;
+    gap: var(--dsb-md-gutter);
+    flex-direction: column;
+}
+
+.key-value-parameter.spacer {
+    margin-top: calc(1.5 * var(--dsb-gutter))
+}
+
+.key-value-parameter .name {
+    margin-right: var(--dsb-md-gutter);
+}
+
+.key-value-parameter .value {
+    flex-direction: row !important;
+    display: inline-block;
+    color: var(--bs-primary);
+}
+
+.key-value-parameter .name {
+    margin-right: var(--dsb-md-gutter);
+}
+
+.simple-accordion-wrapper.small-size .key-value-parameters {
+    gap: 0
 }
