@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 30/04/2023  18:12
+ * Last updated on : 02/05/2023  16:27
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -534,9 +534,17 @@ legend {
 .simple-accordion {
     display: inline-flex;
     text-decoration: none;
-    width: 100%;
     padding-bottom: var(--dsb-xs-gutter);
     border: none;
+    font-weight: normal;
+}
+
+.simple-accordion-content {
+    border-top: var(--dsb-primary-border);
+}
+
+.simple-accordion.full-width {
+    width: 100%;
 }
 
 .simple-accordion:before {
@@ -555,7 +563,7 @@ legend {
     margin-bottom: 3px;
 }
 
-.simple-accordion-wrapper > a {
+.simple-accordion-wrapper > a, .with-stick .simple-accordion > a {
     display: inline-flex;
     text-decoration: none;
     width: 100%;
@@ -563,15 +571,15 @@ legend {
     border: none;
 }
 
-.simple-accordion-wrapper > a[aria-expanded="true"] {
-    border-bottom: var(--dsb-primary-border);
-}
-
 
 .simple-accordion-wrapper.small-size {
-    padding-left: 2rem;
     font-size: var(--dsb-form-font-size);
     margin-top: -0.5rem;
+}
+
+.with-stick .simple-accordion.small-size {
+    font-size: var(--dsb-form-font-size);
+
 }
 
 /**************************************************************************************************************************************************
@@ -1248,10 +1256,11 @@ footer {
  */
 
 .stick-info {
+    --stick-width: 10rem;
     border-radius: var(--dsb-xs-rounded);
     background-color: var(--dsb-gray-2);
     border: var(--dsb-main-border);
-    max-width: 10rem;
+    max-width: var(--stick-width);
     margin: var(--dsb-md-gutter) 0;
     font-size: var(--dsb-small-font-size);
     font-weight: normal;
@@ -1296,10 +1305,20 @@ footer {
     display: flex;
     gap: var(--dsb-gutter);
     align-items: center;
+    margin-bottom: var(--dsb-md-gutter);
 }
 
 .with-stick .stick-info {
     flex: 1;
+}
+
+.with-stick:has(.simple-accordion[aria-expanded="true"]) {
+    border-bott: var(--dsb-primary-border);
+}
+
+.simple-accordion-wrapper.small-size .stick-info {
+    margin: var(--dsb-xs-gutter) 0;
+    width: var(--stick-width);
 }
 
 /******************************************************************************/
