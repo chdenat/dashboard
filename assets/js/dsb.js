@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 28/04/2023  16:32                                                                                *
+ * Last updated on : 02/05/2023  16:28                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -1224,7 +1224,7 @@ var dsb = {
             }
             return dsb.ui
         },
-        
+
         show: (element, flex = true) => {
             if (element !== null) {
                 if (!(element instanceof HTMLElement) && element?.includes('#')) {
@@ -1233,7 +1233,7 @@ var dsb = {
                         return dsb.ui
                     }
                 }
-                
+
                 element.classList.remove('dsb-hide')
                 if (flex) {
                     element.classList.add('dsb-show-flex')
@@ -1243,14 +1243,33 @@ var dsb = {
             }
             return dsb.ui
         },
-        
+
+        /**
+         * Show element sibling.
+         *
+         * @param element
+         * @param sibling
+         *
+         * @return dsb.ui
+         */
+        showSibling: (element, sibling = '*') => {
+            if (!(element instanceof HTMLElement) && element?.includes('#')) {
+                element = document.querySelector(element)
+                if (element === null) {
+                    return dsb.ui
+                }
+            }
+            dsb.ui.show(element.parentElement.querySelector(sibling));
+            return dsb.ui
+        },
+
         show_block: (element) => {
             if (element !== null) {
                 dsb.ui.show(element, false)
             }
             return dsb.ui
         },
-        
+
         show_inline: (element, flex = true) => {
             if (element !== null) {
                 element.classList.remove('dsb-hide')
