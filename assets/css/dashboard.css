@@ -1,16 +1,16 @@
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Project : shelteradmin                                                                                             *
- * File : dashboard.css                                                                                               *
- *                                                                                                                    *
- * @author: Christian Denat                                                                                           *
- * @email: contact@noleam.fr                                                                                          *
- *                                                                                                                    *
- * Last updated on : 02/05/2023  16:32                                                                                *
- *                                                                                                                    *
- * Copyright (c) 2023 - noleam.fr                                                                                     *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/*
+ *
+ * Project : dashboard
+ * File : dashboard.css
+ *
+ * @author: Christian Denat
+ * @email: contact@noleam.fr
+ *
+ * Last updated on : 02/05/2023  16:34
+ *
+ * Copyright (c) 2023 - noleam.fr
+ *
+ */
 
 @import '../vendor/choices/choices.min.css';
 
@@ -534,9 +534,17 @@ legend {
 .simple-accordion {
     display: inline-flex;
     text-decoration: none;
-    width: 100%;
     padding-bottom: var(--dsb-xs-gutter);
     border: none;
+    font-weight: normal;
+}
+
+.simple-accordion-content {
+    border-top: var(--dsb-primary-border);
+}
+
+.simple-accordion.full-width {
+    width: 100%;
 }
 
 .simple-accordion:before {
@@ -555,7 +563,7 @@ legend {
     margin-bottom: 3px;
 }
 
-.simple-accordion-wrapper > a {
+.simple-accordion-wrapper > a, .with-stick .simple-accordion > a {
     display: inline-flex;
     text-decoration: none;
     width: 100%;
@@ -563,15 +571,15 @@ legend {
     border: none;
 }
 
-.simple-accordion-wrapper > a[aria-expanded="true"] {
-    border-bottom: var(--dsb-primary-border);
-}
-
 
 .simple-accordion-wrapper.small-size {
-    padding-left: 2rem;
     font-size: var(--dsb-form-font-size);
     margin-top: -0.5rem;
+}
+
+.with-stick .simple-accordion.small-size {
+    font-size: var(--dsb-form-font-size);
+
 }
 
 /**************************************************************************************************************************************************
@@ -1297,10 +1305,15 @@ footer {
     display: flex;
     gap: var(--dsb-gutter);
     align-items: center;
+    margin-bottom: var(--dsb-md-gutter);
 }
 
 .with-stick .stick-info {
     flex: 1;
+}
+
+.with-stick:has(.simple-accordion[aria-expanded="true"]) {
+    border-bott: var(--dsb-primary-border);
 }
 
 .simple-accordion-wrapper.small-size .stick-info {
