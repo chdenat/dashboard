@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 02/05/2023  16:34
+ * Last updated on : 14/05/2023  16:53
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -288,12 +288,20 @@ form h5 {
     font-size: var(--dsb-middle-font-size);
 }
 
-fieldset {
-    margin-bottom: var(--dsb-gutter);
+fieldset, .dsb-card {
     padding: var(--dsb-gutter);
     border: var(--dsb-border) var(--dsb-gray-4);
     border-radius: var(--dsb-xs-rounded);
+}
+
+fieldset {
+    margin-bottom: var(--dsb-gutter);
     height: calc(100% - var(--dsb-gutter));
+}
+
+
+.dsb-card h3 {
+    margin-top: 0 !important;
 }
 
 fieldset.no-border {
@@ -328,7 +336,8 @@ fieldset .fade {
     align-items: center;
 }
 
-.fieldset-footer > i {
+.dsb-card
+-footer > i {
     margin-right: var(--dsb-gutter);
 }
 
@@ -1644,6 +1653,26 @@ console.pause console-menu button:hover {
 .dsb-column {
     flex-basis: 100%;
     flex: 1;
+    gap: var(--dsb-gutter);
+}
+
+.dsb-column.dsb-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dsb-gutter);
+}
+
+
+.dsb-column.md-gap {
+    gap: var(--dsb-md-gutter);
+}
+
+.dsb-column.xs-gap {
+    gap: var(--dsb-xs-gutter);
+}
+
+.nogap {
+    gap: 0 !important;
 }
 
 .dsb-column.double {
