@@ -22,6 +22,7 @@
     "sprintf": "/dashboard/assets/vendor/sprintf.min.js",
     "Toaster": "/dashboard/assets/vendor/Toaster.js",
     "Transient": "/dashboard/assets/js/db/Transient.js",
-    "User": "/dashboard/assets/js/User.js"
+    "User": "/dashboard/assets/js/User.js",
+    "DSBDotsMenu": "/dashboard/assets/components/DSBDotsMenu/DSBDotsMenu.js"
   }
 }
