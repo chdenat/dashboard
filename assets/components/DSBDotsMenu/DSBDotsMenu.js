@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/05/2023  10:08                                                                                *
+ * Last updated on : 17/05/2023  09:36                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -19,6 +19,7 @@ export class DSBDotsMenu extends HTMLElement {
     icon = 'fa-regular fa-ellipsis-vertical'
     direction = 'start'
     list = ''
+    DIVIDER = 'divider'
 
     constructor() {
         super();
@@ -33,6 +34,10 @@ export class DSBDotsMenu extends HTMLElement {
         return ['name', 'id', 'class', 'icon']
     }
 
+    divider = () => {
+        return '<li><hr class="dropdown-divider"></li>'
+    }
+
     // attribute change
     attributeChangedCallback(property, oldValue, newValue) {
 
@@ -43,24 +48,30 @@ export class DSBDotsMenu extends HTMLElement {
 
     // connect component
     connectedCallback() {
+
         const container = this.querySelector('ul')
         this.querySelectorAll('dsb-dots-menu-item').forEach((element) => {
             const type = element.getAttribute('modal')
-            let list = ''
-            if (type === 'divider') {
-                list = '<li><hr class="dropdown-divider"></li>'
-            } else {
+            let list = (type === this.DIVIDER) ? this.divider() : ''
+
+            if (type !== this.DIVIDER) {
                 const [context, action] = element.getAttribute('action').split('/')
-                const modal = element.getAttribute('modal')
-                const icon = element.getAttribute('icon')
-                const text = element.getAttribute('text')
+                if (action === this.DIVIDER) {
+                    list = this.divider()
 
-                // modal-service/{key}/{service}/{action}
+                } else {
 
-                const dataAction = `data-action="${action}"`
-                const dataContext = (context !== undefined) ? ` data-context="${context}"` : ''
-                const dataModal = (modal !== undefined) ? ` data-bs-toggle="modal" data-bs-target="${modal}"` : ''
-                list = `<li><a href="#" class="dropdown-item" ${dataAction}${dataContext}${dataModal}><i class="${icon}"></i><span>${text}</span></a></li>\ `
+                    const modal = element.getAttribute('modal')
+                    const icon = element.getAttribute('icon')
+                    const text = element.getAttribute('text')
+
+                    // modal-service/{key}/{service}/{action}
+
+                    const dataAction = `data-action="${action}"`
+                    const dataContext = (context !== undefined) ? ` data-context="${context}"` : ''
+                    const dataModal = (modal !== undefined) ? ` data-bs-toggle="modal" data-bs-target="${modal}"` : ''
+                    list = `<li><a href="#" class="dropdown-item" ${dataAction}${dataContext}${dataModal}><i class="${icon}"></i><span>${text}</span></a></li>\ `
+                }
             }
             this.list += list
 
