@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : shelteradmin                                                                                             *
+ * Project : dashboard                                                                                                *
  * File : Page.js                                                                                                     *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 17/05/2023  09:08                                                                                *
+ * Last updated on : 17/05/2023  09:10                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -26,6 +26,15 @@ export class Page {
 
         //import sheet from './style.css' assert { type: 'css' };
         //document.adoptedStyleSheets = [sheet];
+    }
+
+    /**
+     * Encapsulate dsb importWebComponents
+     *
+     * @param components
+     */
+    importWebComponents = (...components) => {
+        dsb.utils.importWebComponents(arguments)
     }
 
     /**
