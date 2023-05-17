@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 16/05/2023  10:08
+ * Last updated on : 17/05/2023  09:39
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -25,6 +25,7 @@ dsb-dots-menu .dropdown-menu {
     --bs-dropdown-border-color: var(--dsb-main-border-color);
     --bs-dropdown-border-radius: var(--dsb-xs-rounded);
     --bs-dropdown-inner-border-radius: var(--dsb-xs-rounded);
+    --bs-dropdown-divider-margin-y: var(--dsb-xs-gutter);
     --bs-dropdown-divider-bg: var(--dsb-main-border-color);
     box-shadow: var(--dsb-elevation);
     font-size: var(--dsb-pop-menu-size);
