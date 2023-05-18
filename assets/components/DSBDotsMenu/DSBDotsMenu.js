@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 17/05/2023  15:53                                                                                *
+ * Last updated on : 18/05/2023  17:02                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -68,11 +68,17 @@ export class DSBDotsMenu extends HTMLElement {
                     const modal = element.getAttribute('modal')
                     const icon = element.getAttribute('icon')
                     const text = element.getAttribute('text')
+                    const parameter = element.getAttribute('parameter')
 
+                    const dataParam = (parameter !== null) ? ` data-parameter="${parameter}"` : ''
                     const dataAction = `data-action="${action}"`
                     const dataContext = (context !== null) ? ` data-context="${context}"` : ''
                     const dataModal = (modal !== null) ? ` data-bs-toggle="modal" data-bs-target="${modal}"` : ''
-                    list = `<li><a href="#" class="dropdown-item" ${dataAction}${dataContext}${dataModal}><i class="${icon}"></i><span>${text}</span></a></li>\ `
+                    list = `
+<li>
+<a href="#" class="dropdown-item" ${dataAction}${dataParam}${dataContext}${dataModal}><i class="${icon}"></i><span>${text}</span></a>
+</li>
+`
                 }
             }
             this.list += list
