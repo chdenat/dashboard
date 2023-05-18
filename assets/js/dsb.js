@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/05/2023  19:45                                                                                *
+ * Last updated on : 18/05/2023  15:28                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -940,6 +940,9 @@ var dsb = {
          */
         nl2br: (str) => {
             if (null !== str) {
+                if (str instanceof Object) {
+                    str = str.toString()
+                }
                 return str.replace(/(\r\n|\r|\n)/gm, '<br>')
             }
         },
