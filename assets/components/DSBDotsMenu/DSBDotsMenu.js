@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 17/05/2023  09:36                                                                                *
+ * Last updated on : 17/05/2023  15:53                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -55,21 +55,23 @@ export class DSBDotsMenu extends HTMLElement {
             let list = (type === this.DIVIDER) ? this.divider() : ''
 
             if (type !== this.DIVIDER) {
-                const [context, action] = element.getAttribute('action').split('/')
+                let [context, action] = element.getAttribute('action').split('/')
+                if (action === undefined) {
+                    action = context
+                    context = undefined
+                }
+
                 if (action === this.DIVIDER) {
                     list = this.divider()
-
                 } else {
 
                     const modal = element.getAttribute('modal')
                     const icon = element.getAttribute('icon')
                     const text = element.getAttribute('text')
 
-                    // modal-service/{key}/{service}/{action}
-
                     const dataAction = `data-action="${action}"`
-                    const dataContext = (context !== undefined) ? ` data-context="${context}"` : ''
-                    const dataModal = (modal !== undefined) ? ` data-bs-toggle="modal" data-bs-target="${modal}"` : ''
+                    const dataContext = (context !== null) ? ` data-context="${context}"` : ''
+                    const dataModal = (modal !== null) ? ` data-bs-toggle="modal" data-bs-target="${modal}"` : ''
                     list = `<li><a href="#" class="dropdown-item" ${dataAction}${dataContext}${dataModal}><i class="${icon}"></i><span>${text}</span></a></li>\ `
                 }
             }
