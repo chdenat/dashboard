@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 16/05/2023  10:08
+ * Last updated on : 19/05/2023  17:41
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -87,11 +87,26 @@
     --dsb-danger-border: var(--dsb-border) var(--dsb-danger-border-color);
     --dsb-danger-bg-color: #f8d7da;
 
+
+    --dsb-active-color: var(--dsb-gray-4);
+
+    --dsb-inactive-color: var(--dsb-gray-5);
+    --dsb-inactive-color-rgb: 206, 212, 218;
+    --dsb-inactive-text-color: var(--dsb-gray-5);
+    --dsb-inactive-border-color: var(--dsb-gray-4);
+    --dsb-inactive-border: var(--dsb-border) var(--dsb-inactive-border-color);
+    --dsb-inactive-bg-color: var(--dsb-gray-2);
+
     --dsb-body-color: var(--dsb-gray-8);
     --dsb-text-color: var(--dsb-body-color);
     --dsb-main-bg-color: var(--dsb-gray-1);
     --dsb-link-color: var(--bs-link-color);
     --dsb-link-hover-color: var(--bs-link-hover-color);
+
+    --dsb-fetching-color-rgb: 108, 117, 125;
+    --dsb-fetching-color-opacity: 0.1;
+    --dsb-fetching-color: rgba(var(--dsb-fetching-color-rgb), var(--dsb-fetching-color-opacity));
+
 
     /***************************************************************************
      * Console
@@ -144,12 +159,6 @@
     --dsb-log-font-size: 0.7rem;
     --dsb-form-bg-color: var(--dsb-gray-1);
     --dsb-form-color: var(--dsb-body-color);
-
-    --dsb-active-color: var(--dsb-gray-4);
-    --dsb-inactive-color: var(--dsb-gray-2);
-    --dsb-inactive-bg-color: var(--dsb-gray-5);
-    --dsb-inactive-border: var(--dsb-border) var(--dsb-inactive-color);
-
 
     --dsb-elevation: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
     --dsb-input-shadow: inset rgba(0, 0, 0, 0.15) 0px 2px 8px;
@@ -209,6 +218,13 @@ i.alert-icon {
     align-self: baseline;
     margin-top: var(--dsb-xs-gutter);
     font-size: var(--dsb-alert-icon-size);
+}
+
+.alert-inactive {
+    --bs-alert-color: var(--dsb-inactive-color);
+    --bs-alert-bg: var(--dsb-inactive-bg-color);
+    --bs-alert-border-color: var(--dsb-inactive-border-color);
+    --bs-alert-link-color: var(--dsb-inactive-color);
 }
 
 /***************************************
