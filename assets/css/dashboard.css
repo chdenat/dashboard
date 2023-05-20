@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 20/05/2023  11:03
+ * Last updated on : 20/05/2023  11:55
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -99,7 +99,7 @@
 
     --dsb-body-color: var(--dsb-gray-8);
     --dsb-text-color: var(--dsb-body-color);
-    --dsb-main-bg-color: var(--dsb-gray-1);
+    --dsb-main-bg-color: transparent;
     --dsb-link-color: var(--bs-link-color);
     --dsb-link-hover-color: var(--bs-link-hover-color);
 
@@ -183,8 +183,24 @@
      */
     --dsb-pop-menu-color: var(--dsb-gray-7);
     --dsb-pop-menu-border: var(--dsb-border) var(--dsb-main-border-color);
-    --dsb-pop-menu-size: 0.8rem
+    --dsb-pop-menu-size: 0.8rem;
+
+    /**********************************
+     * Animation
+     */
+
 }
+
+/******************************************************************************
+ * Animations
+ */
+
+@keyframes dsb-fade-in {
+    to {
+        opacity: 1
+    }
+}
+
 
 body {
     overflow: hidden;
@@ -1785,6 +1801,7 @@ text-i18n {
  */
 
 .fetching {
+    background-color: transparent !important;
     background-image: linear-gradient(110deg, transparent 8%, var(--dsb-fetching-color) 18%, transparent 33%) !important;
     background-size: 200% 100% !important;
     animation: 1s shine linear infinite !important;
@@ -1792,7 +1809,7 @@ text-i18n {
 
 .fetching > * {
     opacity: var(--dsb-fetching-color-opacity);
-    animation: opacity 1s ease-out;
+    animation: dsb-fade-in 5s ease-out;
 }
 
 @keyframes shine {
