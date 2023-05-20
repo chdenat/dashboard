@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 29/04/2023  12:13                                                                                *
+ * Last updated on : 20/05/2023  11:00                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -14,9 +14,10 @@
 
 
 export class DashboardUI {
-    
+
     static BACKDROP_ELEMENT = document.getElementById('dsb-backdrop')
-    
+    static FETCHING_CLASS = 'fetching'
+
     /**
      * For all elements that have the class alert-support-access, we change the criteria (primary, secondary...)
      *
@@ -37,7 +38,7 @@ export class DashboardUI {
     static resetElementType(element, prefix = DashboardUI.DEFAULT_PREFIX) {
         DashboardUI.setElementType(element, prefix)
     }
-    
+
     /**
      * Change all classes that are used to type an element (ie primary, secondary, success ...
      * in other words change all that are matching <prefix>-<something> by <prefix>-<criteria>
@@ -90,12 +91,12 @@ export class DashboardUI {
             item.addEventListener('click', this.togglePassword)
         })
     }
-    
+
     static togglePassword = (event) => {
         const eye = event.currentTarget
         const password = document.querySelector(`[name="${event.currentTarget.dataset.password}"]`)
         const type = password.getAttribute('type') === 'password' ? 'text' : 'password'
-        
+
         password.setAttribute('type', type)
         eye.querySelector('.show-password').classList.toggle('dsb-hide')
         eye.querySelector('.hide-password').classList.toggle('dsb-hide')
@@ -144,6 +145,35 @@ export class DashboardUI {
         }
         return stick
 
+    }
+
+    static startFetchingAnimation = (element) => {
+
+        if (!Array.isArray(element)) {
+            const old = element
+            element = []
+            element.push(old)
+        }
+
+        element.forEach(item => {
+            item.classList.add(this.FETCHING_CLASS)
+        })
+    }
+
+    static stopFetchingAnimation = (element) => {
+        if (!Array.isArray(element)) {
+            const old = element
+            element = []
+            element.push(old)
+        }
+
+        element.forEach(item => {
+            item.classList.remove(this.FETCHING_CLASS)
+        })
+    }
+
+    static isFetchingAnimationInProgress = (element) => {
+        return element.classList.contains(this.FETCHING_CLASS)
     }
 
 }
