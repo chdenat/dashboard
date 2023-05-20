@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 18/05/2023  17:02                                                                                *
+ * Last updated on : 20/05/2023  19:04                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -55,16 +55,11 @@ export class DSBDotsMenu extends HTMLElement {
             let list = (type === this.DIVIDER) ? this.divider() : ''
 
             if (type !== this.DIVIDER) {
-                let [context, action] = element.getAttribute('action').split('/')
-                if (action === undefined) {
-                    action = context
-                    context = undefined
-                }
-
+                const action = element.getAttribute('action')
                 if (action === this.DIVIDER) {
                     list = this.divider()
                 } else {
-
+                    const context = element.getAttribute('context')
                     const modal = element.getAttribute('modal')
                     const icon = element.getAttribute('icon')
                     const text = element.getAttribute('text')
