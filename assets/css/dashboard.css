@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 19/05/2023  19:13
+ * Last updated on : 20/05/2023  11:03
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -1779,6 +1779,28 @@ text-i18n {
     --tag-background: var(--dsb-danger-bg-color);
     --tag-border: var(--dsb-danger-color);
 }
+
+/******************************************************************************
+ *  Fetching
+ */
+
+.fetching {
+    background-image: linear-gradient(110deg, transparent 8%, var(--dsb-fetching-color) 18%, transparent 33%) !important;
+    background-size: 200% 100% !important;
+    animation: 1s shine linear infinite !important;
+}
+
+.fetching > * {
+    opacity: var(--dsb-fetching-color-opacity);
+    animation: opacity 1s ease-out;
+}
+
+@keyframes shine {
+    to {
+        background-position-x: -200%;
+    }
+}
+
 
 /*******************************************************************************
  * Key/value data
