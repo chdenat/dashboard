@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 20/05/2023  11:55
+ * Last updated on : 21/05/2023  16:46
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -115,6 +115,8 @@
     --dsb-console-color: var(--dsb-gray-2);
     --dsb-console-scrollbar-color: var(--bs-gray-500);
     --dsb-console-scrollbar-hover-color: var(--dsb-console-color);
+    --dsb-console-font-family: var(--bs-font-monospace);
+    --dsb-console-font-size: 0.7rem;
 
     /***************************************************************************
      * Table
@@ -144,6 +146,7 @@
     --dsb-main-font-size: 0.85rem;
     --dsb-middle-font-size: 1rem;
     --dsb-alert-icon-size: 1.2rem;
+    --dsb-alert-dismiss-icon-size: 0.8rem;
     --dsb-big-font-size: 1.4rem;
     --dsb-small-font-size: 0.65rem;
     --dsb-xsmall-font-size: 0.55rem;
@@ -191,6 +194,10 @@
 
 }
 
+
+/*******************************************************************************
+ * UI elements
+ *******************************************************************************/
 /******************************************************************************
  * Animations
  */
@@ -210,11 +217,6 @@ body {
     color: var(--dsb-body-color)
 }
 
-
-/*******************************************************************************
- * UI elements
- *******************************************************************************/
-
 /***************************************
  * Alert
  */
@@ -226,12 +228,20 @@ body {
     margin: 0;
     --bs-alert-padding-x: var(--dsb-gutter);
     --bs-alert-padding-y: var(--dsb-gutter);
+    --bs-alert-border-radius: var(--dsb-rounded);
 }
 
 i.alert-icon {
     align-self: baseline;
     margin-top: var(--dsb-xs-gutter);
     font-size: var(--dsb-alert-icon-size);
+}
+
+i.dismiss-alert {
+    position: absolute;
+    right: var(--dsb-md-gutter);
+    top: var(--dsb-md-gutter);
+    font-size: var(--dsb-alert-dismiss-icon-size);
 }
 
 .alert-inactive {
@@ -293,6 +303,7 @@ body.logged-in [data-action="logout-confirm"], body.logged-in [data-action="chan
     font-size: var(--dsb-main-font-size);
     display: flex;
     align-items: center;
+    --bs-btn-border-radius: var(--dsb-xs-rounded)
 }
 
 .btn span {
@@ -1697,7 +1708,6 @@ console.pause console-menu button:hover {
     flex-direction: column;
     gap: var(--dsb-gutter);
 }
-
 
 .dsb-column.md-gap {
     gap: var(--dsb-md-gutter);
