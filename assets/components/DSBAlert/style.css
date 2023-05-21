@@ -1,45 +1,21 @@
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Project : shelteradmin                                                                                             *
- * File : style.css                                                                                                   *
- *                                                                                                                    *
- * @author: Christian Denat                                                                                           *
- * @email: contact@noleam.fr                                                                                          *
- *                                                                                                                    *
- * Last updated on : 21/05/2023  11:15                                                                                *
- *                                                                                                                    *
- * Copyright (c) 2023 - noleam.fr                                                                                     *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/*
+ *
+ * Project : dashboard
+ * File : style.css
+ *
+ * @author: Christian Denat
+ * @email: contact@noleam.fr
+ *
+ * Last updated on : 21/05/2023  16:45
+ *
+ * Copyright (c) 2023 - noleam.fr
+ *
+ */
 
-dsb-dots-menu a[data-bs-toggle="dropdown"] {
-    color: var(--dsb-pop-menu-color) !important;
+dsb-alert .alert {
+    display: none;
 }
 
-dsb-dots-menu .dropdown-menu {
-    --bs-dropdown-min-width: 8rem;
-    --bs-dropdown-padding-x: var(--dsb-md-gutter);
-    --bs-dropdown-padding-y: var(--dsb-md-gutter);
-    --bs-dropdown-font-size: var(--dsb-pop-menu-size);
-    --bs-dropdown-border-width: 1px;
-    --bs-dropdown-border-color: var(--dsb-main-border-color);
-    --bs-dropdown-border-radius: var(--dsb-xs-rounded);
-    --bs-dropdown-inner-border-radius: var(--dsb-xs-rounded);
-    --bs-dropdown-divider-margin-y: var(--dsb-xs-gutter);
-    --bs-dropdown-divider-bg: var(--dsb-main-border-color);
-    box-shadow: var(--dsb-elevation);
-    font-size: var(--dsb-pop-menu-size);
-    transform: translate(calc(-1 * var(--dsb-md-gutter)), 0px) !important;
-
-}
-
-dsb-dots-menu .dropdown-item {
-    --bs-dropdown-item-padding-y: var(--dsb-xs-gutter);
-    --bs-dropdown-item-padding-x: var(--dsb-md-gutter);
-    color: var(--dsb-pop-menu-color) !important;
-    border-radius: var(--dsb-xxs-rounded);
-}
-
-dsb-dots-menu .dropdown-item i {
-    width: 1.2rem;
+dsb-alert .alert.show {
+    display: flex;
 }

@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : shelteradmin                                                                                             *
+ * Project : dashboard                                                                                                *
  * File : DSBAlert.js                                                                                                 *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 21/05/2023  11:15                                                                                *
+ * Last updated on : 21/05/2023  16:45                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -16,7 +16,7 @@
 
 export class DSBAlert extends HTMLElement {
 
-    icon = 'fa-regular fa-ellipsis-vertical'
+    icon = 'fa-regular fa-circle-info'
     direction = 'start'
     list = ''
     DIVIDER = 'divider'
@@ -34,9 +34,6 @@ export class DSBAlert extends HTMLElement {
         return ['name', 'id', 'class', 'icon']
     }
 
-    divider = () => {
-        return '<li><hr class="dropdown-divider"></li>'
-    }
 
     // attribute change
     attributeChangedCallback(property, oldValue, newValue) {
@@ -46,61 +43,50 @@ export class DSBAlert extends HTMLElement {
 
     }
 
+    static setMessage(id, message) {
+        document.getElementById(id).querySelector('.alert-body').innerHTML = message
+        return this
+    }
+
+    static show(id) {
+        document.getElementById(id).classList.add('show')
+        return this
+    }
+
     // connect component
     connectedCallback() {
+        const type = this.getAttribute('type')
+        const dismiss = this.getAttribute('dismiss') === 'true'
+        const icon = this.getAttribute('icon') ?? this.icon
+        const noIcon = this.getAttribute('no-icon') === 'true'
+        const dataId = this.id ?? ''
+        const classes = this.getAttribute('class') ?? ''
 
-        const container = this.querySelector('ul')
-        this.querySelectorAll('dsb-dots-menu-item').forEach((element) => {
-            const type = element.getAttribute('modal')
-            let list = (type === this.DIVIDER) ? this.divider() : ''
-
-            if (type !== this.DIVIDER) {
-                const action = element.getAttribute('action')
-                if (action === this.DIVIDER) {
-                    list = this.divider()
-                } else {
-                    const context = element.getAttribute('context')
-                    const modal = element.getAttribute('modal')
-                    const icon = element.getAttribute('icon')
-                    const text = element.getAttribute('text')
-                    const parameter = element.getAttribute('parameter')
-
-                    const dataParam = (parameter !== null) ? ` data-parameter="${parameter}"` : ''
-                    const dataAction = `data-action="${action}"`
-                    const dataContext = (context !== null) ? ` data-context="${context}"` : ''
-                    const dataModal = (modal !== null) ? ` data-bs-toggle="modal" data-bs-target="${modal}"` : ''
-                    list = `
-<li>
-<a href="#" class="dropdown-item" ${dataAction}${dataParam}${dataContext}${dataModal}><i class="${icon}"></i><span>${text}</span></a>
-</li>
-`
-                }
-            }
-            this.list += list
-
-        })
+        const dataType = (type) ? `alert-${type}` : ''
+        let dataDismiss = ''
+        let dismissIcon = ''
+        if (dismiss && dataId) {
+            dismissIcon = `<i class="dismiss-alert fa-regular fa-xmark" onClick="document.getElementById('${dataId}').classList.remove('show')"></i>`
+        }
+        const dataIcon = (!noIcon)
+            ? `<i class="icon-alert ${icon}"></i>`
+            : ''
 
         const template = `
-<style>@import "/dashboard/assets/components/DSBDotsMenu/style.css"</style>
-    <div class="drop${this.direction}">
-        <a href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="${this.icon}"></i>
-        </a>
-        <ul class="dropdown-menu">
-            ${this.list}
-        </ul>
-    </div>
+            <style>@import "/dashboard/assets/components/DSBAlert/style.css"</style>
+        <div class="alert ${dataType} ${classes}" id="${dataId}">
+            ${dismissIcon}${dataIcon}<div class="alert-body">${this.innerHTML}</div>
+        </div>
   `
         this.innerHTML = template
 
-
-        if (this.hasAttribute('id')) {
-            this.setAttribute('id', this.id)
-        }
-
+        this.setAttribute('data-pseudo-id', this.id)
+        this.removeAttribute('id')
+        this.setAttribute('data-pseudo-class', this.class)
+        this.removeAttribute('class')
     }
 
 }
 
 // register component
-customElements.define('dsb-dots-menu', DSBAlert);
+customElements.define('dsb-alert', DSBAlert);

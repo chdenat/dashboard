@@ -23,6 +23,7 @@
     "Toaster": "/dashboard/assets/vendor/Toaster.js",
     "Transient": "/dashboard/assets/js/db/Transient.js",
     "User": "/dashboard/assets/js/User.js",
+    "DSBAlert": "/dashboard/assets/components/DSBAlert/DSBAlert.js",
     "DSBDotsMenu": "/dashboard/assets/components/DSBDotsMenu/DSBDotsMenu.js"
   }
 }
