@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 17/05/2023  09:39
+ * Last updated on : 21/05/2023  17:42
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -42,4 +42,8 @@ dsb-dots-menu .dropdown-item {
 
 dsb-dots-menu .dropdown-item i {
     width: 1.2rem;
+}
+
+dsb-dots-menu ul li:last-child:has(.dropdown-divider) {
+    display: none;
 }
