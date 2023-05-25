@@ -6,15 +6,16 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 14/04/2023  15:42                                                                                *
+ * Last updated on : 25/05/2023  18:49                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 import {Bus as LoggerEvent} from 'Bus'
-import {dsb}                from 'dsb'
-import {DSBConsole}         from 'DSBConsole'
-import {LogContext}         from 'LogContext'
+import {dsb} from 'dsb'
+import {DSBConsole} from 'DSBConsole'
+//import {OverlayScrollbars} from 'overlayscrollbars'
+import {LogContext} from 'LogContext'
 
 class Logger {
 

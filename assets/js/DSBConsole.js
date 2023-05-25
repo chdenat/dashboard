@@ -1,22 +1,23 @@
 
 
-/***********************************************************************************************************************
- *
- * Project : supervix4
- * file : DSBConsole.js
- *
- * @author  Christian Denat
- * @email contact@noleam.fr
- * --
- *
- * updated on :  5/27/22, 9:40 AM
- *
- * @copyright (c) 2022 noleam.fr
- *
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : DSBConsole.js                                                                                               *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 25/05/2023  18:49                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
  **********************************************************************************************************************/
 
 import {dsb} from 'dsb'
 import {Bus as ConsoleEvent} from 'Bus'
+
+//import {OverlayScrollbars} from 'overlayscrollbars'
 
 class DSBConsole {
     #id = null

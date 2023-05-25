@@ -1,18 +1,17 @@
 <?php
 
-/***********************************************************************************************************************
- *
- * Project : supervix4
- * file : dashboard-config.php
- *
- * @author        Christian Denat
- * @email contact@noleam.fr
- * --
- *
- * updated on :  1/19/22, 11:55 AM
- *
- * @copyright (c) 2022 noleam.fr
- *
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : dashboard-config.php                                                                                        *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 25/05/2023  18:14                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
  **********************************************************************************************************************/
 
 /** Bootstrap directory */
@@ -79,6 +78,7 @@ const FAWESOME_JS = D_VDR_URL . FAWESOME . '/js/';
 
 /** Pseudo scrollbar CSS  */
 const SCROLLBAR_CSS = D_VDR_URL . 'overlay-scrollbars/OverlayScrollbars.min.css';
+//const SCROLLBAR_CSS = D_VDR_URL . 'overlay-scrollbars/overlayscrollbars.min.css';
 
 /**  Choices JS  */
 const CHOICES_JS = D_VDR_URL . 'choices/choices.min.js';

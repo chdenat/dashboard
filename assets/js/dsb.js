@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 20/05/2023  10:01                                                                                *
+ * Last updated on : 25/05/2023  18:47                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -22,6 +22,8 @@ import {Session} from 'Session'
 import {Toaster} from 'Toaster'
 import {Transient} from 'Transient'
 import {User} from 'User'
+
+//import {OverlayScrollbars} from 'overlayscrollbars' // keep lwercase
 
 await import ('sprintf')
 
@@ -1930,7 +1932,7 @@ var dsb = {
 
         dsb.page.main_title = instance.title
 
-        const {default: OverlaysScrollbars} = await import ('/dashboard/assets/vendor/overlay-scrollbars/OverlayScrollbars.js')
+        const {default: OverlayScrollbars} = await import ('/dashboard/assets/vendor/overlay-scrollbars/OverlayScrollbars.min.js')
 
         /**
          * First thing to do,manage history

@@ -18,6 +18,8 @@
     "Logger": "/dashboard/assets/js/Logger.js",
     "luxon": "/dashboard/assets/vendor/luxon.min.js",
     "nanoid": "/dashboard/assets/vendor/nanoid.js",
+    "overlayscrollbars": "/dashboard/assets/vendor/overlay-scrollbars/overlayscrollbars.min.js",
+    "OverlayScrollbars": "/dashboard/assets/vendor/overlay-scrollbars/OverlayScrollbars.min.js",
     "Session": "/dashboard/assets/js/Session.js",
     "sprintf": "/dashboard/assets/vendor/sprintf.min.js",
     "Toaster": "/dashboard/assets/vendor/Toaster.js",
