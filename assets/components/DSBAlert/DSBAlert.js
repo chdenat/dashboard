@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 21/05/2023  16:45                                                                                *
+ * Last updated on : 25/05/2023  10:48                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -74,16 +74,11 @@ export class DSBAlert extends HTMLElement {
 
         const template = `
             <style>@import "/dashboard/assets/components/DSBAlert/style.css"</style>
-        <div class="alert ${dataType} ${classes}" id="${dataId}">
+        <div class="alert ${dataType}" id="${dataId}-inner">
             ${dismissIcon}${dataIcon}<div class="alert-body">${this.innerHTML}</div>
         </div>
   `
         this.innerHTML = template
-
-        this.setAttribute('data-pseudo-id', this.id)
-        this.removeAttribute('id')
-        this.setAttribute('data-pseudo-class', this.class)
-        this.removeAttribute('class')
     }
 
 }
