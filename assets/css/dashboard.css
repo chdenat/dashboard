@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 21/05/2023  16:46
+ * Last updated on : 25/05/2023  15:50
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -152,12 +152,17 @@
     --dsb-xsmall-font-size: 0.55rem;
     --dsb-xxsmall-font-size: 0.45rem;
 
+    /**************************************************************************
+     * Logs
+     */
+    --dsb-log-font-family: var(--bs-font-monospace);
+    --dsb-log-font-size: 0.7rem;
+
     /***************************************************************************
      * Forms
      */
     --dsb-form-font-family: verdana, sans-serif;
     --dsb-form-font-size: 0.8rem;
-    --dsb-log-font-size: 0.7rem;
     --dsb-form-bg-color: var(--dsb-gray-1);
     --dsb-form-color: var(--dsb-body-color);
 
@@ -249,6 +254,12 @@ i.dismiss-alert {
     --bs-alert-bg: var(--dsb-inactive-bg-color);
     --bs-alert-border-color: var(--dsb-inactive-border-color);
     --bs-alert-link-color: var(--dsb-inactive-color);
+}
+
+.alert-body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 /***************************************
