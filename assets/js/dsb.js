@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/05/2023  16:30                                                                                *
+ * Last updated on : 26/05/2023  18:15                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -532,7 +532,7 @@ var dsb = {
                         searchEnabled: false,
                         allowHTML: true,
 
-                    callbackOnCreateTemplates: function (template) {
+                        callbackOnCreateTemplates: function (template) {
                             return {
                                 item: ({classNames}, data) => {
                                     return template(select_lang({classNames}, data))
@@ -1545,8 +1545,8 @@ var dsb = {
             event.preventDefault()
             let template = new Block('#popcont#', null, event.currentTarget.getAttribute('href'))
             template.checkLink4Tab(event.currentTarget.getAttribute('href'))
-            template.load()
-            dsb.ui.show_pop_content()
+            template.load().then(r => dsb.ui.show_pop_content())
+
 
             return false
         },
