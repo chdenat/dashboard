@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 26/05/2023  16:29
+ * Last updated on : 26/05/2023  16:41
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -208,6 +208,9 @@
 /*******************************************************************************
  * UI elements
  *******************************************************************************/
+[data-action], a:not([href]) {
+    cursor: pointer;
+}
 /******************************************************************************
  * Animations
  */
@@ -400,8 +403,7 @@ fieldset .fade {
     align-items: center;
 }
 
-.dsb-card
--footer > i {
+.dsb-card-footer > i {
     margin-right: var(--dsb-gutter);
 }
 
