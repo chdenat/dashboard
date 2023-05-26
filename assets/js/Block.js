@@ -6,15 +6,15 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 12/03/2023  10:22                                                                                *
+ * Last updated on : 26/05/2023  18:15                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-import {Animation}         from 'Animation'
+import {Animation} from 'Animation'
 import {Bus as BlockEvent} from 'Bus'
-import {nanoid}            from 'nanoid'
+import {nanoid} from 'nanoid'
 
 let blocksList = [];
 
@@ -527,7 +527,7 @@ class Block {
      * @param force
      * @return {Promise<boolean>}
      */
-    loadPage = async (force) => {
+    loadPage = async (force, parameters = {}) => {
         let value = true
         // Load the link content in the right template
         if (this.is_content && !this.#nofile) {
@@ -536,7 +536,7 @@ class Block {
                     // Once the page  has been loaded, it's time to initalise the page,
                     // if the required method exists
                     if (result.success) {
-                        this.load(force).then((ok) => {
+                        this.load(force, parameters).then((ok) => {
                             if (ok) {
                                 this.importDeferredBlock().then((ok) => {
                                     if (ok) {
