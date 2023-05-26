@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 25/05/2023  18:47                                                                                *
+ * Last updated on : 26/05/2023  16:30                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -1543,12 +1543,9 @@ var dsb = {
 
         show_intermediate_content: (event) => {
             event.preventDefault()
-            let template = new Block('#popcont#')
+            let template = new Block('#popcont#', null, event.currentTarget.getAttribute('href'))
             template.checkLink4Tab(event.currentTarget.getAttribute('href'))
-            template.load({
-                template: template,
-                force: true,
-            })
+            template.load()
             dsb.ui.show_pop_content()
 
             return false
