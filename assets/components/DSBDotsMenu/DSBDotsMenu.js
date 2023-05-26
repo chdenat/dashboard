@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 20/05/2023  19:04                                                                                *
+ * Last updated on : 26/05/2023  16:55                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -53,7 +53,6 @@ export class DSBDotsMenu extends HTMLElement {
         this.querySelectorAll('dsb-dots-menu-item').forEach((element) => {
             const type = element.getAttribute('modal')
             let list = (type === this.DIVIDER) ? this.divider() : ''
-
             if (type !== this.DIVIDER) {
                 const action = element.getAttribute('action')
                 if (action === this.DIVIDER) {
@@ -63,15 +62,23 @@ export class DSBDotsMenu extends HTMLElement {
                     const modal = element.getAttribute('modal')
                     const icon = element.getAttribute('icon')
                     const text = element.getAttribute('text')
-                    const parameter = element.getAttribute('parameter')
+                    const action = element.getAttribute('action')
+                    const href = element.getAttribute('href')
 
-                    const dataParam = (parameter !== null) ? ` data-parameter="${parameter}"` : ''
-                    const dataAction = `data-action="${action}"`
-                    const dataContext = (context !== null) ? ` data-context="${context}"` : ''
-                    const dataModal = (modal !== null) ? ` data-bs-toggle="modal" data-bs-target="${modal}"` : ''
+                    const parameter = element.getAttribute('parameter')
+                    const attributes = element.getAttribute('attributes') ?? ''
+
+                    const textAttributes = ' ' + attributes.split(',').join(' ')
+                    const textParam = (parameter !== null) ? ` data-parameter="${parameter}"` : ''
+                    const textAction = (action) ? ` data-action="${action}"` : ''
+                    const textHref = ` href="${(href) ? href : '#'}"`
+                    const textContext = (context !== null) ? ` data-context="${context}"` : ''
+                    const textModal = (modal !== null) ? ` data-bs-toggle="modal" data-bs-target="${modal}"` : ''
                     list = `
 <li>
-<a href="#" class="dropdown-item" ${dataAction}${dataParam}${dataContext}${dataModal}><i class="${icon}"></i><span>${text}</span></a>
+    <a class="dropdown-item" ${textAction}${textHref}${textParam}${textContext}${textModal}${textAttributes}>
+        <i class="${icon}"></i><span>${text}</span>
+    </a>
 </li>
 `
                 }
