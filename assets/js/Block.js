@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/05/2023  18:15                                                                                *
+ * Last updated on : 26/05/2023  19:04                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -327,7 +327,13 @@ class Block {
                         Animation.loading('#content#')
                     }
 
-                    await template.loadPage(force)
+                    let parameters = {}
+                    // if data-allow-back is present, we inform the block by passing the caller
+                    if (event.currentTarget.hasAttribute('data-allow-back')) {
+                        parameters.caller = new URL(event.currentTarget.baseURI).pathname
+                    }
+
+                    await template.loadPage(force, parameters)
 
                     // save file information
                     template.#dom.container.setAttribute('data-template', template.file)
