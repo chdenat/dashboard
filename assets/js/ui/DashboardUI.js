@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/05/2023  09:05                                                                                *
+ * Last updated on : 26/05/2023  11:16                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -198,10 +198,21 @@ export class DashboardUI {
             button = button.target
         }
 
-
         dsb.ui.show(button.querySelector('.animation.start')).hide(button.querySelector('.animation.doing'))
         button.classList.remove('animation', 'doing')
 
+
+    }
+    static isButtonAnimationRunning = (button) => {
+        // Bail early
+        if (button === null) {
+            return
+        }
+        if (button instanceof PointerEvent) {
+            button = button.target
+        }
+
+        return button.classList.contains('doing')
 
     }
 
