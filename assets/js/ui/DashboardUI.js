@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 20/05/2023  11:00                                                                                *
+ * Last updated on : 26/05/2023  09:05                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -174,6 +174,35 @@ export class DashboardUI {
 
     static isFetchingAnimationInProgress = (element) => {
         return element.classList.contains(this.FETCHING_CLASS)
+    }
+
+    static startButtonAnimation = (button) => {
+        // Bail early
+        if (button === null) {
+            return
+        }
+        if (button instanceof PointerEvent) {
+            button = button.target
+        }
+
+        button.classList.add('animation', 'doing')
+        dsb.ui.hide(button.querySelector('.animation.start')).show(button.querySelector('.animation.doing'))
+    }
+
+    static stopButtonAnimation = (button) => {
+        // Bail early
+        if (button === null) {
+            return
+        }
+        if (button instanceof PointerEvent) {
+            button = button.target
+        }
+
+
+        dsb.ui.show(button.querySelector('.animation.start')).hide(button.querySelector('.animation.doing'))
+        button.classList.remove('animation', 'doing')
+
+
     }
 
 }
