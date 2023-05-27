@@ -5,6 +5,7 @@
     "Block": "/dashboard/assets/js/Block.js",
     "bootstrap": "/dashboard/assets/vendor/bootstrap/js/bootstrap.esm.js",
     "Bus": "/dashboard/assets/vendor/EventEmitter/Bus.js",
+    "ApexCharts": "/dashboard/assets/vendor/apexcharts/apexcharts.esm.js",
     "DateTime": "/dashboard/assets/vendor/luxon.min.js",
     "Dashboard": "/dashboard/assets/js/Dashboard.js",
     "DashboardUI": "/dashboard/assets/js/ui/DashboardUI.js",
