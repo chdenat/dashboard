@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Project : dashboard                                                                                                *
- * File : DSBAlert.js                                                                                                 *
+ * File : DSBAlertComponent.js                                                                                        *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 25/05/2023  10:48                                                                                *
+ * Last updated on : 28/05/2023  16:50                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -14,7 +14,7 @@
 
 // web component
 
-export class DSBAlert extends HTMLElement {
+export class DSBAlertComponent extends HTMLElement {
 
     icon = 'fa-regular fa-circle-info'
     direction = 'start'
@@ -73,7 +73,7 @@ export class DSBAlert extends HTMLElement {
             : ''
 
         const template = `
-            <style>@import "/dashboard/assets/components/DSBAlert/style.css"</style>
+            <style>@import "/dashboard/assets/components/DSBAlertComponent/style.css"</style>
         <div class="alert ${dataType}" id="${dataId}-inner">
             ${dismissIcon}${dataIcon}<div class="alert-body">${this.innerHTML}</div>
         </div>
@@ -84,4 +84,4 @@ export class DSBAlert extends HTMLElement {
 }
 
 // register component
-customElements.define('dsb-alert', DSBAlert);
+customElements.define('dsb-alert', DSBAlertComponent);

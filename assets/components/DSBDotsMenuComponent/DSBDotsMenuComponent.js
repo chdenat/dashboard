@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Project : dashboard                                                                                                *
- * File : DSBDotsMenu.js                                                                                              *
+ * File : DSBDotsMenuComponent.js                                                                                     *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/05/2023  16:55                                                                                *
+ * Last updated on : 28/05/2023  16:52                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -14,7 +14,7 @@
 
 // web component
 
-export class DSBDotsMenu extends HTMLElement {
+export class DSBDotsMenuComponent extends HTMLElement {
 
     icon = 'fa-regular fa-ellipsis-vertical'
     direction = 'start'
@@ -88,7 +88,7 @@ export class DSBDotsMenu extends HTMLElement {
         })
 
         const template = `
-<style>@import "/dashboard/assets/components/DSBDotsMenu/style.css"</style>
+<style>@import "/dashboard/assets/components/DSBDotsMenuComponent/style.css"</style>
     <div class="drop${this.direction}">
         <a href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="${this.icon}"></i>
@@ -110,4 +110,4 @@ export class DSBDotsMenu extends HTMLElement {
 }
 
 // register component
-customElements.define('dsb-dots-menu', DSBDotsMenu);
+customElements.define('dsb-dots-menu', DSBDotsMenuComponent);
