@@ -27,6 +27,7 @@
     "Transient": "/dashboard/assets/js/db/Transient.js",
     "User": "/dashboard/assets/js/User.js",
     "DSBAlertComponent": "/dashboard/assets/components/DSBAlertComponent/DSBAlertComponent.js",
-    "DSBDotsMenuComponent": "/dashboard/assets/components/DSBDotsMenuComponent/DSBDotsMenuComponent.js"
+    "DSBDotsMenuComponent": "/dashboard/assets/components/DSBDotsMenuComponent/DSBDotsMenuComponent.js",
+    "DSBSwitchElement": "/dashboard/assets/js/ui/DSBSwitchElement.js"
   }
 }
