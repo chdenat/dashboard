@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 26/05/2023  16:41
+ * Last updated on : 28/05/2023  15:15
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -497,6 +497,7 @@ legend {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    align-items: center;
 }
 
 
