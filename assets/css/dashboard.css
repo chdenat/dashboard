@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 28/05/2023  15:15
+ * Last updated on : 02/06/2023  14:55
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -182,6 +182,8 @@
     --dsb-main-border: var(--dsb-border) var(--dsb-main-border-color);
     --dsb-hover-border-color: var(--dsb-gray-7);
     --dsb-hover-border: var(--dsb-border) var(--dsb-hover-border-color);
+
+    --dsb-choices-bg-color: var(--dsb-body-bg-color);
 
     /***********************************
      * Bootstrap CSS variable change
@@ -613,6 +615,7 @@ legend {
     padding-bottom: var(--dsb-xs-gutter);
     border: none;
     font-weight: normal;
+    align-items: center;
 }
 
 .simple-accordion-content {
@@ -1551,7 +1554,7 @@ console.pause console-menu button:hover {
 
 .choices__list--dropdown {
     padding: 2px;
-    background-color: var(--dsb-main-bg-color);
+    background-color: var(--dsb-choices-bg-color);
     border: var(--dsb-border) var(--dsb-gray-4);
     top: 100%;
     margin-top: -1px;
