@@ -1106,8 +1106,8 @@ var dsb = {
          * @since 1.0
          *
          */
-        niceBytes: (number, transform = 1024) => {
-            const units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'] //TODO externalize for localisation
+        niceBytes: (number, transform = 1024) =>{
+            const units=['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
             let l = 0, n = parseInt(number, 10) || 0
             while (n >= transform && ++l) {
                 n = n / transform
