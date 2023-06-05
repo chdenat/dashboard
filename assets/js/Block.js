@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/05/2023  19:04                                                                                *
+ * Last updated on : 05/06/2023  15:11                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -649,6 +649,15 @@ class Block {
         this.parameters = parameters
 
         /**
+         * @since 1.6.0
+         */
+        if (this.parameters.length === 0) {
+            // Lets try to see if we have embedded parameters (declared in json)
+            if (this.#dom.container.dataset?.parameters) {
+                this.parameters = JSON.parse(this.#dom.container.dataset?.parameters)
+            }
+        }
+        /**
          * Maybe we need to redirect on home...
          */
 
@@ -701,7 +710,7 @@ class Block {
             action: 'load-template',
             template: this.file,
             tab: this.tab,
-            parameters: JSON.stringify(parameters)
+            parameters: JSON.stringify(this.parameters)
         }), {
             cache: "no-store"
         }).then((response) => {
