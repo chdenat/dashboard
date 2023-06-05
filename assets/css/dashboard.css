@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 02/06/2023  14:55
+ * Last updated on : 04/06/2023  19:06
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -129,9 +129,13 @@
     --dsb-table-hover-color: #212529;
     --dsb-table-hover-bg-color: rgba(var(--dsb-primary-color-rgb), 0.5);
 
+    /***************************************************************************
+     * gutter
+     */
     --dsb-gutter: var(--bs-gutter-x);
     --dsb-xs-gutter: calc(var(--bs-gutter-x) / 3);
     --dsb-md-gutter: calc(var(--bs-gutter-x) / 2);
+    --dsb-scroll-gutter: calc(0.8 * var(--dsb-gutter));
 
     --dsb-xxs-rounded: calc(var(--dsb-gutter) / 6);
     --dsb-xs-rounded: calc(var(--dsb-gutter) / 4);
@@ -492,7 +496,7 @@ legend {
 
 .form-switch .form-check-input {
     width: calc(4 * var(--dsb-md-gutter));
-    margin-left: calc(-4 * var(--dsb-md-gutter) - 0.3em);
+    margin-left: var(--dsb-md-gutter);
 }
 
 .switch-field {
@@ -987,9 +991,9 @@ body:not(.logged-in) #user-dropdown:hover {
  */
 
 .dsb-scroll {
-    width: calc(100% + 0.8 * var(--dsb-gutter));
+    width: calc(100% + var(--dsb-scroll-gutter));
     height: 100%;
-    padding-right: calc(0.8 * var(--dsb-gutter));
+    padding-right: var(--dsb-scroll-gutter);
     overflow-x: auto !important;
     border-radius: var(--dsb-xs-rounded);
 }
