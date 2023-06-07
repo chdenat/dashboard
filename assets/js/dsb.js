@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/05/2023  18:15                                                                                *
+ * Last updated on : 07/06/2023  19:00                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -1695,7 +1695,7 @@ var dsb = {
              * @param fileName
              * @return {Promise<boolean>}
              */
-            export_to_svg: async (chart, fileName = 'sample') => {
+            exportToSVG: async (chart, fileName = 'sample') => {
                 try {
                     let tmp = chart.ctx.exports.w.config.chart.toolbar.export.svg.filename
                     chart.ctx.exports.w.config.chart.toolbar.export.svg.filename = fileName
@@ -1727,7 +1727,7 @@ var dsb = {
              * @param fileName
              * @return {Promise<boolean>}
              */
-            export_to_csv: async (chart, series, fileName = 'sample') => {
+            exportToCSV: async (chart, series, fileName = 'sample') => {
                 try {
                     chart.ctx.exports.exportToCSV({
                         series: series,
