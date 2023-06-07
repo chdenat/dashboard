@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/05/2023  11:16                                                                                *
+ * Last updated on : 07/06/2023  18:04                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -214,6 +214,65 @@ export class DashboardUI {
 
         return button.classList.contains('doing')
 
+    }
+
+    static exportChartToSVG = async (chart, fileName = 'sample') => {
+        try {
+            let tmp = chart.ctx.exports.w.config.chart.toolbar.export.svg.filename
+            chart.ctx.exports.w.config.chart.toolbar.export.svg.filename = fileName
+            chart.ctx.exports.exportToSVG(chart.ctx, {fileName: fileName})
+            chart.ctx.exports.w.config.chart.toolbar.export.svg.filename = tmp
+
+            dsb.toast.message({
+                title: dsb.ui.get_text_i18n('chart/svg', 'title'),
+                message: sprintf(dsb.ui.get_text_i18n('chart/svg', 'text'), fileName),
+                type: 'success',
+            })
+
+            return true
+        } catch (e) {
+            dsb.toast.message({
+                title: dsb.ui.get_text_i18n('chart/svg', 'title'),
+                message: sprintf(dsb.ui.get_text_i18n('chart/svg', 'error'), fileName),
+                type: 'danger',
+            })
+            return false
+        }
+    }
+
+    /**
+     *  Apex Chart export svg
+     *
+     * @param chart
+     * @param series
+     * @param fileName
+     * @return {Promise<boolean>}
+     */
+    static exportChartToCSV = async (chart, series, fileName = 'sample') => {
+        try {
+            chart.ctx.exports.exportToCSV({
+                series: series,
+                columnDelimiter: ',',
+                fileName: fileName,
+            })
+
+            dsb.toast.message({
+                title: dsb.ui.get_text_i18n('chart/csv', 'title'),
+                message: sprintf(dsb.ui.get_text_i18n('chart/csv', 'text'), fileName),
+                type: 'success',
+            })
+
+            return true
+        } catch (e) {
+
+            dsb.toast.message({
+                title: dsb.ui.get_text_i18n('chart/csv', 'title'),
+                message: sprintf(dsb.ui.get_text_i18n('chart/csv', 'error'), fileName),
+                type: 'danger',
+            })
+
+            return false
+        }
     }
 
 }
