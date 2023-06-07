@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 04/06/2023  19:06
+ * Last updated on : 07/06/2023  19:01
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -112,6 +112,9 @@
     --dsb-btn-animation-bg-color: var(--dsb-warning-color);
     --dsb-btn-animation-text-color: var(--dsb-text-color);
     --dsb-btn-animation-border-color: var(--dsb-warning-color);
+
+    --dsb-link-animation-text-color: var(--dsb-warning-color);
+
     /***************************************************************************
      * Console
      */
@@ -514,12 +517,21 @@ legend {
     pointer-events: auto;
 }
 
-.btn .animation.start {
+a:has(.animation) {
+    text-decoration: none;
+}
+
+a .animation.start {
     display: flex;
 }
 
-.btn .animation.doing {
+a .animation.doing {
     display: none;
+}
+
+a .animation.reset {
+    display: none;
+    pointer-events: auto;
 }
 
 .btn.animation.doing {
@@ -529,10 +541,11 @@ legend {
     pointer-events: none;
 }
 
-.btn .animation.reset {
-    display: none;
-    pointer-events: auto;
+a:not(.btn).animation.doing {
+    color: var(--dsb-link-animation-text-color);
+    pointer-events: none;
 }
+
 
 /**************************************************************************************************************************************************
  * Accordions
