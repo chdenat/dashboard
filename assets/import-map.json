@@ -28,6 +28,7 @@
     "User": "/dashboard/assets/js/User.js",
     "DSBAlertComponent": "/dashboard/assets/components/DSBAlertComponent/DSBAlertComponent.js",
     "DSBDotsMenuComponent": "/dashboard/assets/components/DSBDotsMenuComponent/DSBDotsMenuComponent.js",
-    "DSBSwitchElement": "/dashboard/assets/js/ui/DSBSwitchElement.js"
+    "DSBSwitchElement": "/dashboard/assets/js/ui/DSBSwitchElement.js",
+    "DSBSortUpAndDown": "/dashboard/assets/js/ui/DSBSortUpAndDown.js"
   }
 }
