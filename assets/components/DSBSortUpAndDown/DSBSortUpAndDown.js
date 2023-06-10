@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 10/06/2023  10:50                                                                                *
+ * Last updated on : 10/06/2023  11:31                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -42,18 +42,20 @@ export class DSBDotsMenuComponent extends HTMLElement {
         }
 
         this[attribute] = newValue;
-
-        if (attribute === 'direction') {
-            if (newValue !== null) {
-                let item = this.querySelector(`[data-sort="${newValue}"] i`)
-                item.classList.remove('fa-regular')
-                item.classList.add('fa-solid')
-            } else {
-                this.querySelectorAll(`a i`).forEach(item => {
-                    item.classList.remove('fa-solid')
-                    item.classList.add('fa-regular')
-                })
-            }
+        switch (attribute) {
+            case 'direction':
+                if (newValue !== null) {
+                    let item = this.querySelector(`[data-sort="${newValue}"] i`)
+                    item.classList.remove('fa-regular')
+                    item.classList.add('fa-solid')
+                } else {
+                    this.querySelectorAll(`a i`).forEach(item => {
+                        item.classList.remove('fa-solid')
+                        item.classList.add('fa-regular')
+                    })
+                }
+                break;
+            case 'text': //TODO
         }
 
     }
@@ -66,6 +68,7 @@ export class DSBDotsMenuComponent extends HTMLElement {
     connectedCallback() {
         let up = {class: 'regular'}, down = {class: 'regular'}
         this.direction = this.getAttribute('direction') ?? this.directions.none
+        this.text = this.getAttribute('text') ?? ''
         this.asc = this.getAttribute('up')
         this.desc = this.getAttribute('down')
         switch (this.direction) {
@@ -77,10 +80,13 @@ export class DSBDotsMenuComponent extends HTMLElement {
         }
         const template = `
 <style>@import "/dashboard/assets/components/DSBSortUpAndDown/style.css"</style>
-    <span class="dsb-sort-up-down">
-    <a class="dsb-sort-up" data-sort="up" data-action="${this.asc}" href="#"><i class="fa-${up.class} fa-sort-up"></i></i></a>
-    <a class="dsb-sort-down" data-sort="down" data-action="${this.desc}" href="#"><i class="fa-${down.class} fa-sort-down"></i></a>
-    </span>
+    <div class="dsb-sort-up-down">
+    <span>${this.text}</span>
+    <div>
+    <a class="dsb-sort-up" data-sort="up" data-action="${this.asc}" href="#"><i class="fa-${up.class} fa-triangle"></i></i></a>
+    <a class="dsb-sort-down" data-sort="down" data-action="${this.desc}" href="#"><i class="fa-${down.class} fa-triangle fa-rotate-180"></i></a>
+    </div>
+    </div>
   `
         this.innerHTML = template
 
