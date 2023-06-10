@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 09/06/2023  17:11                                                                                *
+ * Last updated on : 10/06/2023  10:50                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -31,14 +31,34 @@ export class DSBDotsMenuComponent extends HTMLElement {
 
     // component attributes
     static get observedAttributes() {
-        return ['name', 'id', 'class']
+        return ['direction']
     }
 
     // attribute change
-    attributeChangedCallback(property, oldValue, newValue) {
+    attributeChangedCallback(attribute, oldValue, newValue) {
 
-        if (oldValue === newValue) return;
-        this[property] = newValue;
+        if (oldValue === newValue) {
+            return;
+        }
+
+        this[attribute] = newValue;
+
+        if (attribute === 'direction') {
+            if (newValue !== null) {
+                let item = this.querySelector(`[data-sort="${newValue}"] i`)
+                item.classList.remove('fa-regular')
+                item.classList.add('fa-solid')
+            } else {
+                this.querySelectorAll(`a i`).forEach(item => {
+                    item.classList.remove('fa-solid')
+                    item.classList.add('fa-regular')
+                })
+            }
+        }
+
+    }
+
+    #changeArrow = (arrow) => {
 
     }
 
@@ -65,9 +85,9 @@ export class DSBDotsMenuComponent extends HTMLElement {
         this.innerHTML = template
 
 
-        if (this.hasAttribute('id')) {
-            this.setAttribute('id', this.id)
-        }
+        // if (this.hasAttribute('id')) {
+        //     this.setAttribute('id', this.id)
+        // }
 
     }
 
