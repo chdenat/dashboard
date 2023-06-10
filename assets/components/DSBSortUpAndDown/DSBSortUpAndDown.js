@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 10/06/2023  11:31                                                                                *
+ * Last updated on : 10/06/2023  15:36                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -46,21 +46,17 @@ export class DSBDotsMenuComponent extends HTMLElement {
             case 'direction':
                 if (newValue !== null) {
                     let item = this.querySelector(`[data-sort="${newValue}"] i`)
-                    item.classList.remove('fa-regular')
-                    item.classList.add('fa-solid')
+                    item?.classList.remove('fa-regular')
+                    item?.classList.add('fa-solid')
                 } else {
                     this.querySelectorAll(`a i`).forEach(item => {
-                        item.classList.remove('fa-solid')
-                        item.classList.add('fa-regular')
+                        item?.classList.remove('fa-solid')
+                        item?.classList.add('fa-regular')
                     })
                 }
                 break;
             case 'text': //TODO
         }
-
-    }
-
-    #changeArrow = (arrow) => {
 
     }
 
