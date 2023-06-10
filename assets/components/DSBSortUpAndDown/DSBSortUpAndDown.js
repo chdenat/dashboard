@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 09/06/2023  16:25                                                                                *
+ * Last updated on : 09/06/2023  17:11                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -21,6 +21,7 @@ export class DSBDotsMenuComponent extends HTMLElement {
         none: 'none'
     }
     direction = 'none'
+
 
     constructor() {
         super();
@@ -45,6 +46,8 @@ export class DSBDotsMenuComponent extends HTMLElement {
     connectedCallback() {
         let up = {class: 'regular'}, down = {class: 'regular'}
         this.direction = this.getAttribute('direction') ?? this.directions.none
+        this.asc = this.getAttribute('up')
+        this.desc = this.getAttribute('down')
         switch (this.direction) {
             case this.directions.up :
                 up.class = 'solid'
@@ -55,8 +58,8 @@ export class DSBDotsMenuComponent extends HTMLElement {
         const template = `
 <style>@import "/dashboard/assets/components/DSBSortUpAndDown/style.css"</style>
     <span class="dsb-sort-up-down">
-    <a class="dsb-sort-up" href="#"><i class="fa-${up.class} fa-sort-up" data-fa-transform="shrink-8 right-6"></i></i></a>
-    <a class="dsb-sort-down" href="#2"><i class="fa-${down.class} fa-sort-down" data-fa-transform="shrink-8 right-6"></i></a>
+    <a class="dsb-sort-up" data-sort="up" data-action="${this.asc}" href="#"><i class="fa-${up.class} fa-sort-up"></i></i></a>
+    <a class="dsb-sort-down" data-sort="down" data-action="${this.desc}" href="#"><i class="fa-${down.class} fa-sort-down"></i></a>
     </span>
   `
         this.innerHTML = template
