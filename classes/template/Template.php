@@ -8,7 +8,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 25/02/2023  11:57                                                                                *
+ * Last updated on : 11/06/2023  11:21                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -700,13 +700,18 @@
                     <button class="console-export" title="<?= _( 'Export content to a file' ) ?>">
                         <i class="fa-regular fa-download"></i>
                     </button>
-                    <button class="console-erase" title="<?= _( 'Clear console' ) ?>">
+                    <button class="console-erase" title="<?= _('Clear console') ?>">
                         <i class="fa-regular fa-eraser"></i>
                     </button>
                 </console-menu>
             </console>
-			<?php
-			return ob_get_clean();
-		}
-	}
+            <?php
+            return ob_get_clean();
+        }
+
+        public function inlineParameters($params): string
+        {
+            return htmlspecialchars(json_encode($params, JSON_THROW_ON_ERROR));
+        }
+    }
  
