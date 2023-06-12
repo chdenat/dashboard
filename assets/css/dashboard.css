@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 07/06/2023  19:01
+ * Last updated on : 12/06/2023  16:43
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -1728,24 +1728,63 @@ console.pause console-menu button:hover {
 /*******************************************************************************
  * Responsive
  */
+
+
+.dsb-container {
+    display: flex;
+}
+
+.dsb-container.vertical {
+    flex-direction: column;
+}
+
 .dsb-row {
     display: flex;
-    gap: var(--dsb-gutter);
+    gap: var(--dsb-column-gutter);
     flex-wrap: wrap;
 }
 
+#content {
+    --dsb-column-gutter: var(--dsb-gutter);
+    --dsb-column-number: 4;
+    --dsb-column-max-width: 500px;
+    container-type: inline-size;
+    container-name: content;
+}
+
+@container content (max-width:1200px) {
+    .dsb-column {
+        --dsb-column-number: 3;
+    }
+
+}
+
+@container content (max-width:1050px) {
+    .dsb-column {
+        --dsb-column-number: 2;
+    }
+
+}
+
+@container content (max-width:700px) {
+    .dsb-column {
+        --dsb-column-number: 1;
+    }
+
+}
+
 .dsb-row.md-gap {
-    gap: var(--dsb-md-gutter);
+    --dsb-column-gutter: var(--dsb-md-gutter);
 }
 
 .dsb-row.xs-gap {
-    gap: var(--dsb-xs-gutter);
+    --dsb-column-gutter: var(--dsb-xs-gutter);
 }
 
 .dsb-column {
-    flex-basis: 100%;
-    flex: 1;
+    flex: calc(100% / var(--dsb-column-number) - 2 * var(--dsb-column-gutter));
     gap: var(--dsb-gutter);
+    max-width: var(--dsb-column-max-width);
 }
 
 .dsb-column.dsb-card {
