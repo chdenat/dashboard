@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 12/06/2023  16:44
+ * Last updated on : 12/06/2023  17:07
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -800,11 +800,13 @@ body:not(.logged-in) #user-dropdown:hover {
  */
 
 #menu-container {
-    top: calc(var(--dsb-header-height) + 2 * var(--dsb-gutter));
     bottom: var(--dsb-gutter);
     background: var(--dsb-gray-2);
     border-radius: var(--dsb-rounded);
     padding: var(--dsb-gutter);
+
+    position: relative;
+    top: 0;
 
     display: flex;
     flex-direction: column;
@@ -812,6 +814,14 @@ body:not(.logged-in) #user-dropdown:hover {
     width: var(--dsb-menu-width);
     min-width: var(--dsb-menu-width);
     transition: var(--dsb-menu-transition);
+}
+
+@media (max-width: 768px) {
+    #menu-container {
+        position: absolute;
+        top: calc(var(--dsb-header-height) + var(--dsb-gutter));
+        z-index: 10000;
+    }
 }
 
 #menu-container.collapsed {
@@ -1747,7 +1757,6 @@ console.pause console-menu button:hover {
 #content {
     --dsb-column-gutter: var(--dsb-gutter);
     --dsb-column-number: 4;
-    --dsb-column-max-width: 500px;
     container-type: inline-size;
     container-name: content;
 }
@@ -1814,6 +1823,10 @@ console.pause console-menu button:hover {
 
 .dsb-column.break {
     flex-basis: 100%;
+}
+
+.dsb-column.dsb-min-width-500 {
+    min-width: 500px;
 }
 
 /*******************************************************************************
