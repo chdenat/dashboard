@@ -389,9 +389,9 @@ fieldset .fade {
     pointer-events: none;
 }
 
-.fieldset-header {
-    overflow: hidden;
-}
+/*.fieldset-header {*/
+/*    overflow: hidden;*/
+/*}*/
 
 .fieldset-title {
     display: flex;
