@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 12/06/2023  17:42
+ * Last updated on : 12/06/2023  19:58
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -550,69 +550,81 @@ a:not(.btn).animation.doing {
 /**************************************************************************************************************************************************
  * Accordions
  */
+/*.accordion-item {*/
+/*    border: none;*/
+/*    background: transparent;*/
+/*    border-radius: 0;*/
+/*}*/
+
+.accordion {
+    gap: var(--dsb-md-gutter);
+    display: flex;
+    flex-direction: column;
+    --bs-accordion-body-padding-x: var(--dsb-md-gutter);
+    --bs-accordion-body-padding-y: var(--dsb-md-gutter);
+}
+
+.accordion-body {
+    display: flex;
+    flex-direction: column;
+}
+
 .accordion-item {
-    border: none;
+    display: flex;
+    gap: var(--dsb-md-gutter);
+    flex-direction: column;
+    padding: 0;
+    border-radius: var(--dsb-xs-rounded);
+    border: 1px solid var(--bs-table-border-color);
+    color: var(--bs-body-color);
     background: transparent;
-    border-radius: 0;
+}
+
+.accordion-item:nth-child(even) .accordion-header {
+    background-color: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.accordion-item [aria-expanded="true"] {
+    color: var(--bs-accordion-active-bg);
+    background-color: var(--bs-primary) !important;
+}
+
+.accordion-item [aria-expanded="true"] .open-indicator {
+    animation: rotation 0.5s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(90deg);
+    }
+}
+
+.accordion-item:hover [aria-expanded="false"] {
+    background-color: rgba(var(--bs-primary-rgb), 0.5);
+    color: var(--bs-accordion-active-bg);
 }
 
 .accordion-header {
     position: relative;
-    display: block;
-    padding: 0;
+    display: flex;
+    gap: var(--dsb-gutter);
     overflow-x: hidden;
-    margin-bottom: var(--dsb-xs-gutter);
-    background-color: rgba(var(--dsb-primary-color-rgb), 0.5);
     font-size: var(--dsb-main-font-size);
-    color: var(--dsb-color-light);
     width: 100%;
     border-radius: var(--dsb-xs-rounded) !important;
     line-height: 1;
-    font-weight: 600;
-}
-
-.accordion-button {
-    display: flex;
-    justify-content: space-around;
-    border-radius: var(--dsb-xs-rounded) !important;
-    padding: var(--dsb-md-gutter);
-    font-size: var(--dsb-main-font-size);
-    background: transparent;
-    width: 100%;
-}
-
-.accordion-button:before {
-    font: var(--fa-font-regular);
-    content: "\f106";
-    background: none !important;
-    color: var(--dsb-color-light);
-    width: unset;
-    height: unset;
-    transition: transform .2s ease-in-out;
-    transform: rotate(90deg);
-    margin-right: var(--dsb-md-gutter);
-}
-
-.accordion-button:not(.collapsed):before {
-    transform: rotate(180deg);
-}
-
-.accordion-button:after {
-    background: none !important;
-    color: transparent;
-    width: unset;
-    height: unset;
-    transform: unset;
-}
-
-.accordion-button:not(.collapsed) {
-    color: var(--dsb-color-light);
-    background-color: var(--dsb-primary-color);
-    opacity: 1;
-}
-
-.accordion-body {
-    margin-bottom: var(--dsb-xs-gutter);
+    font-weight: normal !important;
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: var(--dsb-gutter);
+    margin-bottom: 0;
+    color: var(--dsb-text-color);
+    border: 1px solid var(--dsb-hover-border);
+    cursor: pointer;
 }
 
 
