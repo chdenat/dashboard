@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 12/06/2023  17:07
+ * Last updated on : 12/06/2023  17:42
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -821,6 +821,7 @@ body:not(.logged-in) #user-dropdown:hover {
         position: absolute;
         top: calc(var(--dsb-header-height) + var(--dsb-gutter));
         z-index: 10000;
+        box-shadow: var(--dsb-elevation);
     }
 }
 
@@ -832,6 +833,7 @@ body:not(.logged-in) #user-dropdown:hover {
     padding-right: 0;
     margin-right: 0;
     background: transparent;
+    box-shadow: none;
 }
 
 #menu-container a:not(.btn) {
@@ -1030,7 +1032,7 @@ body:not(.logged-in) #user-dropdown:hover {
  */
 
 #content-wrapper {
-    min-width: 500px;
+    min-width: min(500px, 100%);
     display: flex;
     flex: 1;
     position: relative;
@@ -1826,7 +1828,8 @@ console.pause console-menu button:hover {
 }
 
 .dsb-column.dsb-min-width-500 {
-    min-width: 500px;
+    min-width: min(500px, 100%);
+    max-width: 500px;;
 }
 
 /*******************************************************************************
