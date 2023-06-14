@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 14/06/2023  13:59
+ * Last updated on : 14/06/2023  14:57
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -138,7 +138,7 @@
     --dsb-list-item-hover-bg-color: rgba(var(--dsb-primary-color-rgb), 0.5);
     --dsb-list-item-hover-color: var(--dsb-body-color);
 
-    --dsb-list-item-even-color: var(--dsb-list-item-bg-color);
+    --dsb-list-item-even-color: var(--dsb-list-item-color);
     --dsb-list-item-even-bg-color: transparent;
 
     --dsb-list-rounded: var(--dsb-xs-rounded);
@@ -650,6 +650,49 @@ a:not(.btn).animation.doing {
     pointer-events: none;
     cursor: pointer;
 }
+
+/**************************************************************************************************************************************************
+ * Lists
+ */
+
+.dsb-list {
+    display: flex;
+    flex-direction: column;
+    list-style-type: none;
+    gap: var(--dsb-list-gap);
+}
+
+.dsb-list-item {
+    display: flex;
+    border-radius: var(--dsb-list-rounded);
+    color: var(--dsb-list-item-color);
+    border: var(--dsb-list-border);
+    background-color: var(--dsb-list-item-bg-color);
+    color: var(--dsb-list-item-color);
+}
+
+.dsb-list-item:hover {
+    background-color: var(--dsb-list-item-hover-bg-color) !important;
+    color: var(--dsb-list-item-hover-color) !important;
+}
+
+.dsb-list-item:hover * {
+    color: var(--dsb-list-item-hover-color);
+}
+
+.dsb-list-item li:nth-child(even), .dsb-list-item.dsb-list-item-even {
+    background-color: var(--dsb-list-item-even-bg-color);
+    color: var(--dsb-list-item-even-color)
+}
+
+.dsb-list-item.dsb-list-item-odd {
+    background-color: var(--dsb-list-item-bg-color);
+    color: var(--dsb-list-item-color);
+}
+
+/**************************************************************************************************************************************************
+ * Simple accordion
+ */
 
 .simple-accordion {
     display: inline-flex;
