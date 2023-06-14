@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 14/06/2023  11:24
+ * Last updated on : 14/06/2023  13:59
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -131,18 +131,19 @@
      */
     --dsb-list-gap: var(--dsb-md-gutter);
     --dsb-list-item-padding: var(--dsb-gutter);
-    --dsb-list-item-bg-color: 1px solid rgba(0, 0, 0, 0.05);
+    --dsb-list-item-bg-color: rgba(0, 0, 0, 0.05);
     --dsb-list-item-color: var(--dsb-body-color);
     --dsb-list-item-selected-bg-color: var(--dsb-primary-color);
     --dsb-list-item-selected-color: var(--dsb-body-bg-color);
     --dsb-list-item-hover-bg-color: rgba(var(--dsb-primary-color-rgb), 0.5);
-    --dsb-list-item-hover-color: unset;
+    --dsb-list-item-hover-color: var(--dsb-body-color);
 
     --dsb-list-item-even-color: var(--dsb-list-item-bg-color);
     --dsb-list-item-even-bg-color: transparent;
 
     --dsb-list-rounded: var(--dsb-xs-rounded);
-    --dsb-list-border: 1px solid var(--bs-table-border-color);
+    --dsb-list-item-border-color: rgba(0, 0, 0, 0.1);
+    --dsb-list-border: 1px solid var(--dsb-list-item-border-color);
 
     --dsb-table-hover-color: #212529;
     --dsb-table-hover-bg-color: rgba(var(--dsb-primary-color-rgb), 0.5);
@@ -585,15 +586,15 @@ a:not(.btn).animation.doing {
     gap: var(--dsb-md-gutter);
     flex-direction: column;
     padding: 0;
-    border-radius: var(--dsb-list-rounded);
-    border: var(--dsb-list-border);
+    border-radius: var(--dsb-list-rounded) !important;
     color: var(--dsb-list-item-color);
     background: var(--dsb-list-item-even-bg-color);
+    border: none;
 }
 
 .accordion-item:nth-child(even) .accordion-header {
     background-color: var(--dsb-list-item-even-bg-color);
-    border: var(--dsb-list-item-bg-color);
+    border-radius: var(--dsb-list-rounded) !important;
 }
 
 .accordion-item [aria-expanded="true"] {
@@ -628,14 +629,14 @@ a:not(.btn).animation.doing {
     overflow-x: hidden;
     font-size: var(--dsb-main-font-size);
     width: 100%;
-    border-radius: var(--dsb-list-rounded) !important;
     line-height: 1;
     font-weight: normal !important;
-    background-color: var(--dsb-list-item-hover-bg-color);
+    border: var(--dsb-list-border) !important;
+    border-radius: var(--dsb-list-rounded) !important;
+    background-color: var(--dsb-list-item-bg-color);
     padding: var(--dsb-list-item-padding);
     margin-bottom: 0;
     color: var(--dsb-list-item-color);
-    border: var(--dsb-list-border);
     cursor: pointer;
 }
 
