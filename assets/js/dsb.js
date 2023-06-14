@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 07/06/2023  19:00                                                                                *
+ * Last updated on : 14/06/2023  19:59                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -416,7 +416,7 @@ var dsb = {
              * Close/open all 1st level menu
              */
             let all_open = false
-            menu_container.querySelector('#menu-container .dsb-vertical')?.addEventListener('click', (event) => {
+            menu_container.querySelector('#menu-container .dsb-collapse-vertical')?.addEventListener('click', (event) => {
                 all_open = !all_open
                 event.preventDefault()
                 menu_container?.querySelectorAll(`#menu-container  #menu-wrapper a[data-bs-toggle="collapse"][aria-expanded="${!all_open}"]`).forEach((element) => {
@@ -430,9 +430,9 @@ var dsb = {
             })
 
             /**
-             * Adds a specific class when horizontal collapse down
+             * Adds a specific class when horizontal collapse
              */
-            menu_container?.querySelector('.dsb-horizontal')?.addEventListener('click', (event) => {
+            menu_container?.querySelector('.dsb-collapse-horizontal')?.addEventListener('click', (event) => {
                 menu_container.classList.toggle('collapsed')
             })
             dsb.menu.update()

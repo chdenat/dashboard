@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 14/06/2023  16:11
+ * Last updated on : 14/06/2023  20:17
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -167,8 +167,11 @@
     --dsb-main-height: calc(100vh - var(--dsb-header-height) - var(--dsb-footer-height) - 4 * var(--dsb-gutter));
 
     --dsb-menu-width: calc(250px + 2 * var(--dsb-gutter));
-    --dsb-menu-width-collapsed: var(--dsb-gutter);
+    --dsb-menu-width-collapsed: calc(2 * var(--dsb-gutter));
     --dsb-menu-transition: 0.4s ease;
+    --dsb-menu-bg-color: var(--dsb-gray-2);
+    --dsb-menu-color: var(--dsb-body-color);
+
 
     --dsb-main-font-family: Arial, Helvetica, sans-serif;
     --dsb-main-font-size: 0.85rem;
@@ -953,7 +956,7 @@ body:not(.logged-in) #user-dropdown:hover {
     position: relative;
     display: flex;
     width: 100%;
-    justify-content: right;
+    justify-content: space-between;
     line-height: 1;
 }
 
@@ -961,10 +964,12 @@ body:not(.logged-in) #user-dropdown:hover {
     color: var(--dsb-gray-6);
 }
 
-#menu-container.collapsed #collapser a i {
+#menu-container.collapsed #collapser a {
     margin-right: 0;
-    color: var(--dsb-primary-color);
+    color: var(--dsb-menu-color);
     font-size: var(--dsb-middle-font-size);
+    color: var(--dsb-body-color);
+    border-radius: var(--dsb-xs-rounded);
 }
 
 #menu-container.collapsed #collapser {
@@ -972,29 +977,33 @@ body:not(.logged-in) #user-dropdown:hover {
     right: unset;
 }
 
-#menu-container #collapser a i:first-child {
+#menu-container #collapser a i.dsb-close-menu {
     display: inline-block;
 }
 
-#menu-container.collapsed #collapser a i:first-child {
+#menu-container.collapsed #collapser a i.dsb-close-menu {
     display: none;
 }
 
-#menu-container #collapser a i:nth-child(2) {
+#menu-container #collapser a i.dsb-open-menu {
     display: none;
 }
 
-#menu-container.collapsed #collapser a i:nth-child(2) {
+#menu-container.collapsed #collapser a i.dsb-open-menu {
     display: inline-block;
 }
 
-#menu-container #collapser a:last-child {
+#menu-container #collapser a.dsb-collapse-vertical {
     margin-left: var(--dsb-md-gutter);
 }
 
-#menu-container.collapsed #collapser a:last-child {
+#menu-container.collapsed #collapser a.dsb-collapse-vertical {
     display: none;
     transition: var(--dsb-menu-transition);
+}
+
+.dsb-open-menu, .dsb-close-menu {
+    font-size: var(--dsb-big-font-size)
 }
 
 #menu-container > ul li {
@@ -1047,7 +1056,7 @@ body:not(.logged-in) #user-dropdown:hover {
 
 #menu-container.show #menu-wrapper li > a:hover {
     padding: var(--dsb-xs-gutter);
-    background: var(--dsb-gray-2);
+    background: var(--dsb-menu-bg-color);
     border-radius: var(--dsb-xs-rounded);
     border: var(--dsb-border) var(--dsb-gray-4);
 }
@@ -1082,11 +1091,11 @@ body:not(.logged-in) #user-dropdown:hover {
 #menu-container .dsb-vertical {
     width: calc(var(--dsb-big-font-size));
     margin: 0 !important;
-    text-align: right;
+    text-align: left;
 }
 
 #menu-container .dsb-vertical i {
-    margin-right: 0 !important;
+    margin-left: 0 !important;
 }
 
 #menu-container .close-all {
