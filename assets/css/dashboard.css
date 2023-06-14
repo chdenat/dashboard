@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 12/06/2023  19:58
+ * Last updated on : 14/06/2023  11:24
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -127,8 +127,23 @@
     --dsb-console-font-size: 0.7rem;
 
     /***************************************************************************
-     * Table
+     * Lists
      */
+    --dsb-list-gap: var(--dsb-md-gutter);
+    --dsb-list-item-padding: var(--dsb-gutter);
+    --dsb-list-item-bg-color: 1px solid rgba(0, 0, 0, 0.05);
+    --dsb-list-item-color: var(--dsb-body-color);
+    --dsb-list-item-selected-bg-color: var(--dsb-primary-color);
+    --dsb-list-item-selected-color: var(--dsb-body-bg-color);
+    --dsb-list-item-hover-bg-color: rgba(var(--dsb-primary-color-rgb), 0.5);
+    --dsb-list-item-hover-color: unset;
+
+    --dsb-list-item-even-color: var(--dsb-list-item-bg-color);
+    --dsb-list-item-even-bg-color: transparent;
+
+    --dsb-list-rounded: var(--dsb-xs-rounded);
+    --dsb-list-border: 1px solid var(--bs-table-border-color);
+
     --dsb-table-hover-color: #212529;
     --dsb-table-hover-bg-color: rgba(var(--dsb-primary-color-rgb), 0.5);
 
@@ -550,14 +565,10 @@ a:not(.btn).animation.doing {
 /**************************************************************************************************************************************************
  * Accordions
  */
-/*.accordion-item {*/
-/*    border: none;*/
-/*    background: transparent;*/
-/*    border-radius: 0;*/
-/*}*/
+
 
 .accordion {
-    gap: var(--dsb-md-gutter);
+    gap: var(--dsb-list-gap);
     display: flex;
     flex-direction: column;
     --bs-accordion-body-padding-x: var(--dsb-md-gutter);
@@ -574,24 +585,29 @@ a:not(.btn).animation.doing {
     gap: var(--dsb-md-gutter);
     flex-direction: column;
     padding: 0;
-    border-radius: var(--dsb-xs-rounded);
-    border: 1px solid var(--bs-table-border-color);
-    color: var(--bs-body-color);
-    background: transparent;
+    border-radius: var(--dsb-list-rounded);
+    border: var(--dsb-list-border);
+    color: var(--dsb-list-item-color);
+    background: var(--dsb-list-item-even-bg-color);
 }
 
 .accordion-item:nth-child(even) .accordion-header {
-    background-color: transparent;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    background-color: var(--dsb-list-item-even-bg-color);
+    border: var(--dsb-list-item-bg-color);
 }
 
 .accordion-item [aria-expanded="true"] {
-    color: var(--bs-accordion-active-bg);
-    background-color: var(--bs-primary) !important;
+    color: var(--dsb-list-item-selected-color) !important;
+    background-color: var(--dsb-list-item-selected-bg-color) !important;
+}
+
+.accordion-item .accordion-header:hover {
+    background-color: var(--dsb-list-item-hover-bg-color) !important;
+    color: var(--dsb-list-item-hover-color) !important;
 }
 
 .accordion-item [aria-expanded="true"] .open-indicator {
-    animation: rotation 0.5s;
+    animation: rotation 0.3s;
     animation-fill-mode: forwards;
 }
 
@@ -604,10 +620,6 @@ a:not(.btn).animation.doing {
     }
 }
 
-.accordion-item:hover [aria-expanded="false"] {
-    background-color: rgba(var(--bs-primary-rgb), 0.5);
-    color: var(--bs-accordion-active-bg);
-}
 
 .accordion-header {
     position: relative;
@@ -616,14 +628,14 @@ a:not(.btn).animation.doing {
     overflow-x: hidden;
     font-size: var(--dsb-main-font-size);
     width: 100%;
-    border-radius: var(--dsb-xs-rounded) !important;
+    border-radius: var(--dsb-list-rounded) !important;
     line-height: 1;
     font-weight: normal !important;
-    background-color: rgba(0, 0, 0, 0.05);
-    padding: var(--dsb-gutter);
+    background-color: var(--dsb-list-item-hover-bg-color);
+    padding: var(--dsb-list-item-padding);
     margin-bottom: 0;
-    color: var(--dsb-text-color);
-    border: 1px solid var(--dsb-hover-border);
+    color: var(--dsb-list-item-color);
+    border: var(--dsb-list-border);
     cursor: pointer;
 }
 
