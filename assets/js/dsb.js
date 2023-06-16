@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 14/06/2023  19:59                                                                                *
+ * Last updated on : 16/06/2023  17:35                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -434,6 +434,7 @@ var dsb = {
              */
             menu_container?.querySelector('.dsb-collapse-horizontal')?.addEventListener('click', (event) => {
                 menu_container.classList.toggle('collapsed')
+                document.body.classList.toggle('menu-collapsed')
             })
             dsb.menu.update()
 
