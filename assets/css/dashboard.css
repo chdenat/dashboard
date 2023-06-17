@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 16/06/2023  17:41
+ * Last updated on : 17/06/2023  18:00
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -1891,6 +1891,7 @@ console.pause console-menu button:hover {
 
 .dsb-column {
     flex: calc(100% / var(--dsb-column-number) - 2 * var(--dsb-column-gutter));
+    flex-grow: 1;
     gap: var(--dsb-gutter);
 }
 
@@ -1939,11 +1940,41 @@ pre {
     font-size: var(--dsb-form-font-size);
 }
 
+/*******************************************************************************
+ * Tables
+ */
 
-table {
-    --bs-table-hover-color: var(--dsb-table-hover-color) !important;
-    --bs-table-hover-bg: var(--dsb-table-hover-bg-color) !important;
+.dsb-table {
+    display: grid;
+    gap: var(--dsb-list-gap);
 }
+
+.dsb-table-row {
+    position: relative;
+    display: flex;
+    gap: var(--dsb-gutter);
+    overflow-x: hidden;
+    font-size: var(--dsb-main-font-size);
+    width: 100%;
+    line-height: 1;
+    font-weight: normal !important;
+    border: var(--dsb-list-border) !important;
+    border-radius: var(--dsb-list-rounded) !important;
+    background-color: var(--dsb-list-item-bg-color);
+    padding: var(--dsb-list-item-padding);
+    margin-bottom: 0;
+    color: var(--dsb-list-item-color);
+}
+
+.dsb-table-row:nth-child(even) {
+    background-color: var(--dsb-list-item-even-bg-color);
+    border-radius: var(--dsb-list-rounded) !important;
+}
+
+.dsb-table-header {
+
+}
+
 
 /*******************************************************************************
  * Translations
@@ -1969,7 +2000,7 @@ text-i18n {
     color: var(--tag-color);
     background: var(--tag-background);
     padding: var(--dsb-xs-gutter) var(--dsb-md-gutter);
-    margin: 0 var(--dsb-xs-gutter);
+    margin: var(--dsb-xs-gutter);
     border-radius: var(--dsb-xs-rounded);
     text-transform: uppercase;
     min-width: 4rem;
