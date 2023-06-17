@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 17/06/2023  18:00
+ * Last updated on : 17/06/2023  19:03
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -145,8 +145,10 @@
     --dsb-list-item-border-color: rgba(0, 0, 0, 0.1);
     --dsb-list-border: 1px solid var(--dsb-list-item-border-color);
 
-    --dsb-table-hover-color: #212529;
-    --dsb-table-hover-bg-color: rgba(var(--dsb-primary-color-rgb), 0.5);
+    --dsb-list-header-bg-color: var(--dsb-gray-6);
+    --dsb-list-header-border-color: var(--dsb-list-header-bg-color);
+    --dsb-list-header-color: var(--dsb-body-bg-color);
+
 
     /***************************************************************************
      * gutter
@@ -1949,7 +1951,7 @@ pre {
     gap: var(--dsb-list-gap);
 }
 
-.dsb-table-row {
+.dsb-table-row, .dsb-table-header {
     position: relative;
     display: flex;
     gap: var(--dsb-gutter);
@@ -1964,6 +1966,15 @@ pre {
     padding: var(--dsb-list-item-padding);
     margin-bottom: 0;
     color: var(--dsb-list-item-color);
+    align-items: center;
+}
+
+.dsb-table-header {
+    font-weight: bold !important;
+    background-color: var(--dsb-list-header-bg-color);
+    border-color: var(--dsb-list-header-border-color);
+    color: var(--dsb-list-header-color);
+
 }
 
 .dsb-table-row:nth-child(even) {
