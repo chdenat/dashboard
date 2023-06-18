@@ -1,16 +1,16 @@
-/*
- *
- * Project : dashboard
- * File : dashboard.css
- *
- * @author: Christian Denat
- * @email: contact@noleam.fr
- *
- * Last updated on : 18/06/2023  08:20
- *
- * Copyright (c) 2023 - noleam.fr
- *
- */
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : shelteradmin                                                                                             *
+ * File : dashboard.css                                                                                               *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 18/06/2023  16:48                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
 
 @import '../vendor/choices/choices.min.css';
 
@@ -35,6 +35,11 @@
      * Common declarations
      */
     --dsb-border: 1px solid;
+
+    /* breakpoints in px*/
+    --dsb-breakpoint-sm: 700;
+    --dsb-breakpoint-md: 1050;
+    --dsb-breakpoint-lg: 1200;
 
     /***********************************
      * Colors
@@ -886,6 +891,49 @@ body:not(.logged-in) #user-dropdown:hover {
 }
 
 /*****************************************************************************************************************************************************
+ * content
+ */
+
+#content-wrapper {
+    min-width: min(500px, 100%);
+    display: flex;
+    flex: 1;
+    position: relative;
+}
+
+#content {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--dsb-gutter);
+    background: var(--dsb-main-bg-color);
+    border-radius: var(--dsb-rounded);
+    padding: var(--dsb-gutter);
+    overflow: hidden;
+    opacity: 0;
+    --dsb-column-gutter: var(--dsb-gutter);
+    --dsb-column-number: 4;
+    container-type: inline-size;
+    container-name: content;
+}
+
+@container content (max-width:700px) {
+    #content {
+        padding: var(--dsb-gutter);
+    }
+
+}
+
+#content.loading {
+    opacity: 0.04;
+}
+
+#content.loaded {
+    opacity: 1;
+}
+
+/*****************************************************************************************************************************************************
  * Menu
  */
 
@@ -906,18 +954,16 @@ body:not(.logged-in) #user-dropdown:hover {
     transition: var(--dsb-menu-transition);
 }
 
-@media (max-width: 768px) {
-    #menu-container {
-        position: absolute;
-        top: calc(var(--dsb-header-height) + var(--dsb-gutter));
-        z-index: 10000;
-        box-shadow: var(--dsb-elevation);
-    }
+.small-device #menu-container {
+    position: absolute;
+    top: calc(var(--dsb-header-height) + var(--dsb-gutter));
+    z-index: 10000;
+    box-shadow: var(--dsb-elevation);
+}
 
-    /* we need to "push" content on the right */
-    body.menu-collapsed #content {
-        margin-left: calc(2 * var(--dsb-gutter));
-    }
+/* we need to "push" content on the right */
+.small-device.menu-collapsed #content {
+    margin-left: calc(2 * var(--dsb-gutter));
 }
 
 #menu-container.collapsed {
@@ -1128,48 +1174,9 @@ body:not(.logged-in) #user-dropdown:hover {
     height: 100%;
 }
 
-/*****************************************************************************************************************************************************
- * content
+/***********************************************************************************************************************
+ * Horizontal menu
  */
-
-#content-wrapper {
-    min-width: min(500px, 100%);
-    display: flex;
-    flex: 1;
-    position: relative;
-}
-
-#content {
-    position: relative;
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    gap: var(--dsb-gutter);
-    background: var(--dsb-main-bg-color);
-    border-radius: var(--dsb-rounded);
-    padding: var(--dsb-gutter);
-    overflow: hidden;
-    opacity: 0;
-    --dsb-column-gutter: var(--dsb-gutter);
-    --dsb-column-number: 4;
-    container-type: inline-size;
-    container-name: content;
-}
-
-@container content (max-width:700px) {
-    #content {
-        padding: var(--dsb-gutter);
-    }
-
-}
-
-#content.loading {
-    opacity: 0.04;
-}
-
-#content.loaded {
-    opacity: 1;
-}
 
 .tools {
     display: flex;
