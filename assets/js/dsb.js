@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : shelteradmin                                                                                             *
+ * Project : dashboard                                                                                                *
  * File : dsb.js                                                                                                      *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 18/06/2023  16:49                                                                                *
+ * Last updated on : 18/06/2023  19:40                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -340,20 +340,21 @@ var dsb = {
         },
 
         toggleCollapse: () => {
-            let menu_container = document.getElementById('menu-container')
-            menu_container.classList.toggle('collapsed')
+            let menu = bootstrap.Collapse.getOrCreateInstance(document.getElementById('menu-container'), {})
             document.body.classList.toggle('menu-collapsed')
+            menu.toggle()
+
         },
 
         unCollapse: () => {
-            let menu_container = document.getElementById('menu-container')
-            menu_container.classList.remove('collapsed')
+            let menu = bootstrap.Collapse.getOrCreateInstance(document.getElementById('menu-container'), {})
             document.body.classList.remove('menu-collapsed')
+            menu.show()
         },
         collapse: () => {
-            let menu_container = document.getElementById('menu-container')
-            menu_container.classList.add('collapsed')
+            let menu = bootstrap.Collapse.getOrCreateInstance(document.getElementById('menu-container'), {})
             document.body.classList.add('menu-collapsed')
+            menu.hide()
         },
 
         /**
@@ -456,7 +457,7 @@ var dsb = {
              * Adds a specific class when horizontal collapse
              */
             menu_container?.querySelector('.dsb-collapse-horizontal')?.addEventListener('click', (event) => {
-                dsb.menu.toggleCollapse()
+                // dsb.menu.toggleCollapse()
             })
             dsb.menu.update()
 
@@ -1995,6 +1996,8 @@ var dsb = {
         Block.event.on('template/loaded/blocks/menu', (block) => {
             dsb.menu.init(block).then(() => {
                 dsb.menu.synchronize(block, dsb.menu.pathname)
+                dsb.ui.resizeWindowEvent()
+                window.onresize = dsb.ui.resizeWindowEvent
             })
         })
 

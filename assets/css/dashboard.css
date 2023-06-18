@@ -1,16 +1,16 @@
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Project : shelteradmin                                                                                             *
- * File : dashboard.css                                                                                               *
- *                                                                                                                    *
- * @author: Christian Denat                                                                                           *
- * @email: contact@noleam.fr                                                                                          *
- *                                                                                                                    *
- * Last updated on : 18/06/2023  16:48                                                                                *
- *                                                                                                                    *
- * Copyright (c) 2023 - noleam.fr                                                                                     *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/*
+ *
+ * Project : dashboard
+ * File : dashboard.css
+ *
+ * @author: Christian Denat
+ * @email: contact@noleam.fr
+ *
+ * Last updated on : 18/06/2023  19:40
+ *
+ * Copyright (c) 2023 - noleam.fr
+ *
+ */
 
 @import '../vendor/choices/choices.min.css';
 
@@ -951,7 +951,7 @@ body:not(.logged-in) #user-dropdown:hover {
     overflow: hidden;
     width: var(--dsb-menu-width);
     min-width: var(--dsb-menu-width);
-    transition: var(--dsb-menu-transition);
+    /*transition: var(--dsb-menu-transition);*/
 }
 
 .small-device #menu-container {
@@ -966,7 +966,7 @@ body:not(.logged-in) #user-dropdown:hover {
     margin-left: calc(2 * var(--dsb-gutter));
 }
 
-#menu-container.collapsed {
+#menu-container:not(.show) {
     min-width: var(--dsb-menu-width-collapsed);
     width: var(--dsb-menu-width-collapsed);
 
@@ -998,8 +998,11 @@ body:not(.logged-in) #user-dropdown:hover {
 
 }
 
-#menu-container.collapsed #menu-wrapper, #menu-container.collapsing #menu-wrapper {
-    transition: unset;
+#menu-container:not(.show) #menu-wrapper {
+
+}
+
+#menu-container:not(.show) #menu-wrapper, #menu-container.collapsing #menu-wrapper {
     opacity: 0;
 }
 
@@ -1019,7 +1022,7 @@ body:not(.logged-in) #user-dropdown:hover {
     color: var(--dsb-gray-6);
 }
 
-#menu-container.collapsed #collapser a {
+#menu-container #collapser a {
     margin-right: 0;
     color: var(--dsb-menu-color);
     font-size: var(--dsb-middle-font-size);
@@ -1027,7 +1030,7 @@ body:not(.logged-in) #user-dropdown:hover {
     border-radius: var(--dsb-xs-rounded);
 }
 
-#menu-container.collapsed #collapser {
+#menu-container:not(.show):not(.collapsing) #collapser {
     justify-content: center;
     right: unset;
 }
@@ -1036,7 +1039,7 @@ body:not(.logged-in) #user-dropdown:hover {
     display: inline-block;
 }
 
-#menu-container.collapsed #collapser a i.dsb-close-menu {
+#menu-container:not(.show):not(.collapsing) #collapser a i.dsb-close-menu {
     display: none;
 }
 
@@ -1044,7 +1047,7 @@ body:not(.logged-in) #user-dropdown:hover {
     display: none;
 }
 
-#menu-container.collapsed #collapser a i.dsb-open-menu {
+#menu-container:not(.show):not(.collapsing) #collapser a i.dsb-open-menu {
     display: inline-block;
 }
 
@@ -1052,7 +1055,7 @@ body:not(.logged-in) #user-dropdown:hover {
     margin-left: var(--dsb-md-gutter);
 }
 
-#menu-container.collapsed #collapser a.dsb-collapse-vertical {
+#menu-container:not(.show):not(.collapsing) #collapser a.dsb-collapse-vertical {
     display: none;
     transition: var(--dsb-menu-transition);
 }
@@ -1069,7 +1072,7 @@ body:not(.logged-in) #user-dropdown:hover {
     margin: var(--dsb-xs-gutter);
 }
 
-#menu-container.collapsed > ul > li > a {
+#menu-container:not(.show) > ul > li > a {
     margin: var(--dsb-xs-gutter) 0;
 }
 
@@ -1104,7 +1107,7 @@ body:not(.logged-in) #user-dropdown:hover {
     color: var(--dsb-color-light);
 }
 
-#menu-container:not(.show) a[href*="level"] {
+#menu-container:not(.show):not(.collapsing) a[href*="level"] {
     pointer-events: none;
     cursor: pointer;
 }
@@ -1130,7 +1133,7 @@ body:not(.logged-in) #user-dropdown:hover {
     opacity: 1;
 }
 
-#menu-container.collapsed #menu-wrapper ul li {
+#menu-container:not(.show) #menu-wrapper ul li {
     opacity: 0;
 }
 
