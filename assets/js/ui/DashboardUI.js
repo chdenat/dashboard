@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : dashboard                                                                                                *
+ * Project : shelteradmin                                                                                             *
  * File : DashboardUI.js                                                                                              *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 07/06/2023  18:04                                                                                *
+ * Last updated on : 18/06/2023  16:49                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -274,5 +274,27 @@ export class DashboardUI {
             return false
         }
     }
+
+    /**
+     *
+     * @param variable  Variable name without --
+     * @return {string}
+     */
+    static getCSSVariable = (variable) => {
+        return window.getComputedStyle(document.documentElement).getPropertyValue('--' + variable).trim()
+    }
+
+    /**
+     *
+     * @param variable Variable name without --
+     * @param value
+     *
+     * @return {{void}}
+     */
+
+    static setCSSVariable = (variable, value) => {
+        document.documentElement.style.setProperty('--' + variable, value)
+    }
+
 
 }
