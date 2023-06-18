@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : dashboard                                                                                                *
+ * Project : shelteradmin                                                                                             *
  * File : dsb.js                                                                                                      *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/06/2023  17:35                                                                                *
+ * Last updated on : 18/06/2023  16:49                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -22,6 +22,7 @@ import {Session} from 'Session'
 import {Toaster} from 'Toaster'
 import {Transient} from 'Transient'
 import {User} from 'User'
+import {Responsive} from 'Responsive'
 
 //import {OverlayScrollbars} from 'overlayscrollbars' // keep lwercase
 
@@ -330,7 +331,29 @@ var dsb = {
                     dsb.page.add_to_history_from_menu(item)
                 }
             }
+
+            // On responsive mode, each click collapse the menu
+            if (Responsive.isSmallDevice()) {
+                dsb.menu.collapse()
+            }
             return false
+        },
+
+        toggleCollapse: () => {
+            let menu_container = document.getElementById('menu-container')
+            menu_container.classList.toggle('collapsed')
+            document.body.classList.toggle('menu-collapsed')
+        },
+
+        unCollapse: () => {
+            let menu_container = document.getElementById('menu-container')
+            menu_container.classList.remove('collapsed')
+            document.body.classList.remove('menu-collapsed')
+        },
+        collapse: () => {
+            let menu_container = document.getElementById('menu-container')
+            menu_container.classList.add('collapsed')
+            document.body.classList.add('menu-collapsed')
         },
 
         /**
@@ -433,8 +456,7 @@ var dsb = {
              * Adds a specific class when horizontal collapse
              */
             menu_container?.querySelector('.dsb-collapse-horizontal')?.addEventListener('click', (event) => {
-                menu_container.classList.toggle('collapsed')
-                document.body.classList.toggle('menu-collapsed')
+                dsb.menu.toggleCollapse()
             })
             dsb.menu.update()
 
@@ -1107,8 +1129,8 @@ var dsb = {
          * @since 1.0
          *
          */
-        niceBytes: (number, transform = 1024) =>{
-            const units=['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+        niceBytes: (number, transform = 1024) => {
+            const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
             let l = 0, n = parseInt(number, 10) || 0
             while (n >= transform && ++l) {
                 n = n / transform
@@ -1843,11 +1865,22 @@ var dsb = {
                 new DashboardWCManager()
             }
             dsb.ui.INITIALISED = true
-
         },
 
+        resizeWindowEvent: () => {
+            if (Responsive.isSmallDevice()) {
+                dsb.menu.collapse()
 
+            } else if (Responsive.isExtraLargeDevice()) {
+                dsb.menu.unCollapse()
+
+            } else if (Responsive.isMediumDevice()) {
+            } else {
+                Responsive.isLargeDevice()
+            }
+        },
     },
+
 
     init_lang: async () => {
         /**
