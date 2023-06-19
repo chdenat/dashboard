@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 19/06/2023  18:39                                                                                *
+ * Last updated on : 19/06/2023  19:03                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -1449,6 +1449,7 @@ var dsb = {
                         // change menu info to corresponding item
                         document.querySelector(`.${dsb.menu.openClass}[href]`)?.classList.remove(dsb.menu.openClass)
                         document.querySelector(`[href="${pathname}"]`)?.classList.add(dsb.menu.openClass)
+                        dsb.page.setBreadcrumbs(document.querySelector(`[href="${pathname}"]`))
                     }
                 })
 
