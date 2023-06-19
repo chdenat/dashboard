@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 18/06/2023  19:40
+ * Last updated on : 19/06/2023  15:12
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -175,10 +175,9 @@
 
     --dsb-menu-width: calc(250px + 2 * var(--dsb-gutter));
     --dsb-menu-width-collapsed: calc(2 * var(--dsb-gutter));
-    --dsb-menu-transition: 0.4s ease;
+    --dsb-menu-transition: 0.4s ease-in-out;
     --dsb-menu-bg-color: var(--dsb-gray-2);
-    --dsb-menu-color: var(--dsb-body-color);
-
+    --dsb-menu-color: var(--dsb-gray-8);
 
     --dsb-main-font-family: Arial, Helvetica, sans-serif;
     --dsb-main-font-size: 0.85rem;
@@ -939,10 +938,9 @@ body:not(.logged-in) #user-dropdown:hover {
 
 #menu-container {
     bottom: var(--dsb-gutter);
-    background: var(--dsb-gray-2);
+    background: var(--dsb-menu-bg-color);
     border-radius: var(--dsb-rounded);
     padding: var(--dsb-gutter);
-
     position: relative;
     top: 0;
 
@@ -950,8 +948,9 @@ body:not(.logged-in) #user-dropdown:hover {
     flex-direction: column;
     overflow: hidden;
     width: var(--dsb-menu-width);
-    min-width: var(--dsb-menu-width);
-    /*transition: var(--dsb-menu-transition);*/
+
+    transition: width var(--dsb-menu-transition);
+
 }
 
 .small-device #menu-container {
@@ -962,7 +961,7 @@ body:not(.logged-in) #user-dropdown:hover {
 }
 
 /* we need to "push" content on the right */
-.small-device.menu-collapsed #content {
+.small-device :not(.show) #content {
     margin-left: calc(2 * var(--dsb-gutter));
 }
 
@@ -978,7 +977,7 @@ body:not(.logged-in) #user-dropdown:hover {
 }
 
 #menu-container a:not(.btn) {
-    color: var(--dsb-body-color);
+    color: var(--dsb-menu-color);
     text-decoration: none;
     background: transparent;
     cursor: pointer;
@@ -989,25 +988,22 @@ body:not(.logged-in) #user-dropdown:hover {
     list-style-type: none;
 }
 
-#menu-container #menu-wrapper {
+#menu-wrapper {
     margin-top: var(--dsb-gutter);
     margin-bottom: 0;
     min-height: 0;
     min-width: 0;
-    transition: var(--dsb-menu-transition);
+    opacity: 0;
 
 }
 
-#menu-container:not(.show) #menu-wrapper {
-
-}
-
-#menu-container:not(.show) #menu-wrapper, #menu-container.collapsing #menu-wrapper {
+#menu-container.collapsing #menu-wrapper {
     opacity: 0;
 }
 
 #menu-container.show #menu-wrapper {
     opacity: 1;
+    transition: none;
 }
 
 #menu-container #collapser {
@@ -1019,18 +1015,10 @@ body:not(.logged-in) #user-dropdown:hover {
 }
 
 #menu-container #collapser a {
-    color: var(--dsb-gray-6);
-}
-
-#menu-container #collapser a {
-    margin-right: 0;
     color: var(--dsb-menu-color);
-    font-size: var(--dsb-middle-font-size);
-    color: var(--dsb-body-color);
-    border-radius: var(--dsb-xs-rounded);
 }
 
-#menu-container:not(.show):not(.collapsing) #collapser {
+#menu-container:not(.show) #collapser {
     justify-content: center;
     right: unset;
 }
@@ -1039,7 +1027,7 @@ body:not(.logged-in) #user-dropdown:hover {
     display: inline-block;
 }
 
-#menu-container:not(.show):not(.collapsing) #collapser a i.dsb-close-menu {
+#menu-container:not(.show) #collapser a i.dsb-close-menu {
     display: none;
 }
 
@@ -1047,17 +1035,16 @@ body:not(.logged-in) #user-dropdown:hover {
     display: none;
 }
 
-#menu-container:not(.show):not(.collapsing) #collapser a i.dsb-open-menu {
-    display: inline-block;
+#menu-container:not(.show) #collapser a i.dsb-open-menu {
+    display: block;
 }
 
 #menu-container #collapser a.dsb-collapse-vertical {
     margin-left: var(--dsb-md-gutter);
 }
 
-#menu-container:not(.show):not(.collapsing) #collapser a.dsb-collapse-vertical {
+#menu-container:not(.show) #collapser a.dsb-collapse-vertical {
     display: none;
-    transition: var(--dsb-menu-transition);
 }
 
 .dsb-open-menu, .dsb-close-menu {
@@ -1107,7 +1094,7 @@ body:not(.logged-in) #user-dropdown:hover {
     color: var(--dsb-color-light);
 }
 
-#menu-container:not(.show):not(.collapsing) a[href*="level"] {
+#menu-container:not(.show) a[href*="level"] {
     pointer-events: none;
     cursor: pointer;
 }
@@ -1158,7 +1145,6 @@ body:not(.logged-in) #user-dropdown:hover {
 
 #menu-container .close-all {
     display: none;
-    transition: var(--dsb-menu-transition);
 }
 
 /*****************************************************************************************************************************************************
