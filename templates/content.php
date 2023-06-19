@@ -1,18 +1,17 @@
 <?php
 
-/***********************************************************************************************************************
- *
- * Project : supervix4
- * file : content.php
- *
- * @author        Christian Denat
- * @email contact@noleam.fr
- * --
- *
- * updated on :  2/19/22, 11:16 AM
- *
- * @copyright (c) 2022 noleam.fr
- *
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : content.php                                                                                                 *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 19/06/2023  16:32                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
  **********************************************************************************************************************/
 
 global $template;
@@ -30,7 +29,7 @@ $content = $template->get_template_parameters()['template'] ?? '';
     </block>
     <div id="content-wrapper">
 
-
+        <div class="breadcrumbs">breadcrumbs</div>
         <block id="content" data-template="" data-template-id="#content#"></block>
         <block id="pop-content" data-template="" data-template-id="#popcont#"></block>
 

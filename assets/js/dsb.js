@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 19/06/2023  10:48                                                                                *
+ * Last updated on : 19/06/2023  18:39                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -67,6 +67,30 @@ var dsb = {
             }
 
             document.title = `${dsb.page.main_title}: ${title}`
+        },
+
+        setBreadcrumbs: (item) => {
+
+            const path = dsb.utils.findPath(dsb.menu.json, item.getAttribute('href'))
+            let current = dsb.menu.json
+            let breadcrumb = []
+
+            path.forEach(child => {
+                current = current[child]
+                if (current.text !== undefined) {
+                    let text = current.text
+                    // If there is some translation, get it instead
+                    if (current.lang && current.lang[dsb.ui.get_lang()]) {
+                        text = current.lang[dsb.ui.get_lang()]
+                    }
+                    breadcrumb.push(text)
+                }
+            })
+            // Show Text
+            document.getElementById('breadcrumbs').innerHTML = '<i class="fa-regular fa-house"></i>'
+                + breadcrumb.join('<i class="fa-regular fa-chevron-right"></i>'
+                )
+
         },
 
         /**
@@ -326,6 +350,7 @@ var dsb = {
                 item.classList.add(dsb.menu.openClass)
                 // change title
                 dsb.page.set_title(dsb.menu.item_text(item)) //TODO change
+                dsb.page.setBreadcrumbs(item)
 
                 if (historize) {
                     dsb.page.add_to_history_from_menu(item)
@@ -935,6 +960,21 @@ var dsb = {
         },
         _clearAndUpper: (text) => {
             return text.replace(/-/, '').toUpperCase()
+        },
+
+        findPath: (obj, target) => {
+            function helper(obj, target, path) {
+                if (typeof obj !== 'object' || obj === null) return null;
+                for (const key in obj) {
+                    const newPath = [...path, key];
+                    if (obj[key] === target) return newPath;
+                    const result = helper(obj[key], target, newPath);
+                    if (result) return result;
+                }
+                return null;
+            }
+
+            return helper(obj, target, []);
         },
 
         /**

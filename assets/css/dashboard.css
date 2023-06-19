@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 19/06/2023  15:20
+ * Last updated on : 19/06/2023  18:39
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -231,6 +231,11 @@
     --dsb-pop-menu-color: var(--dsb-gray-7);
     --dsb-pop-menu-border: var(--dsb-border) var(--dsb-main-border-color);
     --dsb-pop-menu-size: 0.8rem;
+
+    /**********************************
+     * Breadcrumbs
+     */
+    --dsb-breadcrumbs-border: var(--dsb-border) var(--dsb-main-border-color);
 
     /**********************************
      * Animation
@@ -902,6 +907,8 @@ body:not(.logged-in) #user-dropdown:hover {
     display: flex;
     flex: 1;
     position: relative;
+    flex-direction: column;
+    gap: var(--dsb-gutter);
 }
 
 #content {
@@ -912,7 +919,7 @@ body:not(.logged-in) #user-dropdown:hover {
     gap: var(--dsb-gutter);
     background: var(--dsb-main-bg-color);
     border-radius: var(--dsb-rounded);
-    padding: var(--dsb-gutter);
+    padding: 0 var(--dsb-gutter);
     overflow: hidden;
     opacity: 0;
     --dsb-column-gutter: var(--dsb-gutter);
@@ -921,11 +928,12 @@ body:not(.logged-in) #user-dropdown:hover {
     container-name: content;
 }
 
-@container content (max-width:700px) {
-    #content {
-        padding: var(--dsb-gutter);
-    }
+.small-device #content {
+    padding: 0 var(--dsb-gutter);
+}
 
+.small-device.menu-collapsed #content {
+    margin-left: calc(2 * var(--dsb-gutter));
 }
 
 #content.loading {
@@ -936,7 +944,33 @@ body:not(.logged-in) #user-dropdown:hover {
     opacity: 1;
 }
 
-/*****************************************************************************************************************************************************
+/***********************************************************************************************************************
+ * Breadcrumbs
+ */
+
+#breadcrumbs {
+    font-size: var(--dsb-form-font-size);
+    margin: 0 var(--dsb-gutter);
+    border-bottom: var(--dsb-breadcrumbs-border);
+    padding-bottom: var(--dsb-md-gutter);
+    display: none;
+    gap: var(--dsb-md-gutter);
+    align-items: center;
+}
+
+#breadcrumbs:has(i) {
+    display: inline-flex;
+}
+
+.small-device #breadcrumbs {
+    padding: var(--dsb-gutter);
+}
+
+.small-device.menu-collapsed #breadcrumbs {
+    margin-left: calc(2 * var(--dsb-gutter));
+}
+
+/***********************************************************************************************************************
  * Menu
  */
 
@@ -962,11 +996,6 @@ body:not(.logged-in) #user-dropdown:hover {
     top: calc(var(--dsb-header-height) + var(--dsb-gutter));
     z-index: 10000;
     box-shadow: var(--dsb-elevation);
-}
-
-/* we need to "push" content on the right */
-.small-device :not(.show) #content {
-    margin-left: calc(2 * var(--dsb-gutter));
 }
 
 #menu-container:not(.show) {
