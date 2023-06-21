@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 21/06/2023  19:40                                                                                *
+ * Last updated on : 21/06/2023  20:03                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -80,7 +80,7 @@ export var dsb = {
                 if (current.text !== undefined) {
                     let text = current.text
                     // If there is some translation, get it instead
-                    if (dsb.language.current && current.lang[dsb.language.current]) {
+                    if (dsb.language?.current && current.lang[dsb.language.current]) {
                         text = current.lang[dsb.language.current]
                     }
                     breadcrumb.push(text)
@@ -501,7 +501,7 @@ export var dsb = {
         },
 
         /**
-         * This method emits some events that cousl be managed in blocks
+         * This method emits some events that could be managed in blocks
          */
         genericLoadedEvent: (template => {
             /**
@@ -547,10 +547,6 @@ export var dsb = {
                     renderChoiceLimit: limit,
                 })
             })
-
-            // Language management
-            dsb.language = new DashboardLangManager(template)
-
 
             /**
              * Add scrolling
@@ -1859,8 +1855,6 @@ export var dsb = {
     },
 
 
-
-
     db: new LocalDB({
         name: 'dashboard',
         store: [],
@@ -1918,9 +1912,7 @@ export var dsb = {
             document.body.classList.add(dsb.session.context.user)
         }
 
-        /**
-         * Once menu has been loaded, we initialise some functionalities
-         */
+        // Once menu has been loaded, we initialise some functionalities
         Block.event.on('template/loaded/blocks/menu', (block) => {
             dsb.menu.init(block).then(() => {
                 dsb.menu.synchronize(block, dsb.menu.pathname)
@@ -1929,9 +1921,12 @@ export var dsb = {
             })
         })
 
+        // Same for languages block
+        Block.event.on('template/loaded/blocks/languages', (block) => {
+            dsb.language = new DashboardLangManager()
+        })
 
         // We need to manage some history retrieval
-
         dsb.initialized = true
         console.info('Dashboard Engine is running.')
 

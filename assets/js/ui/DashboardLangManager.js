@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 21/06/2023  19:40                                                                                *
+ * Last updated on : 21/06/2023  20:05                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -21,7 +21,11 @@ export class DashboardLangManager {
     cookie = null
 
 
-    constructor(template) {
+    constructor(template = document) {
+
+        if (template !== document) {
+            template = template.container
+        }
         this.init().then(() => {
             this.initLangSelectors(template)
         })
@@ -144,7 +148,7 @@ export class DashboardLangManager {
     }
 
     initLangSelectors = (template) => {
-        const selects = template.container.querySelectorAll('select.lang-list')
+        const selects = template.querySelectorAll('select.lang-list')
         selects.forEach(select => {
 
             if (!select.hasAttribute('id')) {
