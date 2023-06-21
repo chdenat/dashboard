@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 19/06/2023  19:03                                                                                *
+ * Last updated on : 21/06/2023  19:40                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -20,9 +20,9 @@ import {LocalDB} from 'LocalDB'
 import {customAlphabet} from 'nanoid'
 import {Session} from 'Session'
 import {Toaster} from 'Toaster'
-import {Transient} from 'Transient'
 import {User} from 'User'
 import {Responsive} from 'Responsive'
+import {DashboardLangManager} from 'DashboardLangManager'
 
 //import {OverlayScrollbars} from 'overlayscrollbars' // keep lwercase
 
@@ -38,9 +38,9 @@ const WEEK = 7 * DAY
 const MONTH = 30 * DAY
 const YEAR = 365 * DAY
 
-export {SECOND, MINUTE, HOUR, DAY}
+export {SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, YEAR}
 
-var dsb = {
+export var dsb = {
 
     content_event: DSBEvent,
 
@@ -80,8 +80,8 @@ var dsb = {
                 if (current.text !== undefined) {
                     let text = current.text
                     // If there is some translation, get it instead
-                    if (current.lang && current.lang[dsb.ui.get_lang()]) {
-                        text = current.lang[dsb.ui.get_lang()]
+                    if (dsb.language.current && current.lang[dsb.language.current]) {
+                        text = current.lang[dsb.language.current]
                     }
                     breadcrumb.push(text)
                 }
@@ -548,46 +548,9 @@ var dsb = {
                 })
             })
 
-            /**
-             * Manage Lang Switcher, ei a select box with 'lang-list' class
-             *
-             */
-            dsb.ui.current_lang = dsb.ui.get_lang()
-            template.container.querySelectorAll('select.lang-list').forEach(select => {
+            // Language management
+            dsb.language = new DashboardLangManager(template)
 
-                if (!select.hasAttribute('id')) {
-                    select.id = nanoid()
-                }
-                const select_lang = ({classNames}, data) => {
-                    const CC = data.value.split('_')[1].toLowerCase()
-                    return (`          <div class="${classNames.item} ${classNames.itemChoice} ${
-                        data.disabled ? classNames.itemDisabled : classNames.itemSelectable
-                    }" data-choice ${
-                        data.disabled
-                            ? 'data-choice-disabled aria-disabled="true"'
-                            : 'data-choice-selectable'
-                    } data-id="${data.id}" data-value="${data.value}" ${
-                        data.groupId > 0 ? 'role="treeitem"' : 'role="option"'
-                    } title="${data.label}"><i lang="${data.value}" class="fi fis fi-${CC}"></i></div>`)
-                }
-
-                dsb.ui.lists[select.id] = new Choices(select, {
-                        searchEnabled: false,
-                        allowHTML: true,
-
-                        callbackOnCreateTemplates: function (template) {
-                            return {
-                                item: ({classNames}, data) => {
-                                    return template(select_lang({classNames}, data))
-                                },
-                                choice: ({classNames}, data) => {
-                                    return template(select_lang({classNames}, data))
-                                },
-                            }
-                        },
-                    },
-                )
-            })
 
             /**
              * Add scrolling
@@ -1270,9 +1233,6 @@ var dsb = {
      */
     ui: {
         backdrop: document.getElementById('dsb-backdrop'),
-        check_lang: false,
-        current_lang: null,
-        new_lang: false,
 
         hide: (element) => {
             if (element !== null) {
@@ -1835,25 +1795,6 @@ var dsb = {
             return text?.dataset
         },
 
-        /**
-         * Get the <appli>_lang cookie content
-         *
-         *
-         * @return {null|any}
-         */
-        get_lang_cookie: () => {
-            // we do not know the right name, but it's ended with -lang
-            for (const cookie in Cookies.get()) {
-                if (cookie.endsWith('-lang')) {
-                    return {name: cookie, value: Cookies.get(cookie)}
-                }
-            }
-            return null
-        },
-
-        get_lang: () => {
-            return document.querySelector('html').getAttribute('lang')
-        },
 
         /**
          * Set Bootstrap switch
@@ -1918,54 +1859,6 @@ var dsb = {
     },
 
 
-    init_lang: async () => {
-        /**
-         * Check if lang as changed
-         * @since 1.1.0
-         *
-         */
-
-        if (!dsb.ui.check_lang) {
-            dsb.ui.new_lang = false
-            const cookie = dsb.ui.get_lang_cookie()
-
-            let transient = new Transient(cookie.name)
-
-            // it's better to read content from transients
-            let content = await transient.read()
-
-            if (cookie && content?.change) {
-                // it's a new lang, ok we sync the cookie content
-                content.old = null
-                content.change = false
-
-                Cookies.remove(cookie.name, {path: '/'})
-                //   Cookies.set(cookie.name, JSON.stringify(content), 365)
-
-                dsb.ui.new_lang = true
-
-                /**
-                 * Add a toast if  there is a new lang
-                 * @since 1.1.0
-                 *
-                 */
-
-                if (dsb.ui.new_lang) {
-                    dsb.toast.message({
-                        title: dsb.ui.get_text_i18n('language/change', 'title'),
-                        message: sprintf(dsb.ui.get_text_i18n('language/change', 'text'), content.name),
-                        type: 'success',
-                    })
-                    dsb.ui.new_lang = false
-                }
-            }
-
-            // update transient TTL
-            await transient.update(content, YEAR)
-
-            dsb.ui.check_lang = true
-        }
-    },
 
 
     db: new LocalDB({
@@ -2036,13 +1929,6 @@ var dsb = {
             })
         })
 
-        /**
-         * Once menu has been loaded, we initialise some functionalities
-         */
-        Block.event.once('template/loaded/blocks/languages', block => {
-            dsb.init_lang()
-        })
-
 
         // We need to manage some history retrieval
 
@@ -2053,6 +1939,5 @@ var dsb = {
     },
 
 }
-export {dsb}
 
 /*1667583828996*/
