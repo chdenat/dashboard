@@ -8,6 +8,7 @@
     "ApexCharts": "/dashboard/assets/vendor/apexcharts/apexcharts.esm.js",
     "DateTime": "/dashboard/assets/vendor/luxon.min.js",
     "Dashboard": "/dashboard/assets/js/Dashboard.js",
+    "DashboardLangManager": "/dashboard/assets/js/ui/DashboardLangManager.js",
     "DashboardUI": "/dashboard/assets/js/ui/DashboardUI.js",
     "DashboardWCManager": "/dashboard/assets/js/ui/DashboardWCManager.js",
     "dsb": "/dashboard/assets/js/dsb.js",
