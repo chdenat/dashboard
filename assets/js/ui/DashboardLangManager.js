@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 21/06/2023  20:05                                                                                *
+ * Last updated on : 22/06/2023  10:08                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -69,7 +69,6 @@ export class DashboardLangManager {
                 //save transient
                 let transient = new Transient(this.cookie.name)
                 transient.delete().then(() => {
-                    console.log(data.cookie)
                     transient.create(data.cookie.content, YEAR).then(location.reload())
                 })
 
