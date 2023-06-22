@@ -6,11 +6,12 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 07/03/2023  14:51                                                                                *
+ * Last updated on : 22/06/2023  18:52                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
+import {Block} from 'Block'
 
 class Dashboard {
     #cpath = ''
@@ -42,15 +43,6 @@ class Dashboard {
         return current
     }
 
-    /**
-     * Alias for page
-     *
-     * @deprecated
-     */
-    get current_page() {
-        return this.page
-    }
-
 
     /**
      * Import page controller.
@@ -77,7 +69,7 @@ class Dashboard {
         let _page = null;
 
         if (page === null) {
-            page = this.current_page
+            page = this.page
         }
 
         return new Promise((resolve, reject) => {
@@ -110,6 +102,9 @@ class Dashboard {
                                     if (undefined !== window[name]['attachEvents']) {
                                         window[name].attachEvents()
                                     }
+                                    // Add detachEvents too
+                                    Block.event.on(`template/unload/pages/${page}/index`, window[name]['detachEvents'])
+
                                     // Finally we pass it to the caller
                                     return window[name]
                                 }
@@ -123,6 +118,8 @@ class Dashboard {
                                 page: page.legacy, message: `${page.controller} use legacy controller !`
                             })
                         }
+
+
                         resolve({success: true, page: page})
                     })
                     .catch(error => {
