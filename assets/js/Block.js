@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 05/06/2023  15:11                                                                                *
+ * Last updated on : 22/06/2023  10:59                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -687,9 +687,12 @@ class Block {
         /**
          * We get the actual '#content#' template in order to apply the unload event
          */
+
         if (!this.sameFile) {
-            this.unloadAnimation(true)
-            Block.event.emit(`template/unload/${this?.#old}`.replace('//', '/'))
+            if (null !== this?.#old) {
+                this.unloadAnimation(true)
+                Block.event.emit(`template/unload/${this?.#old}`.replace('//', '/'))
+            }
         }
 
         /**
