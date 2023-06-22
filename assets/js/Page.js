@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 17/05/2023  09:19                                                                                *
+ * Last updated on : 22/06/2023  10:08                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -22,7 +22,8 @@ export class Page {
     constructor(page, template) {
         this.#page = page
         this.#template = template
-        dsb.instance.current_page
+
+        // Load event are drivent by Dashboard, but we need to add
 
         //import sheet from './style.css' assert { type: 'css' };
         //document.adoptedStyleSheets = [sheet];
