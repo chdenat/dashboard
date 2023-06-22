@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : shelteradmin                                                                                             *
+ * Project : dashboard                                                                                                *
  * File : DashboardUI.js                                                                                              *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 18/06/2023  16:49                                                                                *
+ * Last updated on : 22/06/2023  09:20                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -156,7 +156,7 @@ export class DashboardUI {
         }
 
         element.forEach(item => {
-            item.classList.add(this.FETCHING_CLASS)
+            item?.classList.add(this.FETCHING_CLASS)
         })
     }
 
