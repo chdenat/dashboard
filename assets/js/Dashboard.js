@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 22/06/2023  18:52                                                                                *
+ * Last updated on : 25/06/2023  11:34                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -93,18 +93,21 @@ class Dashboard {
                                     // to instantiate the class
                                     let _class = components[0]
                                     let name = dsb.utils.kebab2Camel(page)
-                                    window[name] = new _class(page, template)
-                                    //Call  Global page Initialisation which is a static method
-                                    if (undefined !== window[name]['globalPageInitialisation']) {
-                                        _class.globalPageInitialisation()
-                                    }
-                                    // Then attach all the events to the instance
-                                    if (undefined !== window[name]['attachEvents']) {
-                                        window[name].attachEvents()
-                                    }
-                                    // Add detachEvents too
-                                    Block.event.on(`template/unload/pages/${page}/index`, window[name]['detachEvents'])
+                                    if (window[name] === undefined) {
+                                        window[name] = new _class(page, template)
 
+                                        //Call  Global page Initialisation which is a static method
+                                        if (undefined !== window[name]['globalPageInitialisation']) {
+                                            _class.globalPageInitialisation()
+                                        }
+
+                                        // Then attach all the events to the instance
+                                        if (undefined !== window[name]['attachEvents']) {
+                                            window[name].attachEvents()
+                                        }
+                                        // Add detachEvents too
+                                        Block.event.on(`template/unload/pages/${page}/index`, window[name]['detachEvents'])
+                                    }
                                     // Finally we pass it to the caller
                                     return window[name]
                                 }
