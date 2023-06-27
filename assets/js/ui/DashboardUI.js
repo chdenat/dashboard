@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/06/2023  17:49                                                                                *
+ * Last updated on : 27/06/2023  18:38                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -334,9 +334,9 @@ export class DashboardUI {
         }
     }
 
-    static setBreadcrumbs = (item, addon = null) => {
+    static setBreadcrumbs = (item = null) => {
 
-        const href = (typeof item === string) ? item : item.getAttribute('href')
+        const href = (typeof item === 'string') ? item : item.getAttribute('href')
 
         const path = Utils.findPathInObject(dsb.menu.json, href)
         let current = dsb.menu.json
@@ -356,9 +356,6 @@ export class DashboardUI {
                 }
             })
 
-            if (addon) {
-
-            }
 
             // Show Text
             document.getElementById('breadcrumbs').innerHTML = '<i class="fa-regular fa-house"></i>'
