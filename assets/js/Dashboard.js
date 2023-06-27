@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/06/2023  14:56                                                                                *
+ * Last updated on : 27/06/2023  16:28                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -27,10 +27,9 @@ class Dashboard {
     }
 
     /**
-     * Return the current page
-     *
+     * Return the current page name
      */
-    get page() {
+    get pageName() {
         //assume pathname = /pages/<page>
 
         // We 1st set current to home (can contains #)
@@ -41,6 +40,15 @@ class Dashboard {
             current = path.split('/')[2]
         }
         return current
+    }
+
+    /**
+     * Retrurns the current page Object
+     *
+     * @return {*}
+     */
+    get page() {
+        return window[dsb.utils.kebab2Camel(this.pageName)]
     }
 
 
@@ -99,7 +107,6 @@ class Dashboard {
                                     let name = dsb.utils.kebab2Camel(page)
                                     if (window[name] === undefined) {
                                         window[name] = new _class(page, template)
-
                                         //Call  Global page Initialisation which is a static method
                                         if (undefined !== window[name]['globalPageInitialisation']) {
                                             _class.globalPageInitialisation()
