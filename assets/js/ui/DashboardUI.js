@@ -6,13 +6,14 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/06/2023  18:38                                                                                *
+ * Last updated on : 27/06/2023  19:51                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
 import {DashboardUtils as Utils} from 'DashboardUtils'
+import {DashboardLangManager} from 'DashboardLangManager'
 
 export class DashboardUI {
 
@@ -335,6 +336,10 @@ export class DashboardUI {
     }
 
     static setBreadcrumbs = (item = null) => {
+
+        if (dsb.language === undefined) {
+            dsb.language = new DashboardLangManager()
+        }
 
         const href = (typeof item === 'string') ? item : item.getAttribute('href')
 
