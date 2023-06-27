@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 22/06/2023  10:59                                                                                *
+ * Last updated on : 27/06/2023  14:56                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -40,7 +40,7 @@ class Block {
     #page_path = '/pages/'
     #observer
     #defer;
-    #nofile;
+    nofile;
 
     /**
      *
@@ -92,7 +92,7 @@ class Block {
                 this.file = this.file.replace(`[${this.#variable}]`, '')
             }
 
-            this.#nofile = this.file === '' || this.file === null
+            this.nofile = this.file === '' || this.file === null
 
             this.#dom = {
                 container: element,
@@ -245,8 +245,12 @@ class Block {
         Block.#HOME = home
     }
 
-    static getHome() {
-        return Block.#HOME
+    static getHome(last = false) {
+        if (!last) {
+            return Block.#HOME
+        } else {
+            return Block.#HOME.split('/').pop()
+        }
     }
 
     static setExceptions(list) {
@@ -355,11 +359,10 @@ class Block {
         let blocks = Block.getFirstLevelEmbeddedBlocks(parent)
         let children = []
         for (const block of blocks) {
-            if (block.dataset?.blockId !== '#popcont#') {
-                let element = Block.addBaseToTemplate(block)
-                let item = new Block(element)
-                children.push(item)
-            }
+            let element = Block.addBaseToTemplate(block)
+            let item = new Block(element)
+
+            children.push(item)
         }
         for (const block of children) {
             block.loadPage(true).then(async (ok) => {
@@ -372,8 +375,9 @@ class Block {
 
     static addBaseToTemplate = (block) => {
         if (block.dataset?.templateId === '#content#') {
-            // In case it is  the content block, we push the baseUri as block
-            block.setAttribute('data-template', dsb.utils.path_info(block.baseURI).file)
+            // In case it is  the content block, we push the baseUri or home if nothing
+            const base = (block.dataset.template === '') ? Block.getHome() : block.baseURI
+            block.setAttribute('data-template', dsb.utils.path_info(base).file)
         }
         return block
     }
@@ -536,7 +540,7 @@ class Block {
     loadPage = async (force, parameters = {}) => {
         let value = true
         // Load the link content in the right template
-        if (this.is_content && !this.#nofile) {
+        if (this.is_content && !this.nofile) {
             Block.importPageController(this)
                 .then(result => {
                     // Once the page  has been loaded, it's time to initalise the page,
@@ -639,7 +643,7 @@ class Block {
          * Bail early if we have no file in any template except content
          */
 
-        if ((!this.is_content && this.#nofile) || this.#defer) {
+        if ((!this.is_content && this.nofile) || this.#defer) {
             return false
         }
 

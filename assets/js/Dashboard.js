@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 25/06/2023  11:34                                                                                *
+ * Last updated on : 27/06/2023  14:56                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -73,6 +73,10 @@ class Dashboard {
         }
 
         return new Promise((resolve, reject) => {
+            // Home redirection
+            if (page === 'home') {
+                page = Block.getHome(true)
+            }
             let pascal = `${dsb.utils.kebab2Pascal(page)}Page`
             try {
                 import(`${this.#cpath}${this.#dir}${page}/${pascal}.js`)
