@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/06/2023  18:44                                                                                *
+ * Last updated on : 27/06/2023  19:32                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -385,7 +385,7 @@ class Block {
     static addBaseToTemplate = (block) => {
         if (block.dataset?.templateId === '#content#') {
             // In case it is  the content block, we push the baseUri or home if nothing
-            const base = (block.dataset.template === '') ? Block.getHome() : block.baseURI
+            const base = (block.dataset.template === '') ? (block.baseURI ? block.baseURI : Block.getHome()) : Block.getHome()
             block.setAttribute('data-template', dsb.utils.path_info(base).file)
         }
         return block
