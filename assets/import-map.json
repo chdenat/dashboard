@@ -10,6 +10,7 @@
     "Dashboard": "/dashboard/assets/js/Dashboard.js",
     "DashboardLangManager": "/dashboard/assets/js/ui/DashboardLangManager.js",
     "DashboardUI": "/dashboard/assets/js/ui/DashboardUI.js",
+    "DashboardUtils": "/dashboard/assets/js/DashboardUtils.js",
     "DashboardWCManager": "/dashboard/assets/js/ui/DashboardWCManager.js",
     "dsb": "/dashboard/assets/js/dsb.js",
     "DSBConsole": "/dashboard/assets/js/DSBConsole.js",
