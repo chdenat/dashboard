@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : shelteradmin                                                                                             *
+ * Project : dashboard                                                                                                *
  * File : Transient.js                                                                                                *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 01/03/2023  16:08                                                                                *
+ * Last updated on : 27/06/2023  19:21                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -48,7 +48,7 @@ class Transient {
     }
 
     #expired = data => {
-        return (data?.ttl?.end >= DateTime.now().toMillis)
+        return (data?.ttl?.end < DateTime.now().toMillis())
     }
 
     /**
