@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 22/06/2023  10:08                                                                                *
+ * Last updated on : 27/06/2023  16:58                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -30,15 +30,6 @@ export class Page {
     }
 
     /**
-     * Encapsulate dsb importWebComponents
-     *
-     * @param components
-     */
-    importWebComponents = (...components) => {
-        dsb.utils.importWebComponents(components)
-    }
-
-    /**
      * template getter
      *
      * @return {Block|null}
@@ -54,6 +45,15 @@ export class Page {
      */
     get page() {
         return this.#page
+    }
+
+    /**
+     * Encapsulate dsb importWebComponents
+     *
+     * @param components
+     */
+    importWebComponents = (...components) => {
+        dsb.utils.importWebComponents(components)
     }
 
     /**
@@ -88,5 +88,6 @@ export class Page {
     loaded() {
         Animation.loaded('#content#')
     }
+
 
 }

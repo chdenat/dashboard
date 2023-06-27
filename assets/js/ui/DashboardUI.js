@@ -6,12 +6,13 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 22/06/2023  09:20                                                                                *
+ * Last updated on : 27/06/2023  17:49                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+import {DashboardUtils as Utils} from 'DashboardUtils'
 
 export class DashboardUI {
 
@@ -296,5 +297,74 @@ export class DashboardUI {
         document.documentElement.style.setProperty('--' + variable, value)
     }
 
+    /**
+     * Set page title
+     *
+     * @param title if set, page title is "MAIN : title" else (default) it is "MAIN"
+     *
+     * @since 1.0
+     */
+    static setTitle = (title = null) => {
+        // Null => we use standard page title
+        if (title === null) {
+            document.title = dsb.page.main_title
+            return
+        }
+        // It's a string, we use it
+        if (typeof title === 'string') {
+            document.title = `${dsb.page.main_title}: ${title}`
+            return
+        }
+        // It's a link, we search in the menu settings
+        const path = Utils.findPathInObject(dsb.menu.json, title.getAttribute('href'))
+        if (null !== path) {
+            let current = dsb.menu.json
+            path.forEach(child => {
+                current = current[child]
+                if (current.text !== undefined) {
+                    let text = current.text
+                    // If there is some translation, get it instead
+                    if (dsb.language?.current && current.lang[dsb.language.current]) {
+                        text = current.lang[dsb.language.current]
+                    }
+                    document.title = text
 
+                }
+            })
+        }
+    }
+
+    static setBreadcrumbs = (item, addon = null) => {
+
+        const href = (typeof item === string) ? item : item.getAttribute('href')
+
+        const path = Utils.findPathInObject(dsb.menu.json, href)
+        let current = dsb.menu.json
+        let breadcrumb = []
+
+        if (null !== path) {
+
+            path.forEach(child => {
+                current = current[child]
+                if (current.text !== undefined) {
+                    let text = current.text
+                    // If there is some translation, get it instead
+                    if (dsb.language?.current && current.lang[dsb.language.current]) {
+                        text = current.lang[dsb.language.current]
+                    }
+                    breadcrumb.push(text)
+                }
+            })
+
+            if (addon) {
+
+            }
+
+            // Show Text
+            document.getElementById('breadcrumbs').innerHTML = '<i class="fa-regular fa-house"></i>'
+                + breadcrumb.join('<i class="fa-regular fa-chevron-right"></i>'
+                )
+        }
+
+    }
 }
