@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/06/2023  18:41                                                                                *
+ * Last updated on : 27/06/2023  18:44                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -337,8 +337,8 @@ class Block {
                     // if data-allow-back is present, we inform the block by passing the caller
                     let caller = null
                     if (event.currentTarget.hasAttribute('data-allow-back')) {
-                        caller = new URL(event.currentTarget.baseURI).pathname
-                        parameters.caller = caller
+                        href = new URL(event.currentTarget.baseURI).pathname
+                        parameters.caller = href
                     }
 
                     await template.loadPage(force, parameters)
@@ -346,8 +346,8 @@ class Block {
                     // save file information
                     template.#dom.container.setAttribute('data-template', template.file)
 
-                    //Add breadcrumbs (but with caller href, not current)
-                    UI.setBreadcrumbs(caller)
+                    //Add breadcrumbs
+                    UI.setBreadcrumbs(href)
                     // Add Title
                     UI.setTitle(href)
 
