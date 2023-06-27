@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/06/2023  14:56                                                                                *
+ * Last updated on : 27/06/2023  17:05                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -15,6 +15,7 @@
 import {Animation} from 'Animation'
 import {Bus as BlockEvent} from 'Bus'
 import {nanoid} from 'nanoid'
+import {DashboardUI as UI} from 'DashboardUI'
 
 let blocksList = [];
 
@@ -341,6 +342,12 @@ class Block {
 
                     // save file information
                     template.#dom.container.setAttribute('data-template', template.file)
+
+                    //Add breadcrumbs
+                    UI.setBreadcrumbs(event.currentTarget)
+                    // Add Title
+                    UI.setTitle(event.currentTarget)
+
                 }
 
                 event.preventDefault(); // Cancel the native event
@@ -361,7 +368,6 @@ class Block {
         for (const block of blocks) {
             let element = Block.addBaseToTemplate(block)
             let item = new Block(element)
-
             children.push(item)
         }
         for (const block of children) {
