@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/06/2023  19:32                                                                                *
+ * Last updated on : 28/06/2023  20:03                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -367,25 +367,27 @@ class Block {
      */
     static importChildren = async function (parent = document) {
         let blocks = Block.getFirstLevelEmbeddedBlocks(parent)
-        let children = []
-        for (const block of blocks) {
-            let element = Block.addBaseToTemplate(block)
-            let item = new Block(element)
-            children.push(item)
-        }
-        for (const block of children) {
-            block.loadPage(true).then(async (ok) => {
-                if (ok) {
-                    await block.importDeferredBlock()
-                }
-            })
+        if (blocks.length > 0) {
+            let children = []
+            for (const block of blocks) {
+                let element = Block.addBaseToTemplate(block)
+                let item = new Block(element)
+                children.push(item)
+            }
+            for (const block of children) {
+                block.loadPage(true).then(async (ok) => {
+                    if (ok) {
+                        await block.importDeferredBlock()
+                    }
+                })
+            }
         }
     }
 
     static addBaseToTemplate = (block) => {
         if (block.dataset?.templateId === '#content#') {
             // In case it is  the content block, we push the baseUri or home if nothing
-            const base = (block.dataset.template === '') ? (block.baseURI ? block.baseURI : Block.getHome()) : Block.getHome()
+            const base = (block.dataset.template === '') ? (block.baseURI ? block.baseURI : Block.getHome()) : block.dataset.template
             block.setAttribute('data-template', dsb.utils.path_info(base).file)
         }
         return block
