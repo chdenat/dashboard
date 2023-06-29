@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 29/06/2023  10:00                                                                                *
+ * Last updated on : 29/06/2023  11:28                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -175,7 +175,7 @@ export class User {
                     toast.addEventListener('hidden.bs.toast', async () => {
                         UI.hideOverlay()
                         if (redirection) {
-                            location.href = redirection
+                            window.location.assign(redirection)
                         }
                         Block.reload_page()
                     }, {once: true})
