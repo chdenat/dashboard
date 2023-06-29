@@ -9,6 +9,7 @@
     "DateTime": "/dashboard/assets/vendor/luxon.min.js",
     "Dashboard": "/dashboard/assets/js/Dashboard.js",
     "DashboardLangManager": "/dashboard/assets/js/ui/DashboardLangManager.js",
+    "DashboardMenu": "/dashboard/assets/js/ui/DashboardMenu.js",
     "DashboardUI": "/dashboard/assets/js/ui/DashboardUI.js",
     "DashboardUtils": "/dashboard/assets/js/DashboardUtils.js",
     "DashboardWCManager": "/dashboard/assets/js/ui/DashboardWCManager.js",

@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/06/2023  17:16                                                                                *
+ * Last updated on : 29/06/2023  09:36                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -23,6 +23,8 @@ import {Toaster} from 'Toaster'
 import {User} from 'User'
 import {Responsive} from 'Responsive'
 import {DashboardLangManager} from 'DashboardLangManager'
+import {DashboardMenu as Menu} from 'DashboardMenu'
+
 import {DashboardUI as UI} from 'DashboardUI'
 
 //import {OverlayScrollbars} from 'overlayscrollbars' // keep lwercase
@@ -70,7 +72,7 @@ export var dsb = {
             history.pushState({
                 title: document.title,
                 full: href,
-            }, dsb.menu.item_text(item), href)
+            }, Menu.item_text(item), href)
         },
 
         /**
@@ -123,327 +125,6 @@ export var dsb = {
             } catch (e) {
                 console.error(e)
             }
-        },
-    },
-
-    menu: {
-
-        template_id: '#menu#',
-        pathname: null,
-        current_roles: [],
-        json: null,
-        openClass: 'openItem',
-
-        change_id: (new_id) => {
-            dsb.menu.template_id = new_id
-        },
-
-        /**
-         * Check the URL to find if it exists in the menu.
-         * If it exists (or something similar)
-         * and open the menu accordingly.
-         *
-         * If nothing found, we open the default
-         *
-         *
-         * @param template
-         * @param pathname
-         */
-        synchronize: (template, pathname = '') => {
-            dsb.menu.change_id(template.ID)
-
-            dsb.menu.read_json().then(data => {
-                // If there is no pathname, we use the window location
-                if (pathname === '' || pathname === null) {
-                    pathname = `${window.location.pathname}${window.location.hash}`
-                }
-                let origin = pathname
-                pathname = dsb.menu._clean_path(pathname)
-
-                let found = false               // found in the menu
-                let found_with_role = false     // found with a specific role if not in menu
-                let item = {}
-
-                // We try as is,then without hash and finally without index.
-                for (let key of [' ', '#', 'index']) {
-                    pathname = pathname.split(key)[0]
-                    // Some entry in the menu ?
-                    item = document.querySelector(`[data-template-id="${template.ID}"] a[data-level*="menu-item-"][href*="${pathname}"]`)
-                    if (null !== item) {
-                        // Yes, so we clean and check it
-                        if (pathname === dsb.menu._clean_path(item.getAttribute('href').split(key)[0])) {
-                            found = true
-                            break
-                        }
-
-                    } else if (!dsb.session.active()) {
-                        // Nothing... May be the user need to be logged in to see this item in the menu ...
-                        found_with_role = dsb.menu.find_items_with_roles(dsb.menu.json.menu, 'href', pathname, dsb.menu.all_roles(), true).length > 0
-
-                    }
-                    if (found || found_with_role) {
-                        break
-                    }
-                }
-
-                if (!found) {
-                    if (!found_with_role) {
-                        // Nothing with role
-                        //  we try to open the default if it is / | /home => pathname = null | home
-                        if (pathname === '' || pathname === 'home') {
-                            item = document.querySelector(`[data-template-id="${template.ID}"] a[data-level*="menu-item"][data-default-page]`)
-                            if (null !== item) {
-                                found = true
-                            }
-                        }
-                    } else {
-                        // We find an entry with the role : we load the modal and pass some parameters
-                        dsb.menu.pathname = pathname
-                        dsb.modal.load('login-form', {template: template, pathname: pathname})
-                        dsb.modal.show()
-                        return
-                    }
-                }
-                // If we found something, we'll open the right menu
-                // else we redirect to 404.
-                if (found || found_with_role && item) {
-                    let levels = item.dataset.level.split('-')
-                    let id = 'menu-item-'
-                    levels.slice(2).forEach(level => {  // remove the 2 first, 'menu' and 'item'
-                        id += level
-                        // try to click on item defined as href=#<level-x-x>
-                        let item = document.querySelector(`[href="#${id}"]`)
-                        // or id= <level-x-x>
-                        if (null === item) {
-                            item = document.querySelector(`[data-level=${id}]`)
-                        }
-
-                        // Click on
-                        let link = item.getAttribute('href')
-                        if (link.startsWith('#menu')) {
-                            // Menu section : we click to open it.
-                            item.click()
-                        } else {
-                            // Menu item : we do not click but simulate
-                            dsb.menu.click(item, true)
-                            dsb.ui.show_tab(Block._check_link(link).tab)
-                        }
-                        id += '-'
-
-                    })
-                } else {
-                    Block.page404('#content#', origin)
-                }
-            })
-        },
-
-        /**
-         * Get all roles
-         */
-        all_roles: () => {
-            return ['logged', 'admin']
-        },
-
-        /**
-         * Find a key and/or value in a nested object
-         *
-         * => from https://www.tutorialspoint.com/deep-search-json-object-javascript
-         *
-         * @return {{}|*}
-         * @param obj
-         * @param key
-         * @param value
-         * @param roles
-         * @param single
-         */
-        find_items_with_roles: (obj = {}, key, value, roles = []) => {
-            const result = []
-            let used_roles = {}
-            const recursive = (obj = {}) => {
-                if (!obj || typeof obj !== 'object') {
-                    return
-                }
-                // If no roles in input or no roles in data, search is enabled
-                let search = roles.length === 0 || obj.roles === undefined
-
-                if (obj?.roles !== undefined && roles.length > 0) {
-                    // If there are some roles, we try to see if roles in data are
-                    //  included in input roles
-                    used_roles = obj.roles.filter(x => roles.includes(x))
-                    search = used_roles.length > 0
-                }
-
-                // search is enabled
-                if (search) {
-                    // key and value match... OK we get'em
-
-                    if (dsb.menu._clean_path(obj[key]) === dsb.menu._clean_path(value)) {
-                        result.push({data: obj, roles: used_roles})
-                    }
-                    // Lets'trayt
-                    Object.keys(obj).forEach(function (k) {
-                        recursive(obj[k])
-                    })
-                }
-            }
-            // All starts here
-            recursive(obj)
-            return result
-        },
-
-
-        /**
-         * Click on a menu item (in cascade, ie it opens all the hierarchy menu)
-         * - mark it open
-         * - display the url in the history
-         *
-         * @param item
-         * @param historize  indicates if we need historization (default false)
-         *
-         * @since 1.0
-         *
-         */
-        click: (item, historize = false) => {
-            // it's the link ?  Manage history (and add url in the browser bar)
-            if (item?.dataset?.level && !item.classList.contains(dsb.menu.openClass)) {
-                // Mark new menu item open
-                document.querySelector(`.${dsb.menu.openClass}[href]`)?.classList.remove(dsb.menu.openClass)
-                item.classList.add(dsb.menu.openClass)
-
-                if (historize) {
-                    dsb.page.add_to_history_from_menu(item)
-                }
-
-                //Add breadcrumbs
-                UI.setBreadcrumbs(item)
-                // Add Title
-                UI.setTitle(item)
-
-            }
-
-            // On responsive mode, each click collapse the menu
-            if (Responsive.isSmallDevice()) {
-                dsb.menu.collapse()
-            }
-            return false
-        },
-
-        toggleCollapse: () => {
-            let menu = bootstrap.Collapse.getOrCreateInstance(document.getElementById('menu-container'), {})
-            document.body.classList.toggle('menu-collapsed')
-            menu.toggle()
-
-        },
-
-        unCollapse: () => {
-            let menu = bootstrap.Collapse.getOrCreateInstance(document.getElementById('menu-container'), {})
-            document.body.classList.remove('menu-collapsed')
-            menu.show()
-        },
-        collapse: () => {
-            let menu = bootstrap.Collapse.getOrCreateInstance(document.getElementById('menu-container'), {})
-            document.body.classList.add('menu-collapsed')
-            menu.hide()
-        },
-
-        /**
-         * Get the text from the menu item
-         *
-         * @param item
-         * @return {*}
-         *
-         * @since 1.0
-         *
-         */
-        item_text: (item) => {
-            return item?.innerText
-        },
-
-        /**
-         * Suppress / at both first and end
-         *
-         * @param path
-         * @return path
-         *
-         * @private
-         */
-        _clean_path: (path) => {
-            if (path) {
-                if (path.startsWith('/')) {
-                    path = path.substring(1)
-                }
-                if (path.endsWith('/')) {
-                    path = path.substring(0, path.length - 1)
-                }
-            }
-            return path
-        },
-
-        update: () => {
-            let id = dsb.session.context?.referrer
-            if (id) {
-                let item = id.split(/(level-[0-9]+)/gm)
-            }
-        },
-
-        read_json: async () => {
-            if (dsb.menu.json === null) {
-                await fetch((dsb_ajax.get) + '?' + new URLSearchParams({
-                    action: 'read-json-menu',
-                })).then(function (response) {
-                    return response.json()
-                }).then(function (data) {
-                    dsb.menu.json = data
-                }).catch((error) => {
-                    console.error('Error:', error) // Print or not print ?
-                })
-            }
-            return dsb.menu.json
-        },
-
-        /**
-         * Menu Initialisation
-         *
-         * @since 1.0
-         *
-         */
-        init: async (block) => {
-            /**
-             *
-             * Read JSON menu
-             *
-             * @since 1.0
-             *
-             */
-
-            await dsb.menu.read_json()
-
-            let menu_container = document.getElementById('menu-container')
-
-            // We trap a specifi event on menu items click to instantiate the collapse/uncollapse
-            dsb.content_event.on('click', (item) => {
-                dsb.menu.click(item, true)
-            })
-
-            /**
-             * Close/open all 1st level menu
-             */
-            let all_open = false
-            menu_container.querySelector('#menu-container .dsb-collapse-vertical')?.addEventListener('click', (event) => {
-                all_open = !all_open
-                event.preventDefault()
-                menu_container?.querySelectorAll(`#menu-container  #menu-wrapper a[data-bs-toggle="collapse"][aria-expanded="${!all_open}"]`).forEach((element) => {
-                    let item = bootstrap.Collapse.getOrCreateInstance(menu_container.querySelector(element.getAttribute('href')))
-                    if (all_open) {
-                        item?.show()
-                    } else {
-                        item?.hide()
-                    }
-                })
-            })
-
-            dsb.menu.update()
-
         },
     },
 
@@ -644,9 +325,15 @@ export var dsb = {
             this._instance = new bootstrap.Modal(this._element, {focus: false})
 
             return this
-        }
+        },
 
-        ,
+
+        /**
+         *
+         */
+        hiddenAction: (event) => {
+            console.log(event)
+        },
 
         /**
          * Show the user modal
@@ -808,7 +495,7 @@ export var dsb = {
 
         },
         logout: () => {
-            dsb.user.person.logout()
+            dsb.user.person.logout(null, null, Block.getHome())
         },
         login: () => {
             dsb.user.person.login()
@@ -1353,8 +1040,8 @@ export var dsb = {
                         let pathname = url.split(window.location.origin)[1]
                         dsb.page.add_to_history(document.title, url, pathname)
                         // change menu info to corresponding item
-                        document.querySelector(`.${dsb.menu.openClass}[href]`)?.classList.remove(dsb.menu.openClass)
-                        document.querySelector(`[href="${pathname}"]`)?.classList.add(dsb.menu.openClass)
+                        document.querySelector(`.${Menu.openClass}[href]`)?.classList.remove(Menu.openClass)
+                        document.querySelector(`[href="${pathname}"]`)?.classList.add(Menu.openClass)
 
                         UI.setBreadcrumbs(document.querySelector(`[href="${pathname}"]`))
                         UI.setTitle(document.querySelector(`[href="${pathname}"]`))
@@ -1795,10 +1482,10 @@ export var dsb = {
 
         resizeWindowEvent: () => {
             if (Responsive.isSmallDevice()) {
-                dsb.menu.collapse()
+                Menu.collapse()
 
             } else if (Responsive.isExtraLargeDevice()) {
-                dsb.menu.unCollapse()
+                Menu.unCollapse()
 
             } else if (Responsive.isMediumDevice()) {
             } else {
@@ -1867,8 +1554,8 @@ export var dsb = {
 
         // Once menu has been loaded, we initialise some functionalities
         Block.event.on('template/loaded/blocks/menu', (block) => {
-            dsb.menu.init(block).then(() => {
-                dsb.menu.synchronize(block, dsb.menu.pathname)
+            Menu.init(block).then(() => {
+                Menu.synchronize(block, Menu.pathname)
                 dsb.ui.resizeWindowEvent()
                 window.onresize = dsb.ui.resizeWindowEvent
             })
