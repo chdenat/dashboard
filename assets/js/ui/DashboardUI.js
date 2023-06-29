@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/06/2023  19:51                                                                                *
+ * Last updated on : 29/06/2023  08:39                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -14,6 +14,7 @@
 
 import {DashboardUtils as Utils} from 'DashboardUtils'
 import {DashboardLangManager} from 'DashboardLangManager'
+import {Block} from 'Block'
 
 export class DashboardUI {
 
@@ -341,7 +342,15 @@ export class DashboardUI {
             dsb.language = new DashboardLangManager()
         }
 
-        const href = (typeof item === 'string') ? item : item.getAttribute('href')
+        let href
+
+        if (typeof item === 'string') {
+            href = item
+        } else if (item instanceof Block) {
+            href = item.file
+        } else {
+            href = item.getAttribute('href')
+        }
 
         const path = Utils.findPathInObject(dsb.menu.json, href)
         let current = dsb.menu.json
