@@ -6,12 +6,13 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 29/06/2023  08:39                                                                                *
+ * Last updated on : 29/06/2023  09:03                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+import {DashboardMenu as Menu} from 'DashboardMenu'
 import {DashboardUtils as Utils} from 'DashboardUtils'
 import {DashboardLangManager} from 'DashboardLangManager'
 import {Block} from 'Block'
@@ -318,9 +319,9 @@ export class DashboardUI {
             return
         }
         // It's a link, we search in the menu settings
-        const path = Utils.findPathInObject(dsb.menu.json, title.getAttribute('href'))
+        const path = Utils.findPathInObject(Menu.json, title.getAttribute('href'))
         if (null !== path) {
-            let current = dsb.menu.json
+            let current = Menu.json
             path.forEach(child => {
                 current = current[child]
                 if (current.text !== undefined) {
@@ -352,8 +353,8 @@ export class DashboardUI {
             href = item.getAttribute('href')
         }
 
-        const path = Utils.findPathInObject(dsb.menu.json, href)
-        let current = dsb.menu.json
+        const path = Utils.findPathInObject(Menu.json, href)
+        let current = Menu.json
         let breadcrumb = []
 
         if (null !== path) {
