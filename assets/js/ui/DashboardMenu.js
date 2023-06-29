@@ -6,13 +6,14 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 29/06/2023  09:36                                                                                *
+ * Last updated on : 29/06/2023  10:14                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 import {Block} from 'Block'
 import {DashboardUI as UI} from 'DashboardUI'
+import * as bootstrap from 'bootstrap'
 
 export class DashboardMenu {
 
