@@ -6,14 +6,14 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 14/04/2023  16:49                                                                                *
+ * Last updated on : 29/06/2023  10:00                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {Block}             from 'Block'
+import {Block} from 'Block'
 import {DashboardUI as UI} from 'DashboardUI'
-import {dsb, SECOND}       from 'dsb'
+import {dsb, SECOND} from 'dsb'
 
 export class User {
     static activityEvents = ['click', 'keydown', 'mousedown', 'mousemove', 'scroll', 'touchstart']
@@ -114,11 +114,16 @@ export class User {
      *
      */
     logout = async (event = null, button = null, redirection = null) => {
-        
+
+        if (null === button) {
+            button = document.querySelector('#logout-confirm [data-action="dsb.user.logout"]')
+        }
         // if redirection is null, we try to get it from button, ie in data-logout-redirection
         if (null === redirection) {
             if (button) {
                 redirection = button.dataset.logoutRedirection ?? null
+            } else {
+
             }
         }
         const form = document.getElementById('logout-confirm')
@@ -170,10 +175,9 @@ export class User {
                     toast.addEventListener('hidden.bs.toast', async () => {
                         UI.hideOverlay()
                         if (redirection) {
-                            let t = new Block('#content#', null, redirection)
-                            await t.load(true)
+                            location.href = redirection
                         }
-                        Block.reload_page(redirection)
+                        Block.reload_page()
                     }, {once: true})
                     
                 }
