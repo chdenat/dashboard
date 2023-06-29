@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 29/06/2023  09:36                                                                                *
+ * Last updated on : 29/06/2023  09:47                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -495,7 +495,7 @@ export var dsb = {
 
         },
         logout: () => {
-            dsb.user.person.logout(null, null, Block.getHome())
+            dsb.user.person.logout()
         },
         login: () => {
             dsb.user.person.login()
