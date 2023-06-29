@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 28/06/2023  20:03                                                                                *
+ * Last updated on : 29/06/2023  09:37                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -463,12 +463,14 @@ class Block {
         return blocksList[key]
     }
 
-    static async reloadPage() {
+    static async reloadPage(url) {
         let t = new Block(document.querySelector('[data-template-id="#content#"]'))
         t.loadingAnimation()
-        await t.load(true)
-        // await Block.importChildren(t.container)
-        t.loadedAnimation()
+        t.load(true).then(() => {
+            UI.setBreadcrumbs(t)
+            t.loadedAnimation()
+        })
+
     }
 
     static reload_page(soft = true) {
