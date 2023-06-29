@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 29/06/2023  09:37                                                                                *
+ * Last updated on : 29/06/2023  19:28                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -388,7 +388,7 @@ class Block {
         if (block.dataset?.templateId === '#content#') {
             // In case it is  the content block, we push the baseUri or home if nothing
             const base = (block.dataset.template === '') ? (block.baseURI ? block.baseURI : Block.getHome()) : block.dataset.template
-            block.setAttribute('data-template', dsb.utils.path_info(base).file)
+            block.setAttribute('data-template', dsb.utils.path_info(base).file !== '' ? dsb.utils.path_info(base).file : Block.getHome())
         }
         return block
     }
