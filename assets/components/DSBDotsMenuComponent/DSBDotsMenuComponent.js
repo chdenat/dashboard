@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 28/05/2023  16:52                                                                                *
+ * Last updated on : 30/06/2023  17:08                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -59,6 +59,7 @@ export class DSBDotsMenuComponent extends HTMLElement {
                     list = this.divider()
                 } else {
                     const context = element.getAttribute('context')
+                    const id = element.getAttribute('id')
                     const modal = element.getAttribute('modal')
                     const icon = element.getAttribute('icon')
                     const text = element.getAttribute('text')
@@ -70,14 +71,15 @@ export class DSBDotsMenuComponent extends HTMLElement {
 
                     const textAttributes = ' ' + attributes.split(',').join(' ')
                     const textParam = (parameter !== null) ? ` data-parameter="${parameter}"` : ''
+                    const textId = (id) ? ` id="${id}"` : ''
                     const textAction = (action) ? ` data-action="${action}"` : ''
                     const textHref = ` href="${(href) ? href : '#'}"`
                     const textContext = (context !== null) ? ` data-context="${context}"` : ''
                     const textModal = (modal !== null) ? ` data-bs-toggle="modal" data-bs-target="${modal}"` : ''
                     list = `
-<li>
+<li ${textId}>
     <a class="dropdown-item" ${textAction}${textHref}${textParam}${textContext}${textModal}${textAttributes}>
-        <i class="${icon}"></i><span>${text}</span>
+        <i class="${icon ?? ''} "></i><span>${text ?? ''}</span>
     </a>
 </li>
 `
