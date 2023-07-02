@@ -6,21 +6,24 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 13/06/2023  18:49
+ * Last updated on : 02/07/2023  10:08
  *
  * Copyright (c) 2023 - noleam.fr
  *
  */
 
 dsb-dots-menu a[data-bs-toggle="dropdown"] {
-    color: var(--dsb-pop-menu-color) !important;
     text-decoration: none;
+    display: inline-flex;
+    gap: var(--dsb-md-gutter);
+    align-items: center
 }
+
 
 dsb-dots-menu a[data-bs-toggle="dropdown"] i {
     margin: 0 calc(-1 * var(--dsb-xs-gutter)) !important;
     padding: 0 var(--dsb-xs-gutter);
-
+    color: var(--dsb-pop-menu-color) !important;
 }
 
 dsb-dots-menu .dropdown-menu {

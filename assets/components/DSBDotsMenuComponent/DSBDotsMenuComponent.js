@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 30/06/2023  17:08                                                                                *
+ * Last updated on : 02/07/2023  10:08                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -20,6 +20,7 @@ export class DSBDotsMenuComponent extends HTMLElement {
     direction = 'start'
     list = ''
     DIVIDER = 'divider'
+    title = ''
 
     constructor() {
         super();
@@ -31,7 +32,7 @@ export class DSBDotsMenuComponent extends HTMLElement {
 
     // component attributes
     static get observedAttributes() {
-        return ['name', 'id', 'class', 'icon']
+        return ['name', 'id', 'class', 'icon', 'title']
     }
 
     divider = () => {
@@ -93,7 +94,7 @@ export class DSBDotsMenuComponent extends HTMLElement {
 <style>@import "/dashboard/assets/components/DSBDotsMenuComponent/style.css"</style>
     <div class="drop${this.direction}">
         <a href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="${this.icon}"></i>
+            <span>${this.title}</span><i class="${this.icon}"></i>
         </a>
         <ul class="dropdown-menu">
             ${this.list}
