@@ -6,13 +6,20 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 02/07/2023  10:08                                                                                *
+ * Last updated on : 02/07/2023  11:07                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+import * as html2canvas from 'html2canvas'
+import * as jsPDF from 'jsPDF'
 import {DateTime} from 'luxon'
+
+// dummy...
+let dummy = jsPDF
+dummy = html2canvas
+
 
 export class DashboardExportUtils {
 
@@ -110,8 +117,8 @@ export class DashboardExportUtils {
         }
         return result
     }
-    static copyCanvasToClipboard = (canvas) => {
-        canvas.toBlob(function (blob) {
+    static copyCanvasToClipboard = async (canvas) => {
+        await canvas.toBlob(function (blob) {
             const item = new ClipboardItem({'image/svg': blob})
             navigator.clipboard.write([item])
         })
@@ -123,13 +130,13 @@ export class DashboardExportUtils {
      * @param file
      */
 
-    static exportToFile = (content = '', file = 'sample.txt') => {
+    static exportToFile = async (content = '', file = 'sample.txt') => {
         const link = document.createElement('a')
         const blob = new Blob([content], {type: 'text/plain'})
         link.href = URL.createObjectURL(blob)
         link.download = file
         link.click()
-        URL.revokeObjectURL(link.href)
+        await URL.revokeObjectURL(link.href)
     }
 
 
