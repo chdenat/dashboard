@@ -7,7 +7,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 21/02/2023  09:35                                                                                *
+ * Last updated on : 02/07/2023  10:50                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -101,12 +101,26 @@ APEX CHART Translation
 <text-i18n context="toolbar/reset" data-text="<?= _('Reset Zoom') ?>"></text-i18n>
 
 <!--
-Language
- change
+Language change
  -->
 
 <text-i18n
         context="language/change"
         data-title="<?= _('New Language') ?>"
         data-text="<?= _('Language set to %s!') ?>">
+</text-i18n>
+
+<!--
+Export
+-->
+<text-i18n
+        context="export/generic"
+        data-title="<?= _('Export to %s') ?>"
+        data-text="<?= _('Exported to %s!') ?>">
+</text-i18n>
+
+<text-i18n
+        context="export/clipboard"
+        data-title="<?= _('Clipboard Copy') ?>"
+        data-text="<?= _('Data copied into the clipboard!') ?>">
 </text-i18n>
