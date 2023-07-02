@@ -6,13 +6,27 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 02/07/2023  10:07
+ * Last updated on : 02/07/2023  19:45
  *
  * Copyright (c) 2023 - noleam.fr
  *
  */
 
 @import '../vendor/choices/choices.min.css';
+
+/***********************************************************************************************************************
+ * FONTS
+ */
+@font-face {
+    font-family: "normal";
+    src: url('../fonts/OpenSans-Regular.ttf');
+}
+
+@font-face {
+    font-family: "bold";
+    src: url('../fonts/OpenSans-Bold.ttf');
+}
+
 
 .show {
     display: block;
@@ -179,7 +193,7 @@
     --dsb-menu-bg-color: var(--dsb-gray-2);
     --dsb-menu-color: var(--dsb-gray-8);
 
-    --dsb-main-font-family: Arial, Helvetica, sans-serif;
+    --dsb-main-font-family: normal;
     --dsb-main-font-size: 0.85rem;
     --dsb-middle-font-size: 1rem;
     --dsb-alert-icon-size: 1.2rem;
@@ -198,7 +212,7 @@
     /***************************************************************************
      * Forms
      */
-    --dsb-form-font-family: verdana, sans-serif;
+    --dsb-form-font-family: normal;
     --dsb-form-font-size: 0.8rem;
     --dsb-form-bg-color: var(--dsb-gray-1);
     --dsb-form-color: var(--dsb-body-color);
@@ -237,6 +251,11 @@
      */
     --dsb-breadcrumbs-border: var(--dsb-border) var(--dsb-main-border-color);
 
+    /**********************************
+     * Toast
+     */
+    --dsb-toast-font-family: normal;
+    --dsb-toast-font-size: 12px;
     /**********************************
      * Animation
      */
@@ -1437,7 +1456,8 @@ footer {
 }
 
 .toast {
-    font-size: var(--dsb-small-font-size);
+    font-family: var(--dsb-toast-font-family);
+    font-size: var(--dsb-toast-font-size);
     box-shadow: var(--dsb-elevation);
     position: relative;
     margin: var(--dsb-gutter);
