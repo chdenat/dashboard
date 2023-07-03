@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 02/07/2023  19:45
+ * Last updated on : 03/07/2023  11:13
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -413,6 +413,15 @@ form *, .dsb-form * {
 
 form h5 {
     font-size: var(--dsb-middle-font-size);
+}
+
+
+.form-control-plaintext[readonly] {
+    border: transparent;
+    background: transparent !important;
+    box-shadow: none;
+    color: var(--dsb-body-color);
+    margin-left: var(--dsb-gutter);
 }
 
 fieldset, .dsb-card {
