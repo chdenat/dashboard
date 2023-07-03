@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 03/07/2023  17:51                                                                                *
+ * Last updated on : 03/07/2023  18:14                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -655,11 +655,12 @@ class Block {
         /*
          * Bail early if we have no file in any template except content
          */
+        if (defer != null) {
+            this.defer = defer
+        }
 
         if ((!this.is_content && this.nofile) || this.#defer) {
-            if (defer) {  // defer can be set by arguments
-                return false
-            }
+            return false
         }
 
         /**
