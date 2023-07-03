@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 29/06/2023  19:28                                                                                *
+ * Last updated on : 03/07/2023  17:51                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -14,8 +14,8 @@
 
 import {Animation} from 'Animation'
 import {Bus as BlockEvent} from 'Bus'
-import {nanoid} from 'nanoid'
 import {DashboardUI as UI} from 'DashboardUI'
+import {nanoid} from 'nanoid'
 
 let blocksList = [];
 
@@ -650,14 +650,16 @@ class Block {
      *
      */
 
-    load = async (force = false, parameters = []) => {
+    load = async (force = false, parameters = [], defer = null) => {
 
         /*
          * Bail early if we have no file in any template except content
          */
 
         if ((!this.is_content && this.nofile) || this.#defer) {
-            return false
+            if (defer) {  // defer can be set by arguments
+                return false
+            }
         }
 
         /**
