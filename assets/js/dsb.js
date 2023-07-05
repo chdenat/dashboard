@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 05/07/2023  09:35                                                                                *
+ * Last updated on : 05/07/2023  19:41                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -17,6 +17,7 @@ import {Bus as DSBEvent} from 'Bus'
 import {Dashboard} from 'Dashboard'
 import {DashboardLangManager} from 'DashboardLangManager'
 import {DashboardMenu as Menu} from 'DashboardMenu'
+import {DashboardResponsiveTabs} from 'DashboardResponsiveTabs'
 
 import {DashboardUI as UI} from 'DashboardUI'
 import {DashboardWebComponentsManager} from 'DashboardWebComponentsManager'
@@ -146,7 +147,7 @@ export var dsb = {
         },
 
         /**
-         * This method emits some events that could be managed in blocks
+         * This method emits some events that could/should be managed in blocks
          */
         genericLoadedEvent: (template => {
             /**
@@ -191,6 +192,15 @@ export var dsb = {
                     searchEnabled: search,
                     renderChoiceLimit: limit,
                 })
+
+
+            })
+
+            template.container.querySelectorAll('.responsive-tabs').forEach((item) => {
+                if (!item.hasAttribute('id')) {
+                    item.id = nanoid()
+                }
+                dsb.ui.lists[`tabs-${item.id}`] = new DashboardResponsiveTabs(item)
             })
 
             /**
