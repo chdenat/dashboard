@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 29/06/2023  09:47                                                                                *
+ * Last updated on : 05/07/2023  09:35                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -15,17 +15,17 @@ import {Block} from 'Block'
 import * as bootstrap from 'bootstrap'
 import {Bus as DSBEvent} from 'Bus'
 import {Dashboard} from 'Dashboard'
-import {DashboardWCManager} from 'DashboardWCManager'
-import {LocalDB} from 'LocalDB'
-import {customAlphabet} from 'nanoid'
-import {Session} from 'Session'
-import {Toaster} from 'Toaster'
-import {User} from 'User'
-import {Responsive} from 'Responsive'
 import {DashboardLangManager} from 'DashboardLangManager'
 import {DashboardMenu as Menu} from 'DashboardMenu'
 
 import {DashboardUI as UI} from 'DashboardUI'
+import {DashboardWebComponentsManager} from 'DashboardWebComponentsManager'
+import {LocalDB} from 'LocalDB'
+import {customAlphabet} from 'nanoid'
+import {Responsive} from 'Responsive'
+import {Session} from 'Session'
+import {Toaster} from 'Toaster'
+import {User} from 'User'
 
 //import {OverlayScrollbars} from 'overlayscrollbars' // keep lwercase
 
@@ -1475,7 +1475,7 @@ export var dsb = {
         init: () => {
             if (!dsb.ui.INITIALISED) {
                 // Attach web components
-                new DashboardWCManager()
+                new DashboardWebComponentsManager()
             }
             dsb.ui.INITIALISED = true
         },

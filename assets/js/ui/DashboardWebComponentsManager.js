@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Project : dashboard                                                                                                *
- * File : DashboardWCManager.js                                                                                       *
+ * File : DashboardWebComponentsManager.js                                                                            *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 11/03/2023  18:39                                                                                *
+ * Last updated on : 05/07/2023  09:30                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -16,7 +16,7 @@
 /**********************************************************************************************************************
  *  Dashboard Web Component Manager
  */
-export class DashboardWCManager {
+export class DashboardWebComponentsManager {
     #webComponents = []
 
     constructor() {

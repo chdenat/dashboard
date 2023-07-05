@@ -13,7 +13,7 @@
     "DashboardExportUtils": "/dashboard/assets/js/DashboardExportUtils.js",
     "DashboardUI": "/dashboard/assets/js/ui/DashboardUI.js",
     "DashboardUtils": "/dashboard/assets/js/DashboardUtils.js",
-    "DashboardWCManager": "/dashboard/assets/js/ui/DashboardWCManager.js",
+    "DashboardWebComponentsManager": "/dashboard/assets/js/ui/DashboardWebComponentsManager.js",
     "dsb": "/dashboard/assets/js/dsb.js",
     "DSBConsole": "/dashboard/assets/js/DSBConsole.js",
     "html2canvas": "/dashboard/assets/vendor/html2canvas/html2canvas.min.js",
