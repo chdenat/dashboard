@@ -6,16 +6,16 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 29/06/2023  09:03                                                                                *
+ * Last updated on : 05/07/2023  19:09                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+import {Block} from 'Block'
+import {DashboardLangManager} from 'DashboardLangManager'
 import {DashboardMenu as Menu} from 'DashboardMenu'
 import {DashboardUtils as Utils} from 'DashboardUtils'
-import {DashboardLangManager} from 'DashboardLangManager'
-import {Block} from 'Block'
 
 export class DashboardUI {
 
@@ -106,7 +106,16 @@ export class DashboardUI {
         eye.querySelector('.hide-password').classList.toggle('dsb-hide')
     }
 
-
+    static encodeHTMLEntities = (text) => {
+        var textArea = document.createElement('textarea');
+        textArea.innerText = text;
+        return textArea.innerHTML;
+    }
+    static  decodeHTMLEntities = (text) => {
+        var textArea = document.createElement('textarea');
+        textArea.innerHTML = text;
+        return textArea.value;
+    }
     static showOverlay = (opacity) => {
         this.BACKDROP_ELEMENT.classList.add('show')
         if (opacity) {
