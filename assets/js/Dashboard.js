@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/06/2023  16:28                                                                                *
+ * Last updated on : 05/07/2023  09:35                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -116,8 +116,13 @@ class Dashboard {
                                         if (undefined !== window[name]['attachEvents']) {
                                             window[name].attachEvents()
                                         }
-                                        // Add detachEvents too
-                                        Block.event.on(`template/unload/pages/${page}/index`, window[name]['detachEvents'])
+                                        // Add detachEvents and clear page
+                                        Block.event.on(`template/unload/pages/${page}/index`, () => {
+                                            if (undefined !== window[name]['detachEvents']) {
+                                                window[name]['detachEvents']()
+                                            }
+                                            window[name] = undefined
+                                        })
                                     }
                                     // Finally we pass it to the caller
                                     return window[name]
