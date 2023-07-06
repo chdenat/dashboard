@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 06/07/2023  08:09                                                                                *
+ * Last updated on : 06/07/2023  17:06                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -31,8 +31,6 @@ export class DashboardResponsiveTabs {
                 selected: link.classList.contains('active'),
                 disabled: false,
             })
-
-            //dsb.ui.hide(link)
 
         })
 
@@ -121,11 +119,13 @@ ${UI.decodeHTMLEntities(label)}
         this.#tabs.appendChild(select);
 
         this.#links.forEach(link => {
-            const option = document.createElement("option");
-            option.text = link.label
-            option.value = link.value
-            option.selected = link.selected
-            select.add(option);
+            if (link.instance.style.display !== 'none') {
+                const option = document.createElement("option");
+                option.text = link.label
+                option.value = link.value
+                option.selected = link.selected
+                select.add(option);
+            }
         })
         return select
 
