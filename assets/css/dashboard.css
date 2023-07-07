@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 07/07/2023  19:11
+ * Last updated on : 07/07/2023  19:30
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -124,9 +124,11 @@
     --dsb-link-color: var(--bs-link-color);
     --dsb-link-hover-color: var(--bs-link-hover-color);
 
-    --dsb-fetching-color-rgb: 108, 117, 125; /* gray6 */
-    --dsb-fetching-color-opacity: 0.15;
-    --dsb-fetching-color: rgba(var(--dsb-fetching-color-rgb), var(--dsb-fetching-color-opacity));
+    --dsb-fetching-color-1-rgb: 108, 117, 125; /* gray6 */
+    --dsb-fetching-color-1-opacity: 0.15;
+    --dsb-fetching-color-1: rgba(var(--dsb-fetching-color-1-rgb), var(--dsb-fetching-color-1-opacity));
+
+    --dsb-fetching-color-2: transparent;
 
     --dsb-btn-animation-bg-color: var(--dsb-warning-color);
     --dsb-btn-animation-text-color: var(--dsb-text-color);
@@ -1268,20 +1270,6 @@ body:not(.logged-in) #user-dropdown:hover {
     height: 100%;
 }
 
-/***********************************************************************************************************************
- * Horizontal menu
- */
-
-.tools {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.nav-pills, .nav-pills .nav-link {
-    display: flex;
-    align-items: center;
-}
-
 /*****************************************************************************************************************************************************
  * Loader
  */
@@ -1904,9 +1892,20 @@ console.pause console-menu button:hover {
     flex: 1;
 }
 
-/*******************************************************************************
- * Tabs
+/***********************************************************************************************************************
+ * Horizontal menu
  */
+
+.tools {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.nav-pills, .nav-pills .nav-link {
+    display: flex;
+    align-items: center;
+    border-radius: var(--dsb-xs-rounded)
+}
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
     color: var(--dsb-tab-active-color);
@@ -2196,7 +2195,7 @@ text-i18n {
 
 .fetching {
     background-color: transparent !important;
-    background-image: linear-gradient(110deg, transparent 8%, var(--dsb-fetching-color) 18%, transparent 33%) !important;
+    background-image: linear-gradient(110deg, var(--dsb-fetching-color-2) 8%, var(--dsb-fetching-color-1) 18%, transparent 33%) !important;
     background-size: 200% 100% !important;
     animation: 1s shine linear infinite !important;
 }
