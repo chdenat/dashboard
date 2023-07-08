@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : dashboard                                                                                                *
+ * Project : shelteradmin                                                                                             *
  * File : Page.js                                                                                                     *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/06/2023  16:58                                                                                *
+ * Last updated on : 08/07/2023  10:47                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -22,11 +22,6 @@ export class Page {
     constructor(page, template) {
         this.#page = page
         this.#template = template
-
-        // Load event are drivent by Dashboard, but we need to add
-
-        //import sheet from './style.css' assert { type: 'css' };
-        //document.adoptedStyleSheets = [sheet];
     }
 
     /**
