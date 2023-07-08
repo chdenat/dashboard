@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 03/07/2023  18:14                                                                                *
+ * Last updated on : 08/07/2023  20:02                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -99,8 +99,8 @@ class Block {
                 container: element,
                 defer: this.#defer,
                 forced: element.dataset.templateForced ?? false,        // data-template-forced
-                animate: element.dataset.animationType ?? false,         // data-animation-load
-                animation_type: element.dataset.animationType ?? null,  // data-animation-type
+                animate: element.dataset.animationLoad ?? false,        // data-animation-load
+                animationType: element.dataset.animationType ?? null,  // data-animation-type
             }
 
             this.#load = false
@@ -327,10 +327,10 @@ class Block {
                         }
                     }
 
-                    // The events com from the menu, so, add an animation if it's only a tab template.
-                    if (!template.is_content) {
-                        Animation.loading('#content#')
-                    }
+                    // The events come from the menu, so, add an animation if it's only a tab template.
+                    //if (!template.is_content) {
+                    Animation.loading('#content#')
+                    //}
 
                     let parameters = {}
                     let href = event.currentTarget.getAttribute('href')
@@ -352,9 +352,7 @@ class Block {
                     UI.setTitle(href)
 
                 }
-
                 event.preventDefault(); // Cancel the native event
-                return false
             }
         }
         Animation.loaded('#content#')
@@ -465,10 +463,8 @@ class Block {
 
     static async reloadPage(url) {
         let t = new Block(document.querySelector('[data-template-id="#content#"]'))
-        t.loadingAnimation()
         t.load(true).then(() => {
             UI.setBreadcrumbs(t)
-            t.loadedAnimation()
         })
 
     }
@@ -875,8 +871,8 @@ class Block {
      *                  if it is the content template which have always an animation
      *
      */
-    animation_type = () => {
-        return ('loader' || this.#dom.animation_type)
+    animationType = () => {
+        return ('loader' || this.#dom.animationType)
     }
 
     /**
