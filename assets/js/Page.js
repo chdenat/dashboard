@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 08/07/2023  16:17                                                                                *
+ * Last updated on : 08/07/2023  19:41                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -22,8 +22,6 @@ export class Page {
     constructor(page, template) {
         this.#page = page
         this.#template = template
-
-        this.loading()
     }
 
     /**
@@ -67,7 +65,7 @@ export class Page {
 
      * This is a  static method used to make some global initialisation
 
-     static globalPageInitialisation  = ()=> {}
+     static pageInitialisation  = ()=> {}
 
      * This method initialise page data
 
@@ -82,10 +80,7 @@ export class Page {
      */
 
 
-    loading = () => {
-        Animation.loading('#content#')
-    }
-    loaded = () => {
+    loaded() {
         Animation.loaded('#content#')
     }
 
