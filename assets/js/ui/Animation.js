@@ -6,12 +6,12 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/02/2023  10:46                                                                                *
+ * Last updated on : 08/07/2023  16:47                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {Block} from "./Block.js";
+import {Block} from 'Block'
 
 
 class Animation {
@@ -25,7 +25,7 @@ class Animation {
     }
 
     static get #loader() {
-        return document.getElementById(this.#template.animation_type())
+        return document.getElementById(this.#template.animationType())
     }
 
     static #remove_classes = (container) => {
@@ -36,12 +36,10 @@ class Animation {
 
         let template_id = (arg instanceof Event) ? arg.template.ID : arg
         this.#template = new Block(template_id)
-        let loader = Animation.#loader
-
-        if (/*this.#template.animate() && */loader) {
+        if (this.#template.animate() && Animation.#loader) {
             Animation.#remove_classes(this.#template.container)
             this.#template.container.classList.add(Animation.classes.loading)
-            loader?.classList.add(Animation.classes.running)
+            Animation.#loader?.classList.add(Animation.classes.running)
         }
     }
 
