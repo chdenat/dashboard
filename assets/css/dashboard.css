@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 07/07/2023  19:37
+ * Last updated on : 08/07/2023  08:26
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -80,6 +80,8 @@
     --dsb-primary-border-color: #b6d4fe;
     --dsb-primary-border: var(--dsb-border) var(--dsb-primary-border-color);
     --dsb-primary-bg-color: #cfe2ff;
+
+    --dsb-primary-icon-color: var(--dsb-color-light);
 
     --dsb-primary-color-2: #0a53be;
 
@@ -296,6 +298,15 @@
  *******************************************************************************/
 [data-action], a:not([href]) {
     cursor: pointer;
+}
+
+a {
+    color: var(--dsb-link-color);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--dsb-link-hover-color);
 }
 
 /******************************************************************************
@@ -556,6 +567,8 @@ legend {
 
 .btn-check + .btn-primary, .btn-check + .btn-primary {
     color: var(--dsb-inactive-color);
+    color: var(--dsb-primary-color);
+
     background-color: var(--dsb-inactive-bg-color);
     border: var(--dsb-inactive-border);
     font-size: var(--dsb-form-font-size);
@@ -566,6 +579,10 @@ legend {
     color: var(--dsb-color-light);;
     background-color: var(--dsb-primary-color);
     border-color: var(--dsb-primary-color);
+}
+
+.btn-primary i {
+    color: var(--dsb-primary-icon-color)
 }
 
 .btn-warning {
@@ -584,6 +601,11 @@ legend {
     height: 100%;
     display: flex;
     align-items: center;
+}
+
+.form-check-input:checked {
+    background-color: var(--dsb-primary-color);
+    border-color: var(--dsb-primary-color);
 }
 
 .form-switch .form-check-input {
@@ -675,6 +697,14 @@ a:not(.btn).animation.doing {
     background-color: var(--dsb-list-item-selected-bg-color) !important;
 }
 
+.accordion-item [aria-expanded="true"] .open-indicator {
+    color: var(--dsb-primary-icon-color) !important;
+}
+
+.accordion-item [aria-expanded="true"]:hover .open-indicator {
+    color: var(--dsb-primary-color) !important;
+}
+
 .accordion-item .accordion-header:hover {
     background-color: var(--dsb-list-item-hover-bg-color) !important;
     color: var(--dsb-list-item-hover-color) !important;
@@ -716,6 +746,10 @@ a:not(.btn).animation.doing {
 .accordion-item [aria-expanded="true"] .accordion-header {
     color: var(--dsb-list-item-selected-color) !important;
     background-color: var(--dsb-list-item-selected-bg-color) !important;
+}
+
+.accordion-item [aria-expanded="true"] .accordion-header i {
+    color: var(--dsb-primary-icon-color) !important;
 }
 
 .accordion {
