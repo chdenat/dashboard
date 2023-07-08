@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : shelteradmin                                                                                             *
+ * Project : dashboard                                                                                                *
  * File : Page.js                                                                                                     *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 08/07/2023  10:47                                                                                *
+ * Last updated on : 08/07/2023  16:17                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -22,6 +22,8 @@ export class Page {
     constructor(page, template) {
         this.#page = page
         this.#template = template
+
+        this.loading()
     }
 
     /**
@@ -80,7 +82,10 @@ export class Page {
      */
 
 
-    loaded() {
+    loading = () => {
+        Animation.loading('#content#')
+    }
+    loaded = () => {
         Animation.loaded('#content#')
     }
 
