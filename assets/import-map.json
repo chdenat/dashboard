@@ -1,8 +1,9 @@
 {
   "imports": {
     "@popperjs/core": "/dashboard/assets/vendor/popper/popper.js",
-    "Animation": "/dashboard/assets/js/Animation.js",
+    "Animation": "/dashboard/assets/js/ui/Animation.js",
     "Block": "/dashboard/assets/js/Block.js",
+    "BlockAnimationScheduler": "/dashboard/assets/js/ui/BlockAnimationScheduler.js",
     "bootstrap": "/dashboard/assets/vendor/bootstrap/js/bootstrap.esm.js",
     "Bus": "/dashboard/assets/vendor/EventEmitter/Bus.js",
     "ApexCharts": "/dashboard/assets/vendor/apexcharts/apexcharts.esm.js",
