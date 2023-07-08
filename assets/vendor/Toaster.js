@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 13/04/2023  10:43                                                                                *
+ * Last updated on : 08/07/2023  11:44                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -158,7 +158,7 @@ export class Toaster {
     #container = this.#default.CONTAINER
     #position = Toaster.position.BOTTOM_END
     #type = Toaster.type.DEFAULT
-    #timer = Toaster.timer.ELAPSED
+    #timer = Toaster.timer.COUNTDOWN
     #delay = this.#default.DELAY
     #animation = this.#default.ANIMATION
     #icon = this.#default.ICON
@@ -172,7 +172,7 @@ export class Toaster {
             container: this.#default.CONTAINER,
             position: Toaster.position.BOTTOM_END,
             type: Toaster.type.DEFAULT,
-            timer: Toaster.timer.ELAPSED,
+            timer: Toaster.timer.COUNTDOWN,
             delay: this.#default.DELAY,
             icon: this.#default.ICON,
             animation: this.#default.ANIMATION,
@@ -183,7 +183,7 @@ export class Toaster {
         this.#container = options.container ?? this.#default.CONTAINER
         this.#position = options.position ?? Toaster.position.BOTTOM_END
         this.#type = options.type ?? Toaster.type.DEFAULT
-        this.#timer = options.timer ?? Toaster.timer.ELAPSED
+        this.#timer = options.timer ?? Toaster.timer.COUNTDOWN
         this.#animation = options.animation ?? this.#default.ANIMATION
         this.#delay = options.delay ?? this.#default.DELAY
         this.#icon = options.icon ?? this.#default.ICON
