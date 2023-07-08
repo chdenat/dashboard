@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 05/07/2023  19:41                                                                                *
+ * Last updated on : 08/07/2023  18:00                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -139,6 +139,10 @@ export var dsb = {
             Block.use404(false)
 
             // When a template has been loaded, we register specific actions
+            Block.event.on('template/loading', dsb.template.genericLoadingEvent)
+
+
+            // When a template has been loaded, we register specific actions
             Block.event.on('template/loaded', dsb.template.genericLoadedEvent)
 
             // Import all the children
@@ -146,10 +150,21 @@ export var dsb = {
 
         },
 
+
         /**
          * This method emits some events that could/should be managed in blocks
          */
-        genericLoadedEvent: (template => {
+        genericLoadingEvent: template => {
+            /**
+             * Start animation
+             */
+            template.loadingAnimation()
+        },
+
+        /**
+         * This method emits some events that could/should be managed in blocks
+         */
+        genericLoadedEvent: template => {
             /**
              * Let open links in content if required (for a tags with data-content attributes)
              */
@@ -162,12 +177,6 @@ export var dsb = {
                     })
                 })
 
-            })
-            /**
-             * Here is the case we need to open in content pseudo-modal
-             */
-            template.container.querySelectorAll('a[data-content-modal]').forEach(item => {
-                item.addEventListener('click', dsb.ui.show_intermediate_content)
             })
 
             /**
@@ -210,11 +219,16 @@ export var dsb = {
             dsb.ui.add_scrolling(template.container)
 
             /**
+             * Stop animation
+             */
+            template.loadedAnimation()
+
+            /**
              * We can display 404 errors
              */
             Block.use404()
 
-        }),
+        },
 
     },
 
