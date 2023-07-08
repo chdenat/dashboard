@@ -6,14 +6,14 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 25/05/2023  18:49                                                                                *
+ * Last updated on : 08/07/2023  16:15                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 import {Bus as LoggerEvent} from 'Bus'
+import {DashboardConsole} from 'DashboardConsole'
 import {dsb} from 'dsb'
-import {DSBConsole} from 'DSBConsole'
 //import {OverlayScrollbars} from 'overlayscrollbars'
 import {LogContext} from 'LogContext'
 
@@ -90,7 +90,7 @@ class Logger {
         this.#file = parameters.file
         this.#erase = parameters.erase ?? true
 
-        this.#console = new DSBConsole(parameters.console, this.#erase)
+        this.#console = new DashboardConsole(parameters.console, this.#erase)
 
         this.#once = parameters?.once ?? false
         // if once, we force history to true

@@ -16,7 +16,7 @@
     "DashboardUtils": "/dashboard/assets/js/DashboardUtils.js",
     "DashboardWebComponentsManager": "/dashboard/assets/js/ui/DashboardWebComponentsManager.js",
     "dsb": "/dashboard/assets/js/dsb.js",
-    "DSBConsole": "/dashboard/assets/js/DSBConsole.js",
+    "DashboardConsole": "/dashboard/assets/js/ui/DashboardConsole.js",
     "html2canvas": "/dashboard/assets/vendor/html2canvas/html2canvas.min.js",
     "idb": "/dashboard/assets/vendor/idb/idb.min.js",
     "jsPDF": "/dashboard/assets/vendor/jsPDF/jspdf.umd.min.js",

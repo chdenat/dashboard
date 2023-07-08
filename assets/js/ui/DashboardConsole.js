@@ -3,23 +3,23 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Project : dashboard                                                                                                *
- * File : DSBConsole.js                                                                                               *
+ * File : DashboardConsole.js                                                                                         *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 25/05/2023  18:49                                                                                *
+ * Last updated on : 08/07/2023  16:16                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-import {dsb} from 'dsb'
 import {Bus as ConsoleEvent} from 'Bus'
+import {dsb} from 'dsb'
 
 //import {OverlayScrollbars} from 'overlayscrollbars'
 
-class DSBConsole {
+class DashboardConsole {
     #id = null
     #console = null
     #body = null
@@ -27,7 +27,7 @@ class DSBConsole {
     #last = null
     #scroller = null
     #running = true
-    static event= ConsoleEvent
+    static event = ConsoleEvent
 
     /**
      *
@@ -65,7 +65,7 @@ class DSBConsole {
 
         // Set it ready to print
         this.#prepare_next()
-        DSBConsole.event.emit(`console/start/${this.#id}`)
+        DashboardConsole.event.emit(`console/start/${this.#id}`)
     }
 
     /**
@@ -84,7 +84,7 @@ class DSBConsole {
         this.#prepare_next()
         this.#append(from_event ? '' : starter, classes)
 
-        DSBConsole.event.emit(`console/clear/${this.#id}`)
+        DashboardConsole.event.emit(`console/clear/${this.#id}`)
 
         if (from_event) {
             starter.preventDefault()
@@ -138,7 +138,7 @@ class DSBConsole {
             }
         }
 
-        DSBConsole.event.emit(`console/copy/${this.#id}`,[{result:result}])
+        DashboardConsole.event.emit(`console/copy/${this.#id}`, [{result: result}])
 
 
         // We alert the user with a toast
@@ -172,7 +172,7 @@ class DSBConsole {
 
         dsb.utils.export_to_file(this.#body.innerText, 'console.txt')
 
-        DSBConsole.event.emit(`console/export/${this.#id}`)
+        DashboardConsole.event.emit(`console/export/${this.#id}`)
 
         // We alert the user with a toast
             dsb.toast.message({
@@ -192,7 +192,7 @@ class DSBConsole {
         this.#console.classList.toggle('pause')
         this.#running = false
 
-        DSBConsole.event.emit(`console/pause/${this.#id}`,[{running:this.#running}])
+        DashboardConsole.event.emit(`console/pause/${this.#id}`, [{running: this.#running}])
 
         this.#console.querySelector('.console-play').classList.toggle('dsb-hide')
         this.#console.querySelector('.console-pause').classList.toggle('dsb-hide')
@@ -207,7 +207,7 @@ class DSBConsole {
         this.#console.classList.toggle('pause')
         this.#running = true
 
-        DSBConsole.event.emit(`console/play/${this.#id}`,[{running:this.#running}])
+        DashboardConsole.event.emit(`console/play/${this.#id}`, [{running: this.#running}])
 
         this.#console.querySelector('.console-play').classList.toggle('dsb-hide')
         this.#console.querySelector('.console-pause').classList.toggle('dsb-hide')
@@ -234,7 +234,7 @@ class DSBConsole {
      * Show console
      */
     show = () => {
-        DSBConsole.event.emit(`console/show/${this.#id}`)
+        DashboardConsole.event.emit(`console/show/${this.#id}`)
         this.#console.classList.remove('dsb-hide')
     }
 
@@ -242,7 +242,7 @@ class DSBConsole {
      * Hide console
      */
     hide = () => {
-        DSBConsole.event.emit(`console/hide/${this.#id}`)
+        DashboardConsole.event.emit(`console/hide/${this.#id}`)
         this.#console.classList.add('dsb-hide')
     }
 
@@ -262,7 +262,7 @@ class DSBConsole {
         if (classes !== '') {
             this.#last.classList.add(classes)
         }
-        DSBConsole.event.emit(`console/append/${this.#id}`)
+        DashboardConsole.event.emit(`console/append/${this.#id}`)
 
         return this.#prepare_next()
     }
@@ -327,4 +327,4 @@ class DSBConsole {
 
 }
 
-export {DSBConsole}
+export {DashboardConsole}
