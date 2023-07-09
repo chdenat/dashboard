@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : dashboard                                                                                                *
+ * Project : shelteradmin                                                                                             *
  * File : Page.js                                                                                                     *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 09/07/2023  07:31                                                                                *
+ * Last updated on : 09/07/2023  10:25                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -40,6 +40,10 @@ export class Page {
      */
     get page() {
         return this.#page
+    }
+
+    pageInitialisation() {
+        this.loading()
     }
 
     /**
