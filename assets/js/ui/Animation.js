@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 08/07/2023  16:47                                                                                *
+ * Last updated on : 09/07/2023  11:58                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -24,7 +24,9 @@ class Animation {
         running: 'running',
     }
 
-    static get #loader() {
+    loader = null
+
+    static get loader() {
         return document.getElementById(this.#template.animationType())
     }
 
@@ -36,10 +38,10 @@ class Animation {
 
         let template_id = (arg instanceof Event) ? arg.template.ID : arg
         this.#template = new Block(template_id)
-        if (this.#template.animate() && Animation.#loader) {
+        if (this.#template.animate() && this.loader) {
             Animation.#remove_classes(this.#template.container)
             this.#template.container.classList.add(Animation.classes.loading)
-            Animation.#loader?.classList.add(Animation.classes.running)
+            this.loader?.classList.add(Animation.classes.running)
         }
     }
 
@@ -47,25 +49,29 @@ class Animation {
 
         let template_id = (arg instanceof Event) ? arg.template.ID : arg
         this.#template = new Block(template_id)
-        let loader = Animation.#loader
 
-        if (/*this.#template.animate() &&*/ loader) {
+        if (/*this.#template.animate() &&*/ this.loader) {
             Animation.#remove_classes(this.#template.container)
             this.#template.container.classList.add(Animation.classes.loaded)
-            loader?.classList.remove(Animation.classes.running)
+            this.loader?.classList.remove(Animation.classes.running)
         }
     }
 
     static unloading(arg) {
         let template_id = (arg instanceof Event) ? arg.template.ID : arg
         this.#template = new Block(template_id)
-        let loader = Animation.#loader
 
-        if (/*this.#template.animate() &&*/ loader) {
+        if (/*this.#template.animate() &&*/ this.loader) {
             Animation.#remove_classes(this.#template.container)
             this.#template.container.classList.add(Animation.classes.unload)
-            loader?.classList.remove(Animation.classes.running)
+            this.loader?.classList.remove(Animation.classes.running)
         }
+    }
+
+    static clickToStopLoaderOnPage = () => {
+        this.loader.addEventListener('click', () => {
+            this.loaded('#content#')
+        })
     }
 }
 

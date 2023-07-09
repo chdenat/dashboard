@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : shelteradmin                                                                                             *
+ * Project : dashboard                                                                                                *
  * File : Page.js                                                                                                     *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 09/07/2023  10:25                                                                                *
+ * Last updated on : 09/07/2023  11:52                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -22,6 +22,8 @@ export class Page {
     constructor(page, template) {
         this.#page = page
         this.#template = template
+
+        Animation.clickToStopLoaderOnPage()
     }
 
     /**
