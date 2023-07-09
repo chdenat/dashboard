@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 08/07/2023  20:01                                                                                *
+ * Last updated on : 09/07/2023  16:42                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -26,6 +26,7 @@ export class BlockAnimationScheduler {
         this.name = name
         this.total = total
         this.counter = 0
+        this.status = 0
     }
 
     get name() {
