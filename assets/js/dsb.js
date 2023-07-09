@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 08/07/2023  18:00                                                                                *
+ * Last updated on : 09/07/2023  19:08                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -1506,7 +1506,7 @@ export var dsb = {
 
         resizeWindowEvent: () => {
             if (Responsive.isSmallDevice()) {
-                Menu.collapse()
+              Menu.collapse()
 
             } else if (Responsive.isExtraLargeDevice()) {
                 Menu.unCollapse()
@@ -1575,13 +1575,16 @@ export var dsb = {
             document.body.classList.add('logged-in')
             document.body.classList.add(dsb.session.context.user)
         }
-
+        Block.event.on('template/loading/blocks/menu', (block) => {
+            dsb.ui.resizeWindowEvent()
+            window.onresize = dsb.ui.resizeWindowEvent
+            dsb.ui.hide(document.querySelector('.small-device #menu-container'))
+        })
         // Once menu has been loaded, we initialise some functionalities
         Block.event.on('template/loaded/blocks/menu', (block) => {
             Menu.init(block).then(() => {
                 Menu.synchronize(block, Menu.pathname)
-                dsb.ui.resizeWindowEvent()
-                window.onresize = dsb.ui.resizeWindowEvent
+                dsb.ui.show(document.querySelector('.small-device #menu-container'))
             })
         })
 
