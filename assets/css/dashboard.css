@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 09/07/2023  11:46
+ * Last updated on : 09/07/2023  19:37
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -252,6 +252,9 @@
     --dsb-hover-border: var(--dsb-border) var(--dsb-hover-border-color);
 
     --dsb-choices-bg-color: var(--dsb-body-bg-color);
+
+    --dsb-button-outline-icon-color: var(--dsb-primary-color);
+    --dsb-button-outline-icon-hover-color: var(--dsb-color-light);
 
     /***********************************
      * Bootstrap CSS variable change
@@ -579,6 +582,26 @@ legend {
     color: var(--dsb-color-light);;
     background-color: var(--dsb-primary-color);
     border-color: var(--dsb-primary-color);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--dsb-primary-color);
+    --bs-btn-border-color: var(--dsb-primary-color);
+    --bs-btn-hover-color: var(--dsb-color-light);
+    --bs-btn-hover-bg: var(--dsb-primary-color);
+    --bs-btn-hover-border-color: var(--dsb-primary-color);
+    --bs-btn-active-color: var(--dsb-color-light);
+    --bs-btn-active-bg: var(--dsb-primary-color);
+    --bs-btn-active-border-color: var(--dsb-primary-color);
+    --bs-btn-disabled-color: var(--dsb-primary-color);
+}
+
+.btn-outline-primary i {
+    color: var(--dsb-button-outline-icon-color)
+}
+
+.btn-outline-primary:hover i {
+    color: var(--dsb-button-outline-icon-hover-color)
 }
 
 .btn-primary i {
