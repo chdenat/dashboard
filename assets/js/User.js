@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 29/06/2023  11:28                                                                                *
+ * Last updated on : 12/07/2023  11:42                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -145,17 +145,17 @@ export class User {
             }
         }
         
-        await fetch(dsb_ajax.post, {
-            method: 'POST',
-            body: JSON.stringify(form_data),
-        }).then(response => {
-                if (!response.ok) {
-                    throw Error(response.statusText)
-                }
-                return response
-            })
-            .then(response => response.json())
-            .then(data => {
+       return await fetch(dsb_ajax.post, {
+           method: 'POST',
+           body: JSON.stringify(form_data),
+       }).then(response => {
+           if (!response.ok) {
+               throw Error(response.statusText)
+           }
+           return response
+       })
+           .then(response => response.json())
+           .then(data => {
                 if (data.logout) {
                     if (!from_session_modal) {
                         dsb.modal.hide()
