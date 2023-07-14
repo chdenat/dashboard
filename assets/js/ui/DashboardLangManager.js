@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 14/07/2023  16:30                                                                                *
+ * Last updated on : 14/07/2023  18:51                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -14,12 +14,13 @@
 import {YEAR} from 'dsb'
 import {Transient} from 'Transient'
 
+var LANG_CHECKED = false
 
 export class DashboardLangManager {
     check = false
     newLang = false
     cookie = null
-
+    LANG_CHECKED = true
 
     constructor(template = document) {
 
@@ -85,59 +86,53 @@ export class DashboardLangManager {
          *
          */
         this.cookie = this.getCookie()
+        let transient = new Transient(this.cookie.name)
 
-        if (!this.check || this.cookie !== undefined) {
-            this.newLang = false
+        if (!LANG_CHECKED) {
+            if (this.cookie !== undefined) {
 
-
-            let transient = new Transient(this.cookie.name)
-
-            // it's better to read content from transients
-            transient.read().then((content) => {
-                // Fix...for 1.1.x and below
-                if (content && content.lang !== undefined) {
-                    while (content.value?.value) {
-                        content.value = content.value.value
+                // it's better to read content from transients
+                transient.read().then((content) => {
+                    // Fix...for 1.1.x and below
+                    if (content !== null && content?.value?.lang !== undefined) {
+                        while (content.value?.value) {
+                            content.value = content.value.value
+                        }
+                        content = content.value
+                    } else {
+                        content = {
+                            old: this.cookie.value.old,
+                            name: this.cookie.value.name,
+                            lang: this.cookie.value.lang,
+                            change: this.cookie.value.change
+                        }
                     }
-                    content = content.value
-                } else {
-                    content = {
-                        old: this.cookie.value.old,
-                        name: this.cookie.value.name,
-                        lang: this.cookie.value.lang,
-                        change: true
-                    }
-                }
-                if (this.cookie && content?.change) {
-                    // it's a new lang, ok we sync the cookie content
-                    content.old = null
-                    content.change = false
-                    //Cookies.remove(this.cookie.name, {path: '/'}) //TODO why?
+                    if (this.cookie && content.change) {
 
-                    this.newLang = true
-
-                    /**
-                     * Add a toast if  there is a new lang
-                     * @since 1.1.0
-                     *
-                     */
-                    if (this.newLang) {
+                        // it's a new lang, ok we sync the cookie content
+                        Cookies.remove(this.cookie.name, {path: '/'}) // no cookie, no arm !
+                        /**
+                         * Add a toast if  there is a new lang
+                         * @since 1.1.0
+                         *
+                         */
                         dsb.toast.message({
                             title: DashboardLangManager.getI18n('language/change', 'title'),
                             message: sprintf(DashboardLangManager.getI18n('language/change', 'text'), content.name),
                             type: 'success',
                         })
-                        this.newLang = false
+
                     }
-                }
+                    content.change = false
+                    content.old = null
+                    transient.update(content, YEAR).then()
 
-                transient.update(content, YEAR).then()
-            })
-
-            this.check = true
+                })
+            }
         }
-    }
+        LANG_CHECKED = true
 
+    }
     /**
      * Get the <appli>_lang cookie content
      *
@@ -148,7 +143,7 @@ export class DashboardLangManager {
         // we do not know the right name, but it's ended with -lang
         for (const cookie in Cookies.get()) {
             if (cookie.endsWith('-lang')) {
-                return {name: cookie, value: Cookies.get(cookie)}
+                return {name: cookie, value: JSON.parse(Cookies.get(cookie))}
             }
         }
         return null
