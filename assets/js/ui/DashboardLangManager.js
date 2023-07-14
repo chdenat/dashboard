@@ -6,13 +6,13 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 22/06/2023  10:08                                                                                *
+ * Last updated on : 14/07/2023  16:30                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {Transient} from 'Transient'
 import {YEAR} from 'dsb'
+import {Transient} from 'Transient'
 
 
 export class DashboardLangManager {
@@ -95,17 +95,24 @@ export class DashboardLangManager {
             // it's better to read content from transients
             transient.read().then((content) => {
                 // Fix...for 1.1.x and below
-                while (content.value?.value) {
-                    content.value = content.value.value
+                if (content && content.lang !== undefined) {
+                    while (content.value?.value) {
+                        content.value = content.value.value
+                    }
+                    content = content.value
+                } else {
+                    content = {
+                        old: this.cookie.value.old,
+                        name: this.cookie.value.name,
+                        lang: this.cookie.value.lang,
+                        change: true
+                    }
                 }
-                content = content.value
-
                 if (this.cookie && content?.change) {
                     // it's a new lang, ok we sync the cookie content
                     content.old = null
                     content.change = false
-
-                    Cookies.remove(this.cookie.name, {path: '/'}) //TODO why?
+                    //Cookies.remove(this.cookie.name, {path: '/'}) //TODO why?
 
                     this.newLang = true
 
@@ -123,6 +130,7 @@ export class DashboardLangManager {
                         this.newLang = false
                     }
                 }
+
                 transient.update(content, YEAR).then()
             })
 
