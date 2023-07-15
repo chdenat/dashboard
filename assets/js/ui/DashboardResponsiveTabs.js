@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 06/07/2023  17:06                                                                                *
+ * Last updated on : 15/07/2023  17:01                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -20,7 +20,13 @@ export class DashboardResponsiveTabs {
     #select = null
 
     constructor(tabs) {
+
         this.#tabs = tabs
+
+        //Bail early if there is already a select
+        if (document.documentElement.contains(tabs.querySelector('select'))) {
+            return false
+        }
 
         // Get all the required information
         tabs.querySelectorAll('.nav-link').forEach(link => {
@@ -130,4 +136,9 @@ ${UI.decodeHTMLEntities(label)}
         return select
 
     }
+
+    #alreadyExists = () => {
+
+    }
+
 }
