@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 05/07/2023  19:09                                                                                *
+ * Last updated on : 15/07/2023  12:04                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -194,7 +194,7 @@ export class DashboardUI {
         if (button === null) {
             return
         }
-        if (button instanceof PointerEvent) {
+        if (button instanceof UIEvent) {
             button = button.target
         }
 
@@ -207,7 +207,7 @@ export class DashboardUI {
         if (button === null) {
             return
         }
-        if (button instanceof PointerEvent) {
+        if (button instanceof UIEvent) {
             button = button.target
         }
 
@@ -221,7 +221,7 @@ export class DashboardUI {
         if (button === null) {
             return
         }
-        if (button instanceof PointerEvent) {
+        if (button instanceof UIEvent) {
             button = button.target
         }
 

@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 12/07/2023  11:28                                                                                *
+ * Last updated on : 15/07/2023  12:04                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -1180,7 +1180,7 @@ export var dsb = {
             if (button === null) {
                 return
             }
-            if (button instanceof PointerEvent) {
+            if (button instanceof UIEvent) {
                 button = button.target
             }
 
