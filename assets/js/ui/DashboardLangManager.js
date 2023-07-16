@@ -6,13 +6,13 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 14/07/2023  18:51                                                                                *
+ * Last updated on : 16/07/2023  08:33                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {YEAR} from 'dsb'
-import {Transient} from 'Transient'
+import {Transient} from '/dashboard/assets/js/db/Transient.js'
+import {YEAR} from '/dashboard/assets/js/dsb.js'
 
 var LANG_CHECKED = false
 

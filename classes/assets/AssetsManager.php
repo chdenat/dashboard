@@ -1,30 +1,30 @@
 <?php
-/***********************************************************************************************************************
- *
- * Project : supervix4
- * file : Assets.php
- *
- * @author        Christian Denat
- * @email contact@noleam.fr
- * --
- *
- * updated on :  1/18/22, 11:20 AM
- *
- * @copyright (c) 2022 noleam.fr
- *
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : AssetsManager.php                                                                                           *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 16/07/2023  10:30                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
  **********************************************************************************************************************/
 
 namespace dashboard\assets;
 
 use dashboard\hooks\Hooks;
 use dashboard\template\Template;
+use JsonException;
 
 
 class AssetsManager
 {
 
     /**
-     * @var null|\dashboard\assets\AssetsManager
+     * @var null|AssetsManager
      * @access private
      * @static
      */
@@ -86,22 +86,22 @@ class AssetsManager
         ob_start();
         ?>
 
-        <script async src="/dashboard/assets/vendor/es-module-shims.js"></script>
-        <script type="importmap">
-            <?php
-            $json = [];
-            foreach ([D_ASSETS_DIR, C_ASSETS_DIR] as $dir) {
-                if (file_exists($dir . 'import-map.json')) {
-                    $import = json_decode(file_get_contents($dir . 'import-map.json'), true);
-                    foreach ($import['imports'] as $key => $value) {
-                        $json['imports'][$key] = $value;
-                    }
-                }
-            }
-            echo json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
-
-            ?>
-
+        <!--        <script async src="/dashboard/assets/vendor/es-module-shims.js"></script>-->
+        <!--        <script type="importmap">-->
+        <!--            --><?php
+//            $json = [];
+//            foreach ([D_ASSETS_DIR, C_ASSETS_DIR] as $dir) {
+//                if (file_exists($dir . 'import-map.json')) {
+//                    $import = json_decode(file_get_contents($dir . 'import-map.json'), true);
+//                    foreach ($import['imports'] as $key => $value) {
+//                        $json['imports'][$key] = $value;
+//                    }
+//                }
+//            }
+//            echo json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+//
+//
+        ?>
 
 
         </script>
@@ -180,7 +180,7 @@ class AssetsManager
      * Used to print a CSS tag
      *
      * @param string $handle
-     * @param \dashboard\assets\Asset $asset
+     * @param Asset $asset
      *
      * @return bool|string
      * @access private
@@ -240,7 +240,7 @@ class AssetsManager
      * @return void
      * @access public
      *
-     * @throws \JsonException
+     * @throws JsonException
      * @since  1.0
      */
     public function add_inline_css(string $handle, string $content, array $deps): void
@@ -450,7 +450,7 @@ class AssetsManager
      * In this case we print the tag directly.
      * (it should be embedded in a template)
      *
-     * @param \dashboard\assets\Asset $asset
+     * @param Asset $asset
      *
      * @return void
      * @access private
@@ -484,7 +484,7 @@ class AssetsManager
      * Used to print the script tag
      *
      * @param string $handle
-     * @param \dashboard\assets\Asset $asset
+     * @param Asset $asset
      *
      * @return false|string
      * @access  private
@@ -604,7 +604,7 @@ class AssetsManager
      * @param string $handle asset identification
      * @param bool $footer from footer (true) or header list
      *
-     * @return null|\dashboard\assets\Asset
+     * @return null|Asset
      * @access public
      *
      * @since  1.0
@@ -654,7 +654,7 @@ class AssetsManager
             foreach ($var as $name => $value) {
                 try {
                     echo 'var ' . $name . '=' . json_encode($value, JSON_THROW_ON_ERROR) . ';' . PHP_EOL;
-                } catch (\JsonException $exception) {
+                } catch (JsonException $exception) {
                     echo '// Error: ' . $exception->getMessage() . '\n';
                 }
             }
@@ -801,5 +801,3 @@ class AssetsManager
     }
 
 }
- 
- 

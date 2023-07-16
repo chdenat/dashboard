@@ -6,13 +6,13 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 08/07/2023  11:44                                                                                *
+ * Last updated on : 16/07/2023  10:16                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-import {Toast} from "bootstrap"
+//import {Toast} from "bootstrap"
 
 
 /**
@@ -373,7 +373,7 @@ export class Toaster {
         })
 
         // Init Boostrap Toast
-        const toast = new Toast(toastNode)
+        const toast = new bootstrap.Toast(toastNode)
         toast.show()
     }
 }

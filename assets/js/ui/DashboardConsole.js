@@ -1,5 +1,3 @@
-
-
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Project : dashboard                                                                                                *
@@ -8,18 +6,19 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 08/07/2023  16:16                                                                                *
+ * Last updated on : 16/07/2023  08:31                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-import {Bus as ConsoleEvent} from 'Bus'
-import {dsb} from 'dsb'
+import {dsb} from '/dashboard/assets/js/dsb.js'
+import {Bus as ConsoleEvent} from '/dashboard/assets/vendor/EventEmitter/Bus.js'
 
 //import {OverlayScrollbars} from 'overlayscrollbars'
 
 class DashboardConsole {
+    static event = ConsoleEvent
     #id = null
     #console = null
     #body = null
@@ -27,7 +26,6 @@ class DashboardConsole {
     #last = null
     #scroller = null
     #running = true
-    static event = ConsoleEvent
 
     /**
      *
@@ -66,6 +64,51 @@ class DashboardConsole {
         // Set it ready to print
         this.#prepare_next()
         DashboardConsole.event.emit(`console/start/${this.#id}`)
+    }
+
+    /**
+     * Get last console-text element
+     *
+     * @returns {null}
+     */
+    get last() {
+        return this.#last
+    }
+
+    /**
+     * Get all the console content
+     *
+     * @returns {string}
+     */
+    get text() {
+        return this.#body.innerText
+    }
+
+    /**
+     * Get the console CSS selector
+     *
+     * @returns console selector
+     */
+    get console() {
+        return this.#console
+    }
+
+    /**
+     * Get the running status
+     *
+     * @returns {null}
+     */
+
+    get running() {
+        return this.#running
+    }
+
+    /**
+     * Return id
+     * @return {null}
+     */
+    get id() {
+        return this.#id
     }
 
     /**
@@ -164,7 +207,7 @@ class DashboardConsole {
      * @param parameter             parameter could be an event
      * @returns {Promise<void>}
      */
-    export =  (parameter) => {
+    export = (parameter) => {
         const from_event = parameter instanceof Event
         if (from_event) {
             parameter.preventDefault()
@@ -175,11 +218,11 @@ class DashboardConsole {
         DashboardConsole.event.emit(`console/export/${this.#id}`)
 
         // We alert the user with a toast
-            dsb.toast.message({
-                title: dsb.ui.get_text_i18n('console/export-text', 'title'),
-                message: dsb.ui.get_text_i18n('console/export-text', 'text'),
-                type: 'success'
-            })
+        dsb.toast.message({
+            title: dsb.ui.get_text_i18n('console/export-text', 'title'),
+            message: dsb.ui.get_text_i18n('console/export-text', 'text'),
+            type: 'success'
+        })
 
     }
 
@@ -278,51 +321,6 @@ class DashboardConsole {
         this.#last = document.createElement('console-text')
         this.#body.append(this.#last)
         return this.#last
-    }
-
-    /**
-     * Get last console-text element
-     *
-     * @returns {null}
-     */
-    get last() {
-        return this.#last
-    }
-
-    /**
-     * Get all the console content
-     *
-     * @returns {string}
-     */
-    get text() {
-        return this.#body.innerText
-    }
-
-    /**
-     * Get the console CSS selector
-     *
-     * @returns console selector
-     */
-    get console() {
-        return this.#console
-    }
-
-    /**
-     * Get the running status
-     *
-     * @returns {null}
-     */
-
-    get running() {
-        return this.#running
-    }
-
-    /**
-     * Return id
-     * @return {null}
-     */
-    get id() {
-        return this.#id
     }
 
 }

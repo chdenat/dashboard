@@ -6,12 +6,12 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 07/07/2023  12:03                                                                                *
+ * Last updated on : 16/07/2023  08:16                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {Block} from 'Block'
+import {Block} from '/dashboard/assets/js/Block.js'
 
 class Dashboard {
     #cpath = ''

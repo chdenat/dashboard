@@ -6,16 +6,16 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 08/07/2023  16:15                                                                                *
+ * Last updated on : 16/07/2023  10:30                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {Bus as LoggerEvent} from 'Bus'
-import {DashboardConsole} from 'DashboardConsole'
-import {dsb} from 'dsb'
+import {dsb} from '/dashboard/assets/js/dsb.js'
 //import {OverlayScrollbars} from 'overlayscrollbars'
-import {LogContext} from 'LogContext'
+import {LogContext} from '/dashboard/assets/js/LogContext.js'
+import {DashboardConsole} from '/dashboard/assets/js/ui/DashboardConsole.js'
+import {Bus as LoggerEvent} from '/dashboard/assets/vendor/EventEmitter/Bus.js'
 
 class Logger {
 

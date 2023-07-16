@@ -6,12 +6,12 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 09/07/2023  16:42                                                                                *
+ * Last updated on : 16/07/2023  08:16                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {Block} from 'Block'
+import {Block} from '/dashboard/assets/js/Block.js'
 
 export class BlockAnimationScheduler {
     #total = 0

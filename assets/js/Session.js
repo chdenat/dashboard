@@ -6,13 +6,13 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 14/04/2023  15:43                                                                                *
+ * Last updated on : 16/07/2023  09:45                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {MINUTE} from 'dsb'
-import {User}   from 'User'
+import {MINUTE} from '/dashboard/assets/js/dsb.js'
+import {User} from '/dashboard/assets/js/User.js'
 
 export class Session {
     /**
@@ -21,20 +21,20 @@ export class Session {
      * @since 1.0
      */
     context = {}
-    
+
     // Main session timer
     endTimer = 0
     END_TIMER = 15 * MINUTE
-    
+
     //Final countdown
     finalTimer = 0
     FINAL_TIMER = 2 * MINUTE
-    
+
     // Timer before the final countdown
     endSoonTimer = 0
     SOON_TIMER = 0 //later
-    
-    
+
+
     /**
      * User session initialisation
      *
@@ -43,7 +43,7 @@ export class Session {
     constructor() {
         this.init()
     }
-    
+
     init = () => {
         this.setContext().then(() => {
             if (this.context.logged) {
@@ -55,7 +55,7 @@ export class Session {
             }
         })
     }
-    
+
     /**
      * We launch 2 timers,
      * one for the end of session and one that ends before, to warn the user the session will expire soon
@@ -64,17 +64,17 @@ export class Session {
      *
      */
     checkExpiration = () => {
-        
+
         /**
          * Bail early if we are in a permanent session
          */
         if (this.getPermanent()) {
             return
         }
-        
+
         this.SOON_TIMER = this.END_TIMER - this.FINAL_TIMER
-        
-        
+
+
         /**
          * Countdowns start...
          */
@@ -96,7 +96,7 @@ export class Session {
             this.SOON_TIMER,
         )
     }
-    
+
     /**
      * The session is closed, we launch the required modal to invite user
      * to login or to stay unlogged
@@ -106,17 +106,17 @@ export class Session {
      */
     close = () => {
         this.pauseActivity()
-        
+
         clearTimeout(this.endSoonTimer)
         clearInterval(this.finalTimer)
         dsb.modal.load('end-session')
         dsb.modal.show()
-        
+
         //  (new Modal ({action='end-session'})).show()
-        
-        
+
+
     }
-    
+
     /**
      * The session will close soon,we launch the required modal to invite user
      * to stay logged in or to log out
@@ -126,14 +126,14 @@ export class Session {
      */
     closeSoon = async () => {
         this.pauseActivity()
-        
+
         await dsb.modal.load('end-session-soon')
-        
+
         clearInterval(this.finalTimer)
         this.finalTimer = setInterval(this.countdownBeforeSessionEnds, this.FINAL_TIMER)
         dsb.modal.show()
     }
-    
+
     /**
      * Relaunch the login modal fro a modal
      *
@@ -145,7 +145,7 @@ export class Session {
     relog = async () => {
         await dsb.modal.load('login-form')
     }
-    
+
     /**
      * The session continues (after an activity event.
      * We reinitiate some data
@@ -157,7 +157,7 @@ export class Session {
         this.clearAllTimers()
         this.checkExpiration()
     }
-    
+
     /**
      * Clear all the timers we use for the session management
      *
@@ -169,7 +169,7 @@ export class Session {
         clearTimeout(this.endSoonTimer)
         clearInterval(this.finalTimer)
     }
-    
+
     /**
      * Show the countdown of time befoer the end of the session
      *
@@ -186,7 +186,7 @@ export class Session {
             }
         }
     }
-    
+
     /**
      * Trapping activity events
      *
@@ -198,7 +198,7 @@ export class Session {
             document.addEventListener(event, this.continues)
         })
     }
-    
+
     /**
      * Pause trapping of activity events
      *
@@ -228,7 +228,7 @@ export class Session {
             document.removeEventListener('session-soon-exit', this.closeSoon)
         }
     }
-    
+
     /**
      * Shortcut to prepareModals(false)
      *
@@ -238,7 +238,7 @@ export class Session {
     removeModals = () => {
         this.prepareModals(false)
     }
-    
+
     /**
      * Get the user session context defined in PHP by doing an Ajax request.
      *
@@ -248,25 +248,25 @@ export class Session {
      *
      */
     setContext = async () => {
-        
+
         /**
          * User context is based on session information
          */
         await fetch(dsb_ajax.get + '?' + new URLSearchParams({
             action: 'get-session',
         })).then(response => {
-                if (!response.ok) {
-                    throw Error(response.statusText)
-                }
-                return response
-            })
+            if (!response.ok) {
+                throw Error(response.statusText)
+            }
+            return response
+        })
             .then(response => response.json())
             .then(session => {
                 this.context = session
             })
-        
+
     }
-    
+
     /**
      * Clear the user session context content  locally (session marked as logged out)
      *
@@ -283,9 +283,9 @@ export class Session {
             activity: 0,
             permanent: false,
         }
-        
+
     }
-    
+
     /**
      * Set permanent (ie no session lifetime tracking) or not (default)
      *
@@ -296,7 +296,7 @@ export class Session {
     setPermanent = (permanent = false) => {
         this.context.permanent = permanent
     }
-    
+
     /**
      * Get permanent user context value
      *
@@ -306,7 +306,7 @@ export class Session {
     getPermanent = () => {
         return this.context.permanent
     }
-    
+
     /**
      * Return true if session is active, else false.
      *
@@ -315,5 +315,5 @@ export class Session {
     active = () => {
         return this.context.logged ?? false
     }
-    
+
 }

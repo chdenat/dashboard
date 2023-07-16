@@ -6,15 +6,15 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 02/07/2023  11:07                                                                                *
+ * Last updated on : 16/07/2023  10:30                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-import * as html2canvas from 'html2canvas'
-import * as jsPDF from 'jsPDF'
-import {DateTime} from 'luxon'
+import * as html2canvas from '/dashboard/assets/vendor/html2canvas/html2canvas.min.js'
+import * as jsPDF from '/dashboard/assets/vendor/jsPDF/jspdf.umd.min.js'
+import {DateTime} from '/dashboard/assets/vendor/luxon.min.js'
 
 // dummy...
 let dummy = jsPDF

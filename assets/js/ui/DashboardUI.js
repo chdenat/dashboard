@@ -6,16 +6,16 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 15/07/2023  12:04                                                                                *
+ * Last updated on : 16/07/2023  10:30                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-import {Block} from 'Block'
-import {DashboardLangManager} from 'DashboardLangManager'
-import {DashboardMenu as Menu} from 'DashboardMenu'
-import {DashboardUtils as Utils} from 'DashboardUtils'
+import {Block} from '/dashboard/assets/js/Block.js'
+import {DashboardUtils as Utils} from '/dashboard/assets/js/DashboardUtils.js'
+import {DashboardLangManager} from '/dashboard/assets/js/ui/DashboardLangManager.js'
+import {DashboardMenu as Menu} from '/dashboard/assets/js/ui/DashboardMenu.js'
 
 export class DashboardUI {
 

@@ -6,13 +6,13 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 29/05/2023  11:43                                                                                *
+ * Last updated on : 16/07/2023  08:31                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-import {Bus} from 'Bus'
+import {Bus} from '/dashboard/assets/vendor/EventEmitter/Bus.js'
 
 export class DSBSwitchElement {
 

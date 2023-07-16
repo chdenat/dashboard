@@ -8,7 +8,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 28/04/2023  16:32                                                                                *
+ * Last updated on : 16/07/2023  10:30                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -36,8 +36,8 @@ Hooks::instance()->add_action( 'dashboard/scripts', function () {
 		    Hooks::instance()->add_action( 'assets/register-js', function () {
 			AssetsManager::instance()->add_to_js_list( 'choices', CHOICES_JS, [] );
 			
-			AssetsManager::instance()->add_to_js_list( 'jscookie', JSCOOKIE_JS. 'js.cookie.min.js', [] );
-			//AssetsManager::instance()->add_to_js_list( 'bootstrap', BOOTSTRAP_JS . 'bootstrap.bundle.min.js', [] );
+			AssetsManager::instance()->add_to_js_list('jscookie', JSCOOKIE_JS . 'js.cookie.min.js', []);
+                AssetsManager::instance()->add_to_js_list('bootstrap', BOOTSTRAP_JS . 'bootstrap.bundle.min.js', []);
 
 //AssetsManager::instance()->add_to_js_list( 'dsb', D_JS_URL . 'dsb.js', [],type: Asset::MODULE);
 			AssetsManager::instance()->add_to_js_list( 'dashboard', D_JS_URL . 'dashboard.js', [

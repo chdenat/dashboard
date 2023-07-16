@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/02/2023  19:06                                                                                *
+ * Last updated on : 16/07/2023  10:30                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -15,8 +15,8 @@
 /**
  * Dependencies
  */
-import {openDB} from 'idb';
-import {DateTime} from 'luxon'
+import {openDB} from '/dashboard/assets/vendor/idb/idb.min.js';
+import {DateTime} from '/dashboard/assets/vendor/luxon.min.js'
 
 let millis = 1000
 

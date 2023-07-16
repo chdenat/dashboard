@@ -6,31 +6,31 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 15/07/2023  12:04                                                                                *
+ * Last updated on : 16/07/2023  10:30                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {Block} from 'Block'
-import * as bootstrap from 'bootstrap'
-import {Bus as DSBEvent} from 'Bus'
-import {Dashboard} from 'Dashboard'
-import {DashboardLangManager} from 'DashboardLangManager'
-import {DashboardMenu as Menu} from 'DashboardMenu'
-import {DashboardResponsiveTabs} from 'DashboardResponsiveTabs'
+import {Block} from '/dashboard/assets/js/Block.js'
+//import * as bootstrap from 'bootstrap'
+import {Dashboard} from '/dashboard/assets/js/Dashboard.js'
+import {LocalDB} from '/dashboard/assets/js/db/LocalDB.js'
+import {Session} from '/dashboard/assets/js/Session.js'
+import {DashboardLangManager} from '/dashboard/assets/js/ui/DashboardLangManager.js'
+import {DashboardMenu as Menu} from '/dashboard/assets/js/ui/DashboardMenu.js'
+import {DashboardResponsiveTabs} from '/dashboard/assets/js/ui/DashboardResponsiveTabs.js'
 
-import {DashboardUI as UI} from 'DashboardUI'
-import {DashboardWebComponentsManager} from 'DashboardWebComponentsManager'
-import {LocalDB} from 'LocalDB'
-import {customAlphabet} from 'nanoid'
-import {Responsive} from 'Responsive'
-import {Session} from 'Session'
-import {Toaster} from 'Toaster'
-import {User} from 'User'
+import {DashboardUI as UI} from '/dashboard/assets/js/ui/DashboardUI.js'
+import {DashboardWebComponentsManager} from '/dashboard/assets/js/ui/DashboardWebComponentsManager.js'
+import {Responsive} from '/dashboard/assets/js/ui/Responsive.js'
+import {User} from '/dashboard/assets/js/User.js'
+import {Bus as DSBEvent} from '/dashboard/assets/vendor/EventEmitter/Bus.js'
+import {customAlphabet} from '/dashboard/assets/vendor/nanoid.js'
+import {Toaster} from '/dashboard/assets/vendor/Toaster.js'
 
 //import {OverlayScrollbars} from 'overlayscrollbars' // keep lwercase
 
-await import ('sprintf')
+await import ('/dashboard/assets/vendor/sprintf.min.js')
 
 const nanoid = customAlphabet('1234567890', 6)
 
@@ -1506,7 +1506,7 @@ export var dsb = {
 
         resizeWindowEvent: () => {
             if (Responsive.isSmallDevice()) {
-              Menu.collapse()
+                Menu.collapse()
 
             } else if (Responsive.isExtraLargeDevice()) {
                 Menu.unCollapse()

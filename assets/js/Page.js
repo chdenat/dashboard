@@ -6,13 +6,13 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 09/07/2023  11:52                                                                                *
+ * Last updated on : 16/07/2023  09:45                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {Animation} from "Animation";
-import {dsb} from "dsb";
+import {dsb} from '/dashboard/assets/js/dsb.js'
+import {Animation} from '/dashboard/assets/js/ui/Animation.js'
 
 export class Page {
 

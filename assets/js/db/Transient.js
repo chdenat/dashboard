@@ -6,13 +6,13 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/06/2023  19:21                                                                                *
+ * Last updated on : 16/07/2023  08:34                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {dsb, MINUTE} from 'dsb'
-import {DateTime} from 'luxon'
+import {dsb, MINUTE} from '/dashboard/assets/js/dsb.js'
+import {DateTime} from '/dashboard/assets/vendor/luxon.min.js'
 
 class Transient {
     #store

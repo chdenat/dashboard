@@ -1,17 +1,17 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : shelteradmin                                                                                             *
+ * Project : dashboard                                                                                                *
  * File : Responsive.js                                                                                               *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 18/06/2023  16:49                                                                                *
+ * Last updated on : 16/07/2023  08:32                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {DashboardUI} from 'DashboardUI'
+import {DashboardUI} from '/dashboard/assets/js/ui/DashboardUI.js'
 
 
 export class Responsive {

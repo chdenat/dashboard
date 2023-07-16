@@ -6,16 +6,16 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 08/07/2023  20:02                                                                                *
+ * Last updated on : 16/07/2023  08:32                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-import {Animation} from 'Animation'
-import {Bus as BlockEvent} from 'Bus'
-import {DashboardUI as UI} from 'DashboardUI'
-import {nanoid} from 'nanoid'
+import {Animation} from '/dashboard/assets/js/ui/Animation.js'
+import {DashboardUI as UI} from '/dashboard/assets/js/ui/DashboardUI.js'
+import {Bus as BlockEvent} from '/dashboard/assets/vendor/EventEmitter/Bus.js'
+import {nanoid} from '/dashboard/assets/vendor/nanoid.js'
 
 let blocksList = [];
 

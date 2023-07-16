@@ -6,12 +6,12 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 15/07/2023  17:01                                                                                *
+ * Last updated on : 16/07/2023  08:32                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {DashboardUI as UI} from 'DashboardUI'
+import {DashboardUI as UI} from '/dashboard/assets/js/ui/DashboardUI.js'
 
 export class DashboardResponsiveTabs {
 
