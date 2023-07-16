@@ -1,27 +1,24 @@
-/***********************************************************************************************************************
- *
- * Project : supervix4
- * file : EventEmitter.js
- *
- * fork from  https://github.com/dimitrilahaye/vanilla-js-es6-event-emitter
- *
- * @author  Christian Denat
- * @email contact@noleam.fr
- * --
- *
- * updated on :  7/16/22, 4:50 PM
- *
- * @copyright (c) 2022 noleam.fr
- *
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : shelteradmin                                                                                             *
+ * File : Bus.js                                                                                                      *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 16/07/2023  17:38                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
  **********************************************************************************************************************/
 
-import {EventEmitter} from "./EventEmitter.js";
+import {EventEmitter} from './EventEmitter.js'
 
 /**
  * EventEmitter classe singleton.
  * Require EventEmitter class
  */
- const Bus = (function() {
+const Bus = (function () {
 
     /** @type {Object} module public api */
     var singleton = {};
@@ -34,7 +31,7 @@ import {EventEmitter} from "./EventEmitter.js";
      * @return {EventEmitter} an EventEmitter class instance
      * @private
      */
-    singleton._getInstance = function() {
+    singleton._getInstance = function () {
         if (!_instance) {
             _instance = new EventEmitter();
         }
