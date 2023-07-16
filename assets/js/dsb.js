@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/07/2023  10:30                                                                                *
+ * Last updated on : 16/07/2023  12:12                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -872,6 +872,22 @@ export var dsb = {
                 .then(data => data.exist)
                 .catch(exception => undefined)
         },
+        readVersion: async (file) => {
+            // Send the halt command
+            return fetch(file, {
+                method: 'GET',
+            }).then(response => {
+                if (!response.ok) {
+                    throw Error(response.statusText)
+                }
+                return (response.json())
+            })
+                .catch(error => {
+                        console.error(error)
+                        return {}
+                    }
+                )
+        },
 
         importWebComponents: (...webComponents) => {
             webComponents.forEach(webComponent => {
@@ -881,6 +897,8 @@ export var dsb = {
                 document.getElementsByTagName('head')[0].appendChild(scriptTag);
             })
         }
+
+
     },
     /**
      * UI management
@@ -1595,7 +1613,7 @@ export var dsb = {
 
         // We need to manage some history retrieval
         dsb.initialized = true
-        console.info('Dashboard Engine is running.')
+        console.info(`Dashboard Engine [${dsb.instance.version}] is running!`)
 
         return this
     },

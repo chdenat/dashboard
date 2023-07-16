@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/07/2023  08:16                                                                                *
+ * Last updated on : 16/07/2023  12:12                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -19,12 +19,20 @@ class Dashboard {
     #dir = 'pages'
     pages = []
 
+    #version = ''
+
     #dpath = 'dashboard/' + this.#js_path
 
     constructor(cpath, dir = 'templates/pages') {
         this.#cpath = `/${cpath}/`
         this.#dir = `${dir}/`
+        dsb.utils.readVersion('/dashboard/version.json').then(data => {
+            if (data) {
+                this.#version = data.dashboard
+            }
+        })
     }
+
 
     /**
      * Return the current page name
@@ -51,6 +59,9 @@ class Dashboard {
         return window[dsb.utils.kebab2Camel(this.pageName)]
     }
 
+    get version() {
+        return this.#version
+    }
 
     /**
      * Import page controller.
