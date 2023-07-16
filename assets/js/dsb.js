@@ -1,26 +1,38 @@
-/***********************************************************************************************************************
- *
- * Project : supervix4
- * file : utils.js
- *
- * @author  Christian Denat
- * @email contact@noleam.fr
- * --
- *
- * updated on :  1/18/22, 11:19 AM
- *
- * @copyright (c) 2022 noleam.fr
- *
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : dsb.js                                                                                                      *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 16/07/2023  12:12                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
  **********************************************************************************************************************/
-import {customAlphabet} from '../vendor/nanoid.js'
-import {EventEmitter} from "../vendor/EventEmitter/EventEmitter.js";
-import {LocalDB} from "./LocalDB.js";
-import {Dashboard} from "./Dashboard.js";
+import {Block} from '/dashboard/assets/js/Block.js'
+//import * as bootstrap from 'bootstrap'
+import {Dashboard} from '/dashboard/assets/js/Dashboard.js'
+import {LocalDB} from '/dashboard/assets/js/db/LocalDB.js'
+import {Session} from '/dashboard/assets/js/Session.js'
+import {DashboardLangManager} from '/dashboard/assets/js/ui/DashboardLangManager.js'
+import {DashboardMenu as Menu} from '/dashboard/assets/js/ui/DashboardMenu.js'
+import {DashboardResponsiveTabs} from '/dashboard/assets/js/ui/DashboardResponsiveTabs.js'
 
-await import ('../vendor/sprintf/sprintf.min.js');
+import {DashboardUI as UI} from '/dashboard/assets/js/ui/DashboardUI.js'
+import {DashboardWebComponentsManager} from '/dashboard/assets/js/ui/DashboardWebComponentsManager.js'
+import {Responsive} from '/dashboard/assets/js/ui/Responsive.js'
+import {User} from '/dashboard/assets/js/User.js'
+import {Bus as DSBEvent} from '/dashboard/assets/vendor/EventEmitter/Bus.js'
+import {customAlphabet} from '/dashboard/assets/vendor/nanoid.js'
+import {Toaster} from '/dashboard/assets/vendor/Toaster.js'
+
+//import {OverlayScrollbars} from 'overlayscrollbars' // keep lwercase
+
+await import ('/dashboard/assets/vendor/sprintf.min.js')
 
 const nanoid = customAlphabet('1234567890', 6)
-const {Template} = await import ('./Template.js')
 
 const SECOND = 1000
 const MINUTE = 60 * SECOND
@@ -30,36 +42,20 @@ const WEEK = 7 * DAY
 const MONTH = 30 * DAY
 const YEAR = 365 * DAY
 
-export {SECOND, MINUTE, HOUR, DAY}
+export {SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, YEAR}
 
-var dsb = {
+export var dsb = {
 
-    content_event: new EventEmitter(),
+    content_event: DSBEvent,
 
     add_instance(instance) {
         dsb.instance = new Dashboard(instance)
     },
-
+    instance: null,
 
     // app information
     page: {
         main_title: 'Dashboard',
-
-        /**
-         * Set page title
-         *
-         * @param title if set, page title is "MAIN : title" else (default) it is "MAIN"
-         *
-         * @since 1.0
-         */
-        set_title: (title = null) => {
-            if (title === null) {
-                document.title = dsb.page.main_title
-                return
-            }
-
-            document.title = `${dsb.page.main_title}: ${title}`
-        },
 
         /**
          * History management from link on menu
@@ -76,8 +72,8 @@ var dsb = {
             href = href.startsWith('/') ? href : '/' + href
             history.pushState({
                 title: document.title,
-                full: href
-            }, dsb.menu.item_text(item), href)
+                full: href,
+            }, Menu.item_text(item), href)
         },
 
         /**
@@ -96,7 +92,7 @@ var dsb = {
             let href = url.startsWith('/') ? url : '/' + url
             history.pushState({
                 title: page_title,
-                full: full
+                full: full,
             }, page_title, href)
         },
 
@@ -116,7 +112,7 @@ var dsb = {
                 url = event.state.full ?? '/home'
             }
 
-            location.href = url;
+            location.href = url
         },
 
         /**
@@ -126,317 +122,10 @@ var dsb = {
          */
         init: () => {
             try {
-                window.onpopstate = (event) => setTimeout(dsb.page.show_history_item, 0, event);
+                window.onpopstate = (event) => setTimeout(dsb.page.show_history_item, 0, event)
             } catch (e) {
                 console.error(e)
             }
-        }
-    },
-
-    menu: {
-
-        template_id: "#menu#",
-        pathname: null,
-        current_roles: [],
-        json: null,
-
-        change_id: (new_id) => {
-            dsb.menu.template_id = new_id
-        },
-
-        /**
-         * Check the URL to find if it exists in the menu.
-         * If it exists (or something similar)
-         * and open the menu accordingly.
-         *
-         * If nothing found, we open the default
-         *
-         *
-         * @param template
-         * @param pathname
-         */
-        synchronize: (template, pathname = '') => {
-            dsb.menu.change_id(template.ID)
-
-            dsb.menu.read_json().then(data => {
-                // If there is no pathname, we use the window location
-                if (pathname === '' || pathname === null) {
-                    pathname = `${window.location.pathname}${window.location.hash}`
-                }
-                let origin = pathname
-                pathname = dsb.menu._clean_path(pathname)
-
-                let found = false               // found in the menu
-                let found_with_role = false     // found with a specific role if not in menu
-                let item = {}
-
-                // We try as is,then without hash and finally without index.
-                for (let key of [' ', '#', 'index']) {
-                    pathname = pathname.split(key)[0]
-                    // Some entry in the menu ?
-                    item = document.querySelector(`[data-template-id="${template.ID}"] a[data-level*="menu-item-"][href*="${pathname}"]`);
-                    if (null !== item) {
-                        // Yes, so we clean and check it
-                        if (pathname === dsb.menu._clean_path(item.getAttribute('href').split(key)[0])) {
-                            found = true;
-                            break
-                        }
-
-                    } else if (!dsb.user.session.active()) {
-                        // Nothing... May be the user need to be logged in to see this item in the menu ...
-                        found_with_role = dsb.menu.find_items_with_roles(dsb.menu.json.menu, 'href', pathname, dsb.menu.all_roles(), true).length > 0
-
-                    }
-                    if (found || found_with_role) {
-                        break;
-                    }
-                }
-
-                if (!found) {
-                    if (!found_with_role) {
-                        // Nothing with role
-                        //  we try to open the default if it is / | /home => pathname = null | home
-                        if (pathname === '' || pathname === 'home') {
-                            item = document.querySelector(`[data-template-id="${template.ID}"] a[data-level*="menu-item"][data-default-page]`);
-                            if (null !== item) {
-                                found = true;
-                            }
-                        }
-                    } else {
-                        // We find an entry with the role : we load the modal and pass some parameters
-                        dsb.menu.pathname = pathname
-                        dsb.modal.load('login-form', {template: template, pathname: pathname});
-                        dsb.modal.show()
-                        return
-                    }
-                }
-                // If we found something, we'll open the right menu
-                // else we redirect to 404.
-                if (found || found_with_role && item) {
-                    let levels = item.dataset.level.split('-')
-                    let id = 'menu-item-'
-                    levels.slice(2).forEach(level => {  // remove the 2 first, 'menu' and 'item'
-                        id += level
-                        // try to click on item defined as href=#<level-x-x>
-                        let item = document.querySelector(`[href="#${id}"]`)
-                        // or id= <level-x-x>
-                        if (null === item) {
-                            item = document.querySelector(`[data-level=${id}]`)
-                        }
-
-                        // Click on
-                        let link = item.getAttribute('href')
-                        if (link.startsWith('#menu')) {
-                            // Menu section : we click to open it.
-                            item.click()
-                        } else {
-                            // Menu item : we do not click but simulate
-                            dsb.menu.click(item, true);
-                            dsb.ui.show_tab(Template._check_link(link).tab)
-                        }
-                        id += '-'
-
-                    })
-                } else {
-                    Template.page_404('#content#', origin)
-                }
-            })
-        },
-
-        /**
-         * Get all roles
-         */
-        all_roles: () => {
-            return ['logged', 'admin']
-        },
-
-        /**
-         * Find a key and/or value in a nested object
-         *
-         * => from https://www.tutorialspoint.com/deep-search-json-object-javascript
-         *
-         * @return {{}|*}
-         * @param obj
-         * @param key
-         * @param value
-         * @param roles
-         * @param single
-         */
-        find_items_with_roles: (obj = {}, key, value, roles = []) => {
-            const result = []
-            let used_roles = {}
-            const recursive = (obj = {}) => {
-                if (!obj || typeof obj !== 'object') {
-                    return;
-                }
-                // If no roles in input or no roles in data, search is enabled
-                let search = roles.length === 0 || obj.roles === undefined
-
-                if (obj?.roles !== undefined && roles.length > 0) {
-                    // If there are some roles, we try to see if roles in data are
-                    //  included in input roles
-                    used_roles = obj.roles.filter(x => roles.includes(x))
-                    search = used_roles.length > 0
-                }
-
-                // search is enabled
-                if (search) {
-                    // key and value match... OK we get'em
-
-                    if (dsb.menu._clean_path(obj[key]) === dsb.menu._clean_path(value)) {
-                        result.push({data: obj, roles: used_roles});
-                    }
-                    // Lets'trayt
-                    Object.keys(obj).forEach(function (k) {
-                        recursive(obj[k]);
-                    })
-                }
-            }
-            // All starts here
-            recursive(obj);
-            return result;
-        },
-
-
-        /**
-         * Click on a menu item (in cascade, ie it opens all the hierarchy menu)
-         * - mark it opened
-         * - display the url in the history
-         *
-         * @param item
-         * @param historize  indicates if we need historization (default false)
-         *
-         * @since 1.0
-         *
-         */
-        click: async (item, historize = false) => {
-            // it's the link ?  Manage history (and add url in the browser bar)
-            if (item?.dataset?.level) {
-                // Mark new menu item opened
-                document.querySelector(`.opened[href]`)?.classList.remove('opened')
-                item.classList.add('opened')
-                // change title
-                dsb.page.set_title(dsb.menu.item_text(item)) //TODO change
-
-                if (historize) {
-                    dsb.page.add_to_history_from_menu(item)
-                }
-
-
-            }
-            return false
-        },
-
-        /**
-         * Get the text from the menu item
-         *
-         * @param item
-         * @return {*}
-         *
-         * @since 1.0
-         *
-         */
-        item_text: (item) => {
-            return item?.innerText
-        },
-
-        /**
-         * Suppress / at both first and end
-         *
-         * @param path
-         * @return path
-         *
-         * @private
-         */
-        _clean_path: (path) => {
-            if (path) {
-                if (path.startsWith('/')) {
-                    path = path.substring(1)
-                }
-                if (path.endsWith('/')) {
-                    path = path.substring(0, path.length - 1)
-                }
-            }
-            return path
-        },
-
-        update: () => {
-            let id = dsb.user.session.context?.referrer;
-            if (id) {
-                let item = id.split(/(level-[0-9]+)/gm);
-            }
-        },
-
-        read_json: async () => {
-            if (dsb.menu.json === null) {
-                await fetch((dsb_ajax.get) + '?' + new URLSearchParams({
-                    action: 'read-json-menu',
-                })).then(function (response) {
-                    return response.json()
-                }).then(function (data) {
-                    dsb.menu.json = data
-                }).catch((error) => {
-                    console.error('Error:', error); // Print or not print ?
-                })
-            }
-            return dsb.menu.json
-        },
-
-        /**
-         * Menu Initialisation
-         *
-         * @since 1.0
-         *
-         */
-        init: async (block) => {
-            /**
-             *
-             * Read JSON menu
-             *
-             * @since 1.0
-             *
-             */
-
-            await dsb.menu.read_json()
-
-            let menu_container = document.getElementById('menu-container');
-
-            // We trap a specifi event on menu items click to instantiate the collapse/uncollapse
-            dsb.content_event.on('click', (item) => {
-                dsb.menu.click(item, true)
-            })
-
-            /**
-             * Close/open all 1st level menu
-             */
-            let all_open = false;
-            menu_container.querySelector('#menu-container .dsb-vertical')?.addEventListener('click', (event) => {
-                all_open = !all_open
-                event.preventDefault()
-                menu_container?.querySelectorAll(`#menu-container  #menu-wrapper a[data-bs-toggle="collapse"][aria-expanded="${!all_open}"]`).forEach((element) => {
-                    let item = bootstrap.Collapse.getOrCreateInstance(menu_container.querySelector(element.getAttribute("href")))
-                    if (all_open) {
-                        item?.show()
-                    } else {
-                        item?.hide()
-                    }
-                })
-            })
-
-            /**
-             * Adds a specific class when horizontal collapse down
-             */
-            menu_container?.querySelector('.dsb-horizontal')?.addEventListener('click', (event) => {
-                menu_container.classList.toggle('collapsed')
-            });
-            dsb.menu.update();
-
-
-            /**
-             * Call synchronize when menu has been loaded
-             */
-            dsb.menu.synchronize(block, dsb.menu.pathname)
-
         },
     },
 
@@ -446,127 +135,171 @@ var dsb = {
     template: {
 
         init: () => {
-            // During the init phase, we do not use teh 404 redirection
-            Template.use_404(false)
+            // During the init phase, we do not use the 404 redirection
+            Block.use404(false)
 
-            // When a template has been loaded, we register specific link actions and load all the children
-            Template.event.on('load-done', template => {
+            // When a template has been loaded, we register specific actions
+            Block.event.on('template/loading', dsb.template.genericLoadingEvent)
 
-                // Download the family
-                Template.load_all_templates(template.container)
 
-                // Let open links in content if required
-                template.container.querySelectorAll('a[data-content]').forEach(item => {
+            // When a template has been loaded, we register specific actions
+            Block.event.on('template/loaded', dsb.template.genericLoadedEvent)
 
-                    item.addEventListener('click', event => {
-                        Template.load_from_event(event)
+            // Import all the children
+            Block.importChildren()
+
+        },
+
+
+        /**
+         * This method emits some events that could/should be managed in blocks
+         */
+        genericLoadingEvent: template => {
+            /**
+             * Start animation
+             */
+            template.loadingAnimation()
+        },
+
+        /**
+         * This method emits some events that could/should be managed in blocks
+         */
+        genericLoadedEvent: template => {
+            /**
+             * Let open links in content if required (for a tags with data-content attributes)
+             */
+            template.container.querySelectorAll('a[data-content]').forEach(item => {
+
+                item.addEventListener('click', event => {
+                    event.preventDefault()
+                    Block.loadBlockFromEvent(event).then(() => {
                         dsb.content_event.emit('click', item)
-                        event.preventDefault()
-
                     })
-
-                });
-                // Here is the case we need to open in content pseudo-modal
-                template.container.querySelectorAll('a[data-content-modal]').forEach(item => {
-                    item.addEventListener('click', dsb.ui.show_intermediate_content)
-                });
-
-                // Init UI
-                dsb.ui.init(template.container)
-
-                Template.use_404()
+                })
 
             })
 
-            // Update the page
+            /**
+             * Let's manage the select boxes and transform them into Choices Element.
+             *
+             * Selects are ignored if they use 'not-auto-choice's class
+             *
+             */
+            template.container.querySelectorAll('select:not(.not-auto-choices)').forEach(select => {
+                if (!select.hasAttribute('id')) {
+                    select.id = nanoid()
+                }
 
-            Template.load_all_templates()
+                let limit = select.dataset.limit ?? -1
+                let search = select.dataset.search ?? false
 
-        }
+                dsb.ui.lists[select.id] = new Choices(select, {
+                    itemSelectText: '',
+                    silent: true,
+                    allowHTML: true,
+                    shouldSort: false,
+                    searchEnabled: search,
+                    renderChoiceLimit: limit,
+                })
 
-    }
-    ,
+
+            })
+
+            template.container.querySelectorAll('.responsive-tabs').forEach((item) => {
+                if (!item.hasAttribute('id')) {
+                    item.id = nanoid()
+                }
+                dsb.ui.lists[`tabs-${item.id}`] = new DashboardResponsiveTabs(item)
+            })
+
+            /**
+             * Add scrolling
+             *
+             */
+            dsb.ui.add_scrolling(template.container)
+
+            /**
+             * Stop animation
+             */
+            template.loadedAnimation()
+
+            /**
+             * We can display 404 errors
+             */
+            Block.use404()
+
+        },
+
+    },
 
     /**
      * Toast management
      */
     toast: {
-        _element: null,
-        _instance: null,
         /**
          *
          * @param title        of the toast
          * @param message      content of the toast
-         * @param button
+         * @param buttons
          * @param type         any bootstrap type. Depending on the type, different icons are shown.
          * @param delay        Default to 3 seconds, To set it to permanent use 0
          * @param hide          autohide = true, permanent = false
          *
-         * @return void
+         * @return HTMLElement
          * @since 1.0
          *
          */
-        message: function ({title = '', message = '', button = null, type = 'primary', delay = 3000, hide = true}) {
+        message: function ({
+                               title = '',
+                               message = '',
+                               template = null,
+                               buttons = null,
+                               type = null,
+                               delay = null,
+                               hide = true,
 
-            let text, icon;
+                           }) {
+
+            let text, icon
+            const toast_type = type ? eval(`Toaster.type.${type.toUpperCase()}`) : null
+
             switch (type) {
                 case 'success':
                     icon = 'fas fa-check-circle'
-                    break;
+                    break
                 case 'danger':
-                    icon = 'fa fa-bomb'
-                    break;
+                    icon = 'fas fa-bomb'
+                    break
                 case 'warning':
                     icon = 'fas fa-exclamation-triangle'
-                    break;
+                    break
                 default:
-                    icon = 'fas fa-fa-bell'
+                    icon = 'fas fa-bell'
             }
 
-            // Let's use the right toast
-
-            let toast = dsb.toast.autohide
-            if (false === hide) {
-                toast = dsb.toast.permanent
-            }
-            let element = toast._element
-
-            element.querySelector('.toast-header span').innerHTML = '<i class="' + icon + '"></i>' + title
-            element.querySelector('.toast-body .toast-message').innerHTML = message
-            let btn = element.querySelector('.toast-body .btn')
-
-            if (button !== null) {
-                btn.innerHTML = button.text
-                btn.href = button.href
-                btn.id = button.id
-                btn.classList.add('btn-' + type)
-                dsb.ui.show(btn)
+            let html = ''
+            //Buttons can be an array of objects { id,href,text } or a string
+            if (buttons instanceof Array) {
+                buttons.forEach(button => {
+                    html += `<a id="${button.id}" class="btn btn-%TYPE%" href="${button.href}">${button.text}</a>`
+                })
             } else {
-                dsb.ui.hide(btn)
+                html = buttons
             }
 
-            // remove existing type information in case it has not been hidden yet.
-            let classes = element.classList
-            classes.forEach(item => {
-                if (item.startsWith('bg-')) {
-                    element.classList.remove(item)
-                }
-            })
-            element.classList.remove('bg-success', 'bg-danger', 'bg-warning')
-            element.classList.add('bg-' + type)
-
-            toast._instance.show()
-        }
-
-        ,
-
-        set_life: (delay) => {
-            if (0 === delay) {
-                dsb.toast.autohide._element.setAttribute('data-bs-autohide', false)
-            } else {
-                dsb.toast.autohide._element.setAttribute('data-bs-delay', delay)
+            let options = {
+                icon: `<i class="${icon} %TYPE%"></i>`,
+                texts: {},
             }
+
+            options.type = toast_type
+            options.delay = delay
+            options.buttons = html
+            options.template = template
+
+            return dsb.toast.toaster.create(title, message, options)
         },
+
 
         /**
          * Initialisation of the toast object
@@ -575,38 +308,29 @@ var dsb = {
          *
          * @since 1.0
          */
-        init: function (delay = 3000) {
+        init: function (delay = 5000) {
 
-            let tmp = document.querySelector('#dsb-permanent-toast .toast')
-            dsb.toast.permanent = {
-                _element: tmp,
-                _instance: new bootstrap.Toast(tmp, {autohide: false})
-            }
-            dsb.toast.autohide = {
-                _element: tmp,
-                _instance: new bootstrap.Toast(tmp, {delay: delay})
-            }
-
-            // clean classes when toast are hidden
-            dsb.toast.permanent._element.addEventListener('hidden.bs.toast', () => {
-                ["bg-success", "bg-warning", "bg-danger"].forEach(cl => {
-                    if (dsb.toast.permanent._element.classList.contains(cl)) {
-                        dsb.toast.permanent._element.classList.remove(cl);
-                    }
-                })
+            dsb.toast.toaster = new Toaster({
+                position: Toaster.position.BOTTOM_END,
+                delay: delay,
+                template: `
+<div class="toast fade text-bg-%TYPE%" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+        <span class="bs-toaster-icon d-flex">%ICON%</span>
+        <strong class="bs-toaster-title me-auto">%TITLE%</strong>
+        <small class="bs-toaster-timer text-muted">%TIMER%</small>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="bs-toaster-text toast-body">
+        %TEXT%
+        <div class="bs-toaster-buttons">%BUTTONS%</div>
+    </div>
+</div>
+`,
             })
-            dsb.toast.autohide._element.addEventListener('hidden.bs.toast', () => {
-                ["bg-success", "bg-warning", "bg-danger"].forEach(cl => {
-                    if (dsb.toast.autohide._element.classList.contains(cl)) {
-                        dsb.toast.autohide._element.classList.remove(cl);
-                    }
-                })
-            })
-            return dsb.toast;
-        }
-    }
-    ,
-
+            return dsb.toast
+        },
+    },
     modal: {
         _element: null,
         _instance: null,
@@ -625,9 +349,15 @@ var dsb = {
             this._instance = new bootstrap.Modal(this._element, {focus: false})
 
             return this
-        }
+        },
 
-        ,
+
+        /**
+         *
+         */
+        hiddenAction: (event) => {
+            console.log(event)
+        },
 
         /**
          * Show the user modal
@@ -638,8 +368,8 @@ var dsb = {
          *
          */
         show: function () {
-            this._instance.show();
-            return this;
+            this._instance.show()
+            return this
         }
         ,
 
@@ -652,8 +382,8 @@ var dsb = {
          *
          */
         hide: function () {
-            this._instance.hide();
-            return this;
+            this._instance.hide()
+            return this
         }
         ,
 
@@ -667,7 +397,7 @@ var dsb = {
          *
          */
         message: function (html) {
-            this._element.querySelector('.modal-content').innerHTML = html;
+            this._element.querySelector('.modal-content').innerHTML = html
             return this
         }
         ,
@@ -695,12 +425,12 @@ var dsb = {
                 params: JSON.stringify(params),
             })).then(function (response) {
                 return response.text()
-            }).then(function (html) {
+            }).then(async function (html) {
                 dsb.modal.message(html)
-                Template.load_all_templates(document.getElementById('dashboard-modal'))
-                return true;
+                await Block.importChildren(document.getElementById('dashboard-modal'))
+                return true
             }).catch((error) => {
-                console.error('Error:', error); // Print or not print ?
+                console.error('Error:', error) // Print or not print ?
             })
         }
         ,
@@ -721,6 +451,9 @@ var dsb = {
             generic.modal = dsb.modal
             generic.parameters = dsb.modal._parameters.keys
             document.dispatchEvent(generic)
+
+            Block.event.emit(`modal/loading/${dsb.modal._parameters.action}`, dsb.modal)
+
         },
 
         /**
@@ -737,9 +470,11 @@ var dsb = {
             // and a new specific running event
 
             let specific = new Event(`modal/loaded/${dsb.modal._parameters.action}`)
-            generic.modal = dsb.modal
-            generic.parameters = dsb.modal._parameters.keys
+            specific.modal = dsb.modal
+            specific.parameters = dsb.modal._parameters.keys
             document.dispatchEvent(specific)
+
+            Block.event.emit(`modal/loaded/${dsb.modal._parameters.action}`, dsb.modal)
         },
 
         /**
@@ -752,550 +487,44 @@ var dsb = {
             let _dialog = document.querySelector('#dashboard-modal .modal-dialog')
             _dialog.classList.remove(...sizes)
             if (size !== '') {
-                _dialog.classList.add(`modal-${size}`);
+                _dialog.classList.add(`modal-${size}`)
             }
-        }
+        },
 
     }
     ,
 
     /**
-     * User management
+     * User session management
+     *
+     * @since 1.0
+     *
+     */
+    session: new Session(),
+
+
+    /**
+     * User and Session management
+     *
+     * @since 1.2
+     *
      */
     user: {
+        init: async function () {
+            dsb.user.person = new User()
+            dsb.session = new Session()
 
-        referrer: {}
-        ,
-        activity_events: ['click', 'keydown', 'mousedown', 'mousemove', 'scroll', 'touchstart'],
-
-        /**
-         * Events are used to maintain DSB on specific events
-         */
-        events: {
-            /**
-             * Login event, when the login is successful or at load when a session is active
-             *
-             * @since 1.0
-             *
-             */
-            dsb_login: new Event("dsb-login", {}),
-            login: (event) => {
-                document.body.classList.add("logged-in");
-                document.body.classList.add(dsb.user.session.context.user);
-
-                dsb.user.session.init()
-
-                // As some parts depends on user session, we relead all the page content
-                Template.load_all_templates()
-
-                dsb.user.events.loaded();
-                event.preventDefault();
-            },
-
-            /**
-             * Logout event, when the logout is successful or at load when there is no session
-             *
-             * @since 1.0
-             *
-             */
-            dsb_logout: new Event("dsb-logout"),
-            logout: (event) => {
-                document.body.classList.remove("logged-in");
-                if ('' !== dsb.user.session.context.user) {                // user not specified... ie from PHP, not ajax
-                    document.body.classList.remove(dsb.user.session.context.user);
-                }
-
-                dsb.user.session.clear_timers()
-                dsb.user.session.remove_modals()
-                dsb.user.session.clear_context();
-
-                event.preventDefault();
-            },
-            loaded: () => {
-            }
-
-        }
-        ,
-        /**
-         * User session management
-         *
-         * @since 1.0
-         *
-         */
-        session: {
-            /**
-             * context is used to have a lot of information from PHP
-             *
-             * @since 1.0
-             */
-            context: {},
-
-            // Main session timer
-            end_timer: 0,
-            END_TIMER: 15 * MINUTE,
-
-            //Final countdown
-            final_timer: 0,
-            FINAL_TIMER: 2 * MINUTE,
-
-            // Timer before the final countdown
-            soon_timer: 0,
-            SOON_TIMER: 0, //later
-
-            /**
-             * We launch 2 timers,
-             * one for the end of session and one that ends before, to warn the user the session will expire soon
-             *
-             * @since 1.0
-             *
-             */
-            check_expiration: () => {
-
-                /**
-                 * Bail early if we are in a permanent session
-                 */
-                if (dsb.user.session.get_permanent()) {
-                    return
-                }
-
-                dsb.user.session.SOON_TIMER = dsb.user.session.END_TIMER - dsb.user.session.FINAL_TIMER
-
-
-                /**
-                 * Countdowns start...
-                 */
-
-                // The master one, used for session end
-                dsb.user.session.end_timer = setTimeout(() => {
-                        let session_event = new Event('session-exit')
-                        session_event.session = dsb.user.session.name;
-                        document.dispatchEvent(session_event)
-                    },
-                    dsb.user.session.END_TIMER
-                )
-                // Another one, used to warn that the session will end soon
-                dsb.user.session.soon_timer = setTimeout(() => {
-                        let session_event = new Event('session-soon-exit')
-                        session_event.session = dsb.user.session.name;
-                        document.dispatchEvent(session_event)
-                    },
-                    dsb.user.session.SOON_TIMER
-                )
-            },
-
-            /**
-             * The session is closed, we launch the required modal to invite user
-             * to login or to stay unlogged
-             *
-             * @since 1.0
-             *
-             */
-            close: () => {
-                dsb.user.session.pause_activity()
-
-                clearTimeout(dsb.user.session.soon_timer)
-                clearInterval(dsb.user.session.final_timer)
-                dsb.modal.load('end-session')
-                dsb.modal.show()
-
-                //  (new Modal ({action:'end-session'})).show()
-
-
-            },
-
-            /**
-             * The session will close soon,we launch the required modal to invite user
-             * to stay logged in or to log out
-             *
-             * @since 1.0
-             *
-             */
-            close_soon: () => {
-                dsb.user.session.pause_activity()
-
-                dsb.modal.load('end-session-soon')
-
-                clearInterval(dsb.user.session.final_timer)
-                dsb.user.session.final_timer = setInterval(dsb.user.session.countdown_before_session_end, dsb.user.session.FINAL_TIMER)
-                dsb.modal.show()
-            },
-
-            /**
-             * Relaunch the login modal fro a modal
-             *
-             * @return {Promise<void>}
-             *
-             * @since 1.0
-             *
-             */
-            relog: async () => {
-                await dsb.modal.load('login-form');
-            },
-
-            /**
-             * The session continues (after an activity event.
-             * We reinitiate some data
-             *
-             * @since 1.0
-             *
-             */
-            continues: () => {
-                dsb.user.session.clear_timers()
-                dsb.user.session.check_expiration()
-            },
-
-            /**
-             * Clear all the timers we use for the session management
-             *
-             * @since 1.0
-             *
-             */
-            clear_timers: () => {
-                clearTimeout(dsb.user.session.end_timer)
-                clearTimeout(dsb.user.session.soon_timer)
-                clearInterval(dsb.user.session.final_timer)
-            },
-
-            /**
-             * Show the countdown of time befoer the end of the session
-             *
-             * @since 1.0
-             *
-             */
-            countdown_before_session_end: () => {
-                let show_time = document.getElementById('end-session-timer')
-                if (show_time !== null) {
-                    if (show_time.innerHTML === '') {
-                        show_time.innerHTML = dsb.user.session.end_timer - dsb.user.session.SOON_TIMER * 1000
-                    } else {
-                        show_time.innerHTML = show_time.innerHTML - 1
-                    }
-                }
-            },
-
-            /**
-             * Trapping activity events
-             *
-             * @since 1.0
-             *
-             */
-            trap_activity: () => {
-                dsb.user.activity_events.forEach(event => {
-                    document.addEventListener(event, dsb.user.session.continues)
-                })
-            },
-
-            /**
-             * Pause trapping of activity events
-             *
-             * @since 1.0
-             *
-             */
-            pause_activity: () => {
-                dsb.user.activity_events.forEach(event => {
-                    document.removeEventListener(event, dsb.user.session.continues)
-                })
-            },
-            /**
-             * Prepare modals, ie activate the required events
-             * of stop the events to avoid modal
-             *
-             * @param prepare true add events else stop them
-             *
-             * @since 1.0
-             *
-             */
-            prepare_modals: (prepare = true) => {
-                if (prepare) {
-                    document.addEventListener('session-exit', dsb.user.session.close)
-                    document.addEventListener('session-soon-exit', dsb.user.session.close_soon)
-                } else {
-                    document.removeEventListener('session-exit', dsb.user.session.close)
-                    document.removeEventListener('session-soon-exit', dsb.user.session.close_soon)
-                }
-            },
-
-            /**
-             * Shortcut to prepare_modals(false)
-             *
-             * @since 1.0
-             *
-             */
-            remove_modals: () => {
-                dsb.user.session.prepare_modals(false)
-            },
-
-            /**
-             * Get the user session context defined in PHP by doing an Ajax request.
-             *
-             * @return {Promise<void>}
-             *
-             * @since 1.0
-             *
-             */
-            set_context: async () => {
-
-                /**
-                 * User context is based on session information
-                 */
-                await fetch(dsb_ajax.get + '?' + new URLSearchParams({
-                    action: 'get-session',
-                })).then(response => {
-                    if (!response.ok) {
-                        throw Error(response.statusText);
-                    }
-                    return response;
-                })
-                    .then(response => response.json())
-                    .then(session => {
-                        dsb.user.session.context = session
-                    })
-
-            },
-
-            /**
-             * Clear the user session context content  locally (session marked as logged out)
-             *
-             * @since 1.0
-             *
-             */
-            clear_context: () => {
-                dsb.user.session.context = {
-                    logged: false,
-                    user: '',
-                    roles: [],
-                    lifetime: '',
-                    connection: 0,
-                    activity: 0,
-                    permanent: false
-                }
-
-            },
-
-            /**
-             * Set permanent (ie no session lifetime tracking) or not (default)
-             *
-             * @param permanent  default to false
-             *
-             * @since 1.0
-             */
-            set_permanent: (permanent = false) => {
-                dsb.user.session.context.permanent = permanent
-            },
-
-            /**
-             * Get permanent user context value
-             *
-             * @since 1.0
-             *
-             */
-            get_permanent: () => {
-                return dsb.user.session.context.permanent
-            },
-
-            /**
-             * Return true if session is active, else false.
-             *
-             * @return {boolean}
-             */
-            active: () => {
-                return dsb.user.session.context.logged ?? false
-            },
-
-
-            /**
-             * User session initialisation
-             *
-             * @since 1.0
-             */
-            init: async () => {
-
-                // If the user is logged in, we starts timer for managing the session elapsed time
-                // and prepare to display some modals ('session about to exit' and 'session exited')
-
-                await dsb.user.session.set_context()
-
-                if (dsb.user.session.context.logged) {
-                    dsb.user.session.end_timer = dsb.user.session.context.lifetime * 1000
-                    dsb.user.session.SOON_TIMER = dsb.user.session.end_timer - dsb.user.session.FINAL_TIMER
-                    dsb.user.session.prepare_modals()
-                    dsb.user.session.continues()
-                    dsb.user.session.trap_activity()
-                }
-            },
-        }
-        ,
-
-        /**
-         * Login process
-         *
-         * @returns {boolean}
-         *
-         * @since 1.0
-         *
-         */
-        login: function () {
-
-            const form = document.getElementById('login');
-            const form_data = {
-                headers: {'Content-Type': 'multipart/form-data'},
-                user: form.user.value,
-                password: form.password.value,
-                action: 'login'
-            };
-            dsb.user.session.context.user = form.user.value;
-            fetch(dsb_ajax.post, {
-                method: 'POST',
-                body: JSON.stringify(form_data)
-            }).then(response => {
-                if (!response.ok) {
-                    throw Error(response.statusText);
-                }
-                return response;
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.authorization) {
-                        dsb.modal.hide();
-                        dsb.toast.message({
-                            title: dsb.ui.get_text_i18n('user/log-in', 'title'),
-                            message: sprintf(dsb.ui.get_text_i18n('user/log-in', 'text'), `<strong>${form.user.value}</strong>`),
-                            type: 'success'
-                        })
-                        document.dispatchEvent(dsb.user.events.dsb_login);
-                        return true
-                    }
-                })
-                .catch(error => {
-                        dsb.error.init('form .alert').message(error);
-                        return false
-                    }
-                )
-        }
-        ,
-
-        /**
-         * Logout process
-         *
-         * @param event Event  (null)
-         * @param button clicked button (null)
-         * @param redirection (null)
-         *
-         * @return {Promise<void>}
-         *
-         * @since 1.0
-         *
-         */
-        logout: async (event = null, button = null, redirection = null) => {
-
-            // if redirection is null, we try to get it from button, ie in data-logout-redirection
-            if (null === redirection) {
-                if (button) {
-                    redirection = button.dataset.logoutRedirection ?? null
-                }
-            }
-            const form = document.getElementById('logout-confirm')
-            const from_session_modal = (null === form) // if false, we don not use a modal
-            let form_data = {}
-
-            if (from_session_modal) {
-                // call from the exit session soon modal
-                form_data = {
-                    user: dsb.user.session.context.user,
-                    action: 'logout'
-                }
-            } else {
-                // call from the 'normal' logout modal
-                form_data = {
-                    headers: {'Content-Type': 'multipart/form-data'},
-                    user: form.user.value,
-                    action: 'logout'
-                }
-            }
-
-            await fetch(dsb_ajax.post, {
-                method: 'POST',
-                body: JSON.stringify(form_data)
-            }).then(response => {
-                if (!response.ok) {
-                    throw Error(response.statusText);
-                }
-                return response;
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.logout) {
-                        if (!from_session_modal) {
-                            dsb.modal.hide();
-                        }
-                        dsb.toast.message({
-                            title: dsb.ui.get_text_i18n('user/log-out', 'title'),
-                            message: sprintf(dsb.ui.get_text_i18n('user/log-out', 'text'), `<strong>${dsb.user.session.context.user}</strong>`),
-                            type: 'success'
-                        })
-                        document.dispatchEvent(dsb.user.events.dsb_logout);
-
-                        if (redirection) {
-                            let t = new Template('#content#', null, redirection)
-                            t.load(true)
-                            Template.reload_page()
-                        } else {
-                            Template.reload_page(false)
-                        }
-
-                    }
-                })
-                .catch(error => {
-                        dsb.error.init('form .alert').message(error);
-                    }
-                )
-        },
-        change_password: function () {
-            const form = document.getElementById('change-password');
-            const form_data = {
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                new: document.getElementById('new-password').value,
-                confirm: document.getElementById('confirm-password').value,
-                old: document.getElementById('old-password').value,
-                user: form.user?.value,
-                action: 'confirm'
-            };
-            dsb.user.session.context.user = form.user.value;
-
-            fetch(dsb_ajax.post, {
-                method: 'POST',
-                body: JSON.stringify(form_data)
-            }).then(response => {
-                if (!response.ok) {
-                    throw Error(response.statusText);
-                }
-                return response;
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.changed) {
-                        dsb.modal.hide();
-                        document.dispatchEvent(dsb.user.events.dsb_logout);
-                        dsb.toast.message({
-                            title: dsb.ui.get_text_i18n('user/new-password', 'title'),
-                            message: sprintf(dsb.ui.get_text_i18n('user/new-password', 'text'), dsb.user.session.context.user),
-                            type: 'success'
-                        })
-                        Template.reload_page()
-
-                    }
-                })
-                .catch(error => {
-                        dsb.error.init('form .alert').message(error);
-                    }
-                )
-        },
-
-        init: function () {
-            dsb.user.session.init()
             document.addEventListener('modal/loaded/login-form', dsb.ui.manage_password)
             document.addEventListener('modal/loaded/change-password', dsb.ui.manage_password)
-        }
+
+        },
+        logout: () => {
+            return dsb.user.person.logout()
+        },
+        login: () => {
+            return dsb.user.person.login()
+        },
+
 
     },
 
@@ -1320,9 +549,9 @@ var dsb = {
          */
         init: function (selector = 'form .alert') {
             if ('' === selector) {
-                return null;
+                return null
             }
-            this._element = document.querySelector(selector);
+            this._element = document.querySelector(selector)
             return this
         }
 
@@ -1339,10 +568,10 @@ var dsb = {
          * @since 1.0
          */
         message: function (error, _element = 'p span') {
-            this._element.querySelector(_element).innerHTML = error;
-            this._element.classList.toggle('dsb-hide');
-            return this;
-        }
+            this._element.querySelector(_element).innerHTML = error
+            this._element.classList.toggle('dsb-hide')
+            return this
+        },
     }
     ,
 
@@ -1354,6 +583,20 @@ var dsb = {
      */
     utils: {
 
+        kebab2Pascal: (kebab) => {
+            return kebab.replace(/(^\w|-\w)/g, dsb.utils._clearAndUpper)
+        },
+        kebab2Camel: (kebab) => {
+            return kebab.replace(/-\w/g, dsb.utils._clearAndUpper)
+        },
+        kebab2Snake: (kebab) => {
+            return kebab.replace('-', '_')
+        },
+        _clearAndUpper: (text) => {
+            return text.replace(/-/, '').toUpperCase()
+        },
+
+
         /**
          * path info
          *
@@ -1362,8 +605,8 @@ var dsb = {
          * @return {{ext: *, path: *, file: *, name: *}}
          */
         path_info: file => {
-            let info = file.match(/(.*?\/)?(([^/]*?)(\.[^/.]+?)?)(?:[?#].*)?$/);
-            return {path: info[1], file: info[2], name: info[3], ext: info[4]};
+            let info = file.match(/(.*?\/)?(([^/]*?)(\.[^/.]+?)?)(?:[?#].*)?$/)
+            return {path: info[1], file: info[2], name: info[3], ext: info[4]}
         },
 
         /**
@@ -1377,7 +620,10 @@ var dsb = {
          */
         nl2br: (str) => {
             if (null !== str) {
-                return str.replace(/(\r\n|\r|\n)/gm, '<br>');
+                if (str instanceof Object) {
+                    str = str.toString()
+                }
+                return str.replace(/(\r\n|\r|\n)/gm, '<br>')
             }
         },
 
@@ -1389,17 +635,56 @@ var dsb = {
          * @since 1.0
          *
          */
-        copy_to_clipboard: (text) => {
-            navigator.clipboard.writeText(text);
+        copy_to_clipboard: async (text) => {
+            let result = true
+            if (!navigator.clipboard) {
+                let c = document.createElement('textarea')
+                c.value = text
+                c.style.maxWidth = '0px'
+                c.style.maxHeight = '0px'
+                c.style.position = 'fixed'  // Prevent scrolling to bottom of page in Microsoft Edge.
+                document.body.appendChild(c)
+                c.focus()
+                c.select()
+                try {
+                    document.execCommand('copy')
+                } catch (e) {
+                    result = false
+                } finally {
+                    document.body.removeChild(c)
+                }
+            } else {
+                try {
+                    await navigator.clipboard.writeText(text)
+                } catch (e) {
+                    result = false
+                }
+            }
+            return result
         },
 
         copy_canvas_to_clipboard(canvas) {
             canvas.toBlob(function (blob) {
-                const item = new ClipboardItem({"image/svg": blob});
-                navigator.clipboard.write([item]);
-            });
-        }
-        ,
+                const item = new ClipboardItem({'image/svg': blob})
+                navigator.clipboard.write([item])
+            })
+        },
+
+        /**
+         * Export content to a file
+         *
+         * @param content
+         * @param file
+         */
+
+        export_to_file: (content = '', file = 'sample.txt') => {
+            const link = document.createElement('a')
+            const blob = new Blob([content], {type: 'text/plain'})
+            link.href = URL.createObjectURL(blob)
+            link.download = file
+            link.click()
+            URL.revokeObjectURL(link.href)
+        },
 
         /**
          * Download a file
@@ -1411,14 +696,14 @@ var dsb = {
          *
          */
         download(file, filename = null) {
-            let link = document.createElement('a');
-            link.setAttribute('href', file);
+            let link = document.createElement('a')
+            link.setAttribute('href', file)
             if (null !== filename) {
-                link.setAttribute('download', filename);
+                link.setAttribute('download', filename)
             }
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
         }
         ,
 
@@ -1433,7 +718,7 @@ var dsb = {
          *
          */
         sleep: timer => {
-            new Promise(r => setTimeout(r, timer));
+            new Promise(r => setTimeout(r, timer))
         },
 
         /**
@@ -1455,7 +740,7 @@ var dsb = {
             switch (type) {
                 case '%':
                     value = (Number(value)) * 100
-                    break;
+                    break
             }
 
             if (0 === digits) {
@@ -1499,13 +784,13 @@ var dsb = {
          * @since 1.0
          *
          */
-        niceBytes: (number, transform = 1000 /*1024*/) => {
-            const units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']; //TODO externalize for localisation
-            let l = 0, n = parseInt(number, 10) || 0;
+        niceBytes: (number, transform = 1024) => {
+            const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+            let l = 0, n = parseInt(number, 10) || 0
             while (n >= transform && ++l) {
-                n = n / transform;
+                n = n / transform
             }
-            return (n.toFixed(n < 10 && l > 2 ? 2 : 2) + ' ' + units[l]);
+            return (n.toFixed(n < 10 && l > 2 ? 2 : 2) + ' ' + units[l])
         },
 
         /**
@@ -1520,11 +805,11 @@ var dsb = {
         get_object_from_string: (namespace, global = window) => {
             // https://stackoverflow.com/questions/4981671/access-namespaced-javascript-object-by-string-name-without-using-eval
             return namespace.split('.').reduce(function (a, b) {
-                if (typeof (a) == "string") {
-                    return global[a][b];
+                if (typeof (a) == 'string') {
+                    return global[a][b]
                 }
-                return a[b];
-            });
+                return a[b]
+            })
         },
 
 
@@ -1541,13 +826,13 @@ var dsb = {
          */
         remove_key: (array, key) => {
 
-            let tmp = [];
+            let tmp = []
             for (let x in array) {
                 if (x != key) {
-                    tmp[x] = array[x];
+                    tmp[x] = array[x]
                 }
             }
-            return tmp;
+            return tmp
         },
 
         /**
@@ -1576,17 +861,44 @@ var dsb = {
         file_exists: async file => {
             return await fetch(dsb_ajax.get + '?' + new URLSearchParams({
                 action: 'file-exists',
-                file: file
+                file: file,
             })).then(response => {
                 if (!response.ok) {
-                    throw Error(response.statusText);
+                    throw Error(response.statusText)
                 }
-                return response;
+                return response
             })
                 .then(response => response.json())
                 .then(data => data.exist)
                 .catch(exception => undefined)
         },
+        readVersion: async (file) => {
+            // Send the halt command
+            return fetch(file, {
+                method: 'GET',
+            }).then(response => {
+                if (!response.ok) {
+                    throw Error(response.statusText)
+                }
+                return (response.json())
+            })
+                .catch(error => {
+                        console.error(error)
+                        return {}
+                    }
+                )
+        },
+
+        importWebComponents: (...webComponents) => {
+            webComponents.forEach(webComponent => {
+                let scriptTag = document.createElement('script');
+                scriptTag.type = 'module';
+                scriptTag.src = `/dashboard/assets/components/${webComponent}/${webComponent}.js`;
+                document.getElementsByTagName('head')[0].appendChild(scriptTag);
+            })
+        }
+
+
     },
     /**
      * UI management
@@ -1596,9 +908,6 @@ var dsb = {
      */
     ui: {
         backdrop: document.getElementById('dsb-backdrop'),
-        check_lang: false,
-        current_lang: null,
-        new_lang: false,
 
         hide: (element) => {
             if (element !== null) {
@@ -1614,6 +923,7 @@ var dsb = {
                 element.classList.remove('dsb-show-flex')
                 element.classList.remove('dsb-show-inline-block')
                 element.classList.remove('dsb-show-inline-flex')
+                element.classList.remove('dsb-show-table-row')
             }
             return dsb.ui
         },
@@ -1627,7 +937,7 @@ var dsb = {
                     }
                 }
 
-                element.classList.remove('dsb-hide');
+                element.classList.remove('dsb-hide')
                 if (flex) {
                     element.classList.add('dsb-show-flex')
                 } else {
@@ -1637,23 +947,51 @@ var dsb = {
             return dsb.ui
         },
 
+        /**
+         * Show element sibling.
+         *
+         * @param element
+         * @param sibling
+         *
+         * @return dsb.ui
+         */
+        showSibling: (element, sibling = '*') => {
+            if (!(element instanceof HTMLElement) && element?.includes('#')) {
+                element = document.querySelector(element)
+                if (element === null) {
+                    return dsb.ui
+                }
+            }
+            dsb.ui.show(element.parentElement.querySelector(sibling));
+            return dsb.ui
+        },
+
         show_block: (element) => {
             if (element !== null) {
                 dsb.ui.show(element, false)
             }
+            return dsb.ui
         },
 
         show_inline: (element, flex = true) => {
             if (element !== null) {
-                element.classList.remove('dsb-hide');
+                element.classList.remove('dsb-hide')
                 if (flex) {
                     element.classList.add('dsb-show-inline-block')
                 } else {
                     element.classList.add('dsb-show-inline-flex')
                 }
             }
+            return dsb.ui
         },
 
+        show_table_row: (element) => {
+            if (element !== null) {
+                element.classList.remove('dsb-hide')
+                element.classList.add('dsb-show-table-row')
+            }
+            return dsb.ui
+        },
 
         disable: (element) => {
             if (element !== null) {
@@ -1678,19 +1016,19 @@ var dsb = {
         },
 
         manage_password: () => {
-            document.querySelectorAll(".input-group.password .toggle-password").forEach(item => {
-                item.addEventListener("click", dsb.ui.toggle_password)
+            document.querySelectorAll('.input-group.password .toggle-password').forEach(item => {
+                item.addEventListener('click', dsb.ui.toggle_password)
             })
         },
 
         toggle_password: (event) => {
             const eye = event.currentTarget
-            const password = document.querySelector(`[name="${event.currentTarget.dataset.password}"]`);
-            const type = password.getAttribute("type") === "password" ? "text" : "password";
+            const password = document.querySelector(`[name="${event.currentTarget.dataset.password}"]`)
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password'
 
-            password.setAttribute("type", type);
-            eye.querySelector('.show-password').classList.toggle('dsb-hide');
-            eye.querySelector('.hide-password').classList.toggle('dsb-hide');
+            password.setAttribute('type', type)
+            eye.querySelector('.show-password').classList.toggle('dsb-hide')
+            eye.querySelector('.hide-password').classList.toggle('dsb-hide')
         },
 
         /**
@@ -1744,8 +1082,12 @@ var dsb = {
                         let pathname = url.split(window.location.origin)[1]
                         dsb.page.add_to_history(document.title, url, pathname)
                         // change menu info to corresponding item
-                        document.querySelector(`.opened[href]`)?.classList.remove('opened')
-                        document.querySelector(`[href="${pathname}"]`)?.classList.add('opened')
+                        document.querySelector(`.${Menu.openClass}[href]`)?.classList.remove(Menu.openClass)
+                        document.querySelector(`[href="${pathname}"]`)?.classList.add(Menu.openClass)
+
+                        UI.setBreadcrumbs(document.querySelector(`[href="${pathname}"]`))
+                        UI.setTitle(document.querySelector(`[href="${pathname}"]`))
+
                     }
                 })
 
@@ -1856,7 +1198,7 @@ var dsb = {
             if (button === null) {
                 return
             }
-            if (button instanceof PointerEvent) {
+            if (button instanceof UIEvent) {
                 button = button.target
             }
 
@@ -1864,13 +1206,13 @@ var dsb = {
                 case 'start':
                     button.classList.add('animation', 'doing')
                     dsb.ui.hide(button.querySelector('.animation.start')).show(button.querySelector('.animation.doing'))
-                    break;
+                    break
                 case 'stop':
                 case 'reset':
                     dsb.ui.show(button.querySelector('.animation.start')).hide(button.querySelector('.animation.doing'))
                     button.classList.remove('animation', 'start')
 
-                    break;
+                    break
 
             }
         },
@@ -1897,14 +1239,11 @@ var dsb = {
         },
 
         show_intermediate_content: (event) => {
-            event.preventDefault();
-            let template = new Template('#popcont#')
-            template.check_link(event.currentTarget.getAttribute('href'))
-            template.load({
-                template: template,
-                force: true,
-            })
-            dsb.ui.show_pop_content()
+            event.preventDefault()
+            let template = new Block('#popcont#', null, event.currentTarget.getAttribute('href'))
+            template.checkLink4Tab(event.currentTarget.getAttribute('href'))
+            template.load().then(r => dsb.ui.show_pop_content())
+
 
             return false
         },
@@ -1914,14 +1253,14 @@ var dsb = {
         },
 
         show_refresh: (id) => {
-            let item = document.querySelector(`#${id} button .refresh`);
+            let item = document.querySelector(`#${id} button .refresh`)
             if (item) {
                 item.classList.add('dsb-show', 'fa-spin')
             }
         },
 
         hide_refresh: (id) => {
-            let item = document.querySelector(`#${id} button .refresh`);
+            let item = document.querySelector(`#${id} button .refresh`)
             if (item) {
                 item.classList.remove('dsb-show', 'fa-spin')
             }
@@ -1970,6 +1309,11 @@ var dsb = {
          * @param params
          */
         add_scrolling: (element, params = {}) => {
+
+            // Bail early in case we can not work with ekement
+            if (element === null) {
+                return
+            }
             let _params = {cascade: true, options: {}, scroll: {}}
             params = {..._params, ...params}
 
@@ -1995,10 +1339,10 @@ var dsb = {
             if (list?.contains('dsb-scroll') /*&& !list?.contains('os-host')*/) {
                 let params = {
                     overflowBehavior: {
-                        x: 'hidden'
+                        x: 'hidden',
                     },
                     scrollbars: {
-                        autoHide: 'leave'
+                        autoHide: 'leave',
                     },
                     paddingAbsolute: true,
 
@@ -2009,7 +1353,7 @@ var dsb = {
                 // If it is a console, we move the menu outside the scrolling area
                 // in order to fix it when scrolling
                 if ('CONSOLE' === element.tagName) {
-                    element.appendChild(element.getElementsByTagName('console-menu')[0]);
+                    element.appendChild(element.getElementsByTagName('console-menu')[0])
                 }
 
                 // Scroll if we have to do it
@@ -2026,29 +1370,85 @@ var dsb = {
             let evt = new MouseEvent('click', {
                 bubbles: true,
                 cancelable: true,
-                view: window
-            });
+                view: window,
+            })
             // If cancelled, don't dispatch our event
-            let canceled = !elem.dispatchEvent(evt);
+            let canceled = !elem.dispatchEvent(evt)
         },
 
         get_css_var: (variable) => {
-            return window.getComputedStyle(document.documentElement).getPropertyValue('--' + variable).trim();
+            return window.getComputedStyle(document.documentElement).getPropertyValue('--' + variable).trim()
         },
 
         set_css_var: (variable, value) => {
-            document.documentElement.style.setProperty('--' + variable, value);
+            document.documentElement.style.setProperty('--' + variable, value)
         },
 
         chart: {
-            export_to_svg: (chart) => {
-                chart.ctx.exports.exportToSVG(chart.ctx);
+            /**
+             * Apex Chart export to csv
+             *
+             * @param chart
+             * @param fileName
+             * @return {Promise<boolean>}
+             */
+            exportToSVG: async (chart, fileName = 'sample') => {
+                try {
+                    let tmp = chart.ctx.exports.w.config.chart.toolbar.export.svg.filename
+                    chart.ctx.exports.w.config.chart.toolbar.export.svg.filename = fileName
+                    chart.ctx.exports.exportToSVG(chart.ctx, {fileName: fileName})
+                    chart.ctx.exports.w.config.chart.toolbar.export.svg.filename = tmp
+
+                    dsb.toast.message({
+                        title: dsb.ui.get_text_i18n('chart/svg', 'title'),
+                        message: sprintf(dsb.ui.get_text_i18n('chart/svg', 'text'), fileName),
+                        type: 'success',
+                    })
+
+                    return true
+                } catch (e) {
+                    dsb.toast.message({
+                        title: dsb.ui.get_text_i18n('chart/svg', 'title'),
+                        message: sprintf(dsb.ui.get_text_i18n('chart/svg', 'error'), fileName),
+                        type: 'danger',
+                    })
+                    return false
+                }
             },
-            export_to_csv: (chart, series) => {
-                chart.ctx.exports.exportToCSV({
-                    series: series,
-                    columnDelimiter: ','
-                });
+
+            /**
+             *  Apex Chart export svg
+             *
+             * @param chart
+             * @param series
+             * @param fileName
+             * @return {Promise<boolean>}
+             */
+            exportToCSV: async (chart, series, fileName = 'sample') => {
+                try {
+                    chart.ctx.exports.exportToCSV({
+                        series: series,
+                        columnDelimiter: ',',
+                        fileName: fileName,
+                    })
+
+                    dsb.toast.message({
+                        title: dsb.ui.get_text_i18n('chart/csv', 'title'),
+                        message: sprintf(dsb.ui.get_text_i18n('chart/csv', 'text'), fileName),
+                        type: 'success',
+                    })
+
+                    return true
+                } catch (e) {
+
+                    dsb.toast.message({
+                        title: dsb.ui.get_text_i18n('chart/csv', 'title'),
+                        message: sprintf(dsb.ui.get_text_i18n('chart/csv', 'error'), fileName),
+                        type: 'danger',
+                    })
+
+                    return false
+                }
             },
         },
 
@@ -2073,25 +1473,6 @@ var dsb = {
             return text?.dataset
         },
 
-        /**
-         * Get the <appli>_lang cookie content
-         *
-         *
-         * @return {null|any}
-         */
-        get_lang_cookie: () => {
-            // we do not know the right name, but it's ended with -lang
-            for (const cookie in Cookies.get()) {
-                if (cookie.endsWith('-lang')) {
-                    return {name: cookie, value: Cookies.get(cookie)}
-                }
-            }
-            return null
-        },
-
-        get_lang: () => {
-            return document.querySelector('html').getAttribute('lang')
-        },
 
         /**
          * Set Bootstrap switch
@@ -2115,7 +1496,7 @@ var dsb = {
                 element = element.id
             }
             const real = document.querySelector(`[role="switch"][data-target="#${element}"`)
-            real.checked = checked;
+            real.checked = checked
             document.getElementById(element).value = values[Number(checked)]
         },
 
@@ -2131,174 +1512,37 @@ var dsb = {
             document.querySelector(`[name="${name}"][value="${value}"]`).checked = true
         },
 
-        init: async (parent = document) => {
-
-            dsb.ui.lists = []
-
-            // Create all selection lists (except thos who use not-auto-choices)
-            parent.querySelectorAll('select:not(.not-auto-choices)').forEach(select => {
-
-                if (!select.hasAttribute('id')) {
-                    select.id = nanoid()
-                }
-
-                if (!(dsb.ui.lists[select.id] instanceof Choices)) {
-                    let limit = select.dataset.limit ?? -1
-                    let search = select.dataset.search ?? false
-
-                    dsb.ui.lists[select.id] = new Choices(select, {
-                        itemSelectText: '',
-                        silent: true,
-                        allowHTML: true,
-                        shouldSort: false,
-                        searchEnabled: search,
-                        renderChoiceLimit: limit,
-                    })
-                }
-            })
-
-            // Lang switcher
-            dsb.ui.current_lang = dsb.ui.get_lang()
-            parent.querySelectorAll('select.lang-list').forEach(select => {
-
-                if (!select.hasAttribute('id')) {
-                    select.id = nanoid()
-                }
-                if (!(dsb.ui.lists[select.id] instanceof Choices)) {
-                    const select_lang = ({classNames}, data) => {
-                        const CC = data.value.split('_')[1].toLowerCase()
-                        return (`          <div class="${classNames.item} ${classNames.itemChoice} ${
-                            data.disabled ? classNames.itemDisabled : classNames.itemSelectable
-                        }" data-choice ${
-                            data.disabled
-                                ? 'data-choice-disabled aria-disabled="true"'
-                                : 'data-choice-selectable'
-                        } data-id="${data.id}" data-value="${data.value}" ${
-                            data.groupId > 0 ? 'role="treeitem"' : 'role="option"'
-                        } title="${data.label}"><i lang="${data.value}" class="fi fis fi-${CC}"></i></div>`)
-                    }
-
-                    dsb.ui.lists[select.id] = new Choices(select, {
-                            searchEnabled: false,
-                            allowHTML: true,
-
-                            callbackOnCreateTemplates: function (template) {
-                                return {
-                                    item: ({classNames}, data) => {
-                                        return template(select_lang({classNames}, data))
-                                    },
-                                    choice: ({classNames}, data) => {
-                                        return template(select_lang({classNames}, data))
-                                    },
-                                }
-                            }
-                        }
-                    );
-
-                    /**
-                     * Change event
-                     * @since 1.1.0
-                     */
-                    dsb.ui.lists[select.id].passedElement.element.addEventListener(
-                        'change',
-                        async function (event) {
-                            let form_data = {
-                                headers: {'Content-Type': 'multipart/form-data'},
-                                lang: event.detail.value,
-                                old: dsb.ui.current_lang,
-                                action: 'set-lang'
-                            }
-
-                            await fetch(dsb_ajax.post, {
-                                method: 'POST',
-                                body: JSON.stringify(form_data)
-                            }).then(response => {
-                                if (!response.ok) {
-                                    throw Error(response.statusText);
-                                }
-                                return response;
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    //save transient
-                                    dsb.db.set(data.cookie.name, data.cookie.content, 'transients', YEAR)
-                                    location.reload()
-                                })
-                                .catch(error => {
-                                        console.error(error);
-                                    }
-                                )
-                        },
-                        false,
-                    );
-
-                }
-
-            })
-
-            if (parent === document) {
-                dsb.init_lang()
+        INITIALISED: false,
+        lists: [],
+        init: () => {
+            if (!dsb.ui.INITIALISED) {
+                // Attach web components
+                new DashboardWebComponentsManager()
             }
+            dsb.ui.INITIALISED = true
+        },
 
+        resizeWindowEvent: () => {
+            if (Responsive.isSmallDevice()) {
+                Menu.collapse()
 
-            // Add scrolling
-            dsb.ui.add_scrolling(parent)
-        }
+            } else if (Responsive.isExtraLargeDevice()) {
+                Menu.unCollapse()
 
-    },
-
-    init_lang: async () => {
-        /**
-         * Check if lang as changed
-         * @since 1.1.0
-         *
-         */
-
-        if (!dsb.ui.check_lang) {
-            dsb.ui.new_lang = false
-            const cookie = dsb.ui.get_lang_cookie()
-
-            // it's better to read content from transients
-            let content = await dsb.db.get(cookie.name, 'transients')
-
-            if (cookie && content?.change) {
-                // it's a new lang, ok we sync the cookie content
-                content.old = null
-                content.change = false;
-
-                Cookies.remove(cookie.name, {path: '/'})
-                //   Cookies.set(cookie.name, JSON.stringify(content), 365)
-
-                dsb.ui.new_lang = true
-
-                /**
-                 * Add a toast if  there is a new lang
-                 * @since 1.1.0
-                 *
-                 */
-
-                if (dsb.ui.new_lang) {
-                    dsb.toast.message({
-                        title: dsb.ui.get_text_i18n('language/change', 'title'),
-                        message: sprintf(dsb.ui.get_text_i18n('language/change', 'text'), content.name),
-                        type: 'success'
-                    })
-                    dsb.ui.new_lang = false
-                }
+            } else if (Responsive.isMediumDevice()) {
+            } else {
+                Responsive.isLargeDevice()
             }
-
-            // update transient TTL
-            await dsb.db.set(cookie.name, content, 'transients', YEAR)
-
-            dsb.ui.check_lang = true
-        }
+        },
     },
 
 
     db: new LocalDB({
-        name: 'dashboard', store: ['transients'], version: null
+        name: 'dashboard',
+        store: [],
+        manageTransients: true,
+        version: null,
     }),
-    transient: {},
 
     /**
      * Init all functions
@@ -2317,26 +1561,14 @@ var dsb = {
             return
         }
 
-        // var mutationObserver = new MutationObserver(function(mutations) {
-        //     mutations.forEach(function(mutation) {
-        //         if (mutation.target.id ==='content') {
-        //             console.log(mutation);
-        //         }
-        //     });
-        // });
-        // mutationObserver.observe(document.documentElement, {
-        //     attributes: true,
-        //     characterData: true,
-        //     childList: true,
-        //     subtree: true,
-        //     attributeOldValue: true,
-        //     characterDataOldValue: true
-        // });
         dsb.add_instance(instance.name)
+
+        // Clean all event
+        dsb.content_event.clean()
+
         dsb.page.main_title = instance.title
 
-
-        const {default: OverlaysScrollbars} = await import ('/dashboard/assets/vendor/overlay-scrollbars/OverlayScrollbars.js')
+        const {default: OverlayScrollbars} = await import ('/dashboard/assets/vendor/overlay-scrollbars/OverlayScrollbars.min.js')
 
         /**
          * First thing to do,manage history
@@ -2346,58 +1578,46 @@ var dsb = {
         /**
          * Then, get user and session information
          */
-        dsb.user.init();
+        dsb.user.init()
 
         /**
          *  Finally, Initialise other dashboard elements
          */
+        dsb.ui.init()
         dsb.modal.init()
         dsb.error.init()
         dsb.toast.init()
 
-        /**
-         *  Add login-logout events
-         */
-        document.addEventListener('dsb-login', dsb.user.events.login);
-        document.addEventListener('dsb-logout', dsb.user.events.logout);
-
         // Add some body classes at loading if the user is already logged in.
-        if (dsb.user.session.context.logged) {
-            document.body.classList.add("logged-in");
-            document.body.classList.add(dsb.user.session.context.user);
+        if (dsb.session.context.logged) {
+            document.body.classList.add('logged-in')
+            document.body.classList.add(dsb.session.context.user)
         }
-
-        dsb.template.init()
-
-
-        /**
-         * Once menu has been loaded, we initialise some functionalities
-         */
-        Template.event.once('load-done/blocks/menu', (block) => {
-            dsb.menu.init(block)
+        Block.event.on('template/loading/blocks/menu', (block) => {
+            dsb.ui.resizeWindowEvent()
+            window.onresize = dsb.ui.resizeWindowEvent
+            dsb.ui.hide(document.querySelector('.small-device #menu-container'))
+        })
+        // Once menu has been loaded, we initialise some functionalities
+        Block.event.on('template/loaded/blocks/menu', (block) => {
+            Menu.init(block).then(() => {
+                Menu.synchronize(block, Menu.pathname)
+                dsb.ui.show(document.querySelector('.small-device #menu-container'))
+            })
         })
 
-        /**
-         * Once menu has been loaded, we initialise some functionalities
-         */
-        Template.event.once('load-done/blocks/languages', block => {
-            dsb.init_lang()
+        // Same for languages block
+        Block.event.on('template/loaded/blocks/languages', (block) => {
+            dsb.language = new DashboardLangManager()
         })
-
-        dsb.ui.init().then(() => {
-
-        })
-
 
         // We need to manage some history retrieval
+        dsb.initialized = true
+        console.info(`Dashboard Engine [${dsb.instance.version}] is running!`)
 
-        dsb.initialized = true;
-        console.info('Dashboard init done.')
-
-        return this;
+        return this
     },
 
 }
-export {dsb}
 
 /*1667583828996*/

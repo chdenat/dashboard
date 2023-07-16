@@ -1,0 +1,21 @@
+/*
+ *
+ * Project : dashboard
+ * File : style.css
+ *
+ * @author: Christian Denat
+ * @email: contact@noleam.fr
+ *
+ * Last updated on : 28/05/2023  17:05
+ *
+ * Copyright (c) 2023 - noleam.fr
+ *
+ */
+
+dsb-alert, dsb-alert .alert {
+    display: none;
+}
+
+dsb-alert.show .alert {
+    display: flex;
+}

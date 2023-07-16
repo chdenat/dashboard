@@ -1,0 +1,26 @@
+/*
+ *
+ * Project : dashboard
+ * File : style.css
+ *
+ * @author: Christian Denat
+ * @email: contact@noleam.fr
+ *
+ * Last updated on : 10/06/2023  11:38
+ *
+ * Copyright (c) 2023 - noleam.fr
+ *
+ */
+
+.dsb-sort-up-down {
+    --dsb-sort-up-down-gutter: var(--dsb-md-gutter);
+    display: flex;
+    gap: var(--dsb-sort-up-down-gutter);
+    align-items: center;
+}
+
+.dsb-sort-up-down div {
+    display: flex;
+    flex-direction: column;
+    font-size: 8px;
+}

@@ -1,31 +1,28 @@
 <?php
 	
-	/***********************************************************************************************************************
-	 *
-	 * Project : supervix4
-	 * file : default-scripts.php
-	 *
-	 * @author        Christian Denat
-	 * @email contact@noleam.fr
-	 * --
-	 *
-	 * updated on :  1/19/22, 12:24 PM
-	 *
-	 * @copyright (c) 2022 noleam.fr
-	 *
-	 **********************************************************************************************************************/
-	
-	
-	use dashboard\assets\Asset;
-	use dashboard\assets\AssetsManager;
-	use dashboard\hooks\Hooks;
-	use dashboard\user\SessionManager;
-	
-	Hooks::instance()->add_action( 'dashboard/scripts', function () {
+	/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : dashboard-scripts.php                                                                                       *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 16/07/2023  10:30                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+
+use dashboard\assets\Asset;
+use dashboard\assets\AssetsManager;
+use dashboard\hooks\Hooks;
+use dashboard\user\SessionManager;
+
+Hooks::instance()->add_action( 'dashboard/scripts', function () {
 		Hooks::instance()->add_action( 'assets/register-css', function () {
-			AssetsManager::instance()->add_to_css_list( 'theme', D_CSS_URL . 'theme.css', [ 'bootstrap', 'fa' ] );
 			AssetsManager::instance()->add_to_css_list( 'dashboard', D_CSS_URL . 'dashboard.css', [
-				'theme',
 				'bootstrap',
 			] );
 			AssetsManager::instance()->add_to_css_list( 'bootstrap', BOOTSTRAP_CSS . 'bootstrap.min.css', [] );
@@ -39,12 +36,12 @@
 		    Hooks::instance()->add_action( 'assets/register-js', function () {
 			AssetsManager::instance()->add_to_js_list( 'choices', CHOICES_JS, [] );
 			
-			AssetsManager::instance()->add_to_js_list( 'jscookie', JSCOOKIE_JS. 'js.cookie.min.js', [] );
-			AssetsManager::instance()->add_to_js_list( 'bootstrap', BOOTSTRAP_JS . 'bootstrap.bundle.min.js', [] );
-			
-			//AssetsManager::instance()->add_to_js_list( 'dsb', D_JS_URL . 'dsb.js', [],type: Asset::MODULE);
+			AssetsManager::instance()->add_to_js_list('jscookie', JSCOOKIE_JS . 'js.cookie.min.js', []);
+                AssetsManager::instance()->add_to_js_list('bootstrap', BOOTSTRAP_JS . 'bootstrap.bundle.min.js', []);
+
+//AssetsManager::instance()->add_to_js_list( 'dsb', D_JS_URL . 'dsb.js', [],type: Asset::MODULE);
 			AssetsManager::instance()->add_to_js_list( 'dashboard', D_JS_URL . 'dashboard.js', [
-				'bootstrap',
+				//'bootstrap',
 				'jscookie',
 			], type:                                   Asset::MODULE );
 			

@@ -1,43 +1,40 @@
-/***********************************************************************************************************************
- *
- * Project : supervix4
- * file : logger.js
- *
- * @author  Christian Denat
- * @email contact@noleam.fr
- * --
- *
- * updated on :  5/16/22, 7:02 PM
- *
- * @copyright (c) 2022 noleam.fr
- *
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : Logger.js                                                                                                   *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 16/07/2023  10:30                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
  **********************************************************************************************************************/
-import {LogContext} from './LogContext.js'
-import {DSBConsole} from './DSBConsole.js'
-import {dsb} from "./dsb.js";
-import {EventEmitter} from "../vendor/EventEmitter/EventEmitter.js";
-
+import {dsb} from '/dashboard/assets/js/dsb.js'
+//import {OverlayScrollbars} from 'overlayscrollbars'
+import {LogContext} from '/dashboard/assets/js/LogContext.js'
+import {DashboardConsole} from '/dashboard/assets/js/ui/DashboardConsole.js'
+import {Bus as LoggerEvent} from '/dashboard/assets/vendor/EventEmitter/Bus.js'
 
 class Logger {
 
+    static event = LoggerEvent
     #errors = {
         KO: 1,
         STOP: 2
     }
-
     #markers = {
         OK: '#OK#',
         ABORT: '#ABORT#',
         KO: '#KO#',
         STOP: '#STOP#',
     }
-
     #delays = {
         read: 2000,
         animate: 600 // Should be shorter than read
     }
-
-    #ID = 0
+    #id = 0
     #file = ''
     #console = null
     #history = true
@@ -46,10 +43,7 @@ class Logger {
     #scroll_bottom = false
     #erase = true;
     #anim_iter = 0
-
     #parameters = {}
-
-    #event = new EventEmitter()
 
     /**
      *
@@ -58,7 +52,7 @@ class Logger {
      *
      * @param parameters  Object
      *  {
-     *      ID                  Log file identifier, used for the events
+     *      id                  Log file identifier, used for the events
      *      file                file path
      *      lines                max lines to read from end
      *
@@ -92,18 +86,18 @@ class Logger {
         let lines = parameters?.lines ?? 100
 
         // Set logger parameters
-        this.#ID = parameters.ID
+        this.#id = parameters.id
         this.#file = parameters.file
         this.#erase = parameters.erase ?? true
 
-        this.#console = new DSBConsole(parameters.console, this.#erase)
+        this.#console = new DashboardConsole(parameters.console, this.#erase)
 
         this.#once = parameters?.once ?? false
         // if once, we force history to true
         this.#history = this.#once ? true : (parameters.history ?? true)
 
         // Create the context
-        this.context = new LogContext(this.#ID, this.#file)
+        this.context = new LogContext(this.#id, this.#file)
 
         // add some parameters
         this.context.parameters = {
@@ -111,43 +105,7 @@ class Logger {
             lines: lines,
             read: 0
         }
-
         this.#scroll_bottom = parameters.scroll_to_bottom ?? false
-
-
-    }
-
-    /**
-     *
-     * @returns {Promise<Logger>}
-     */
-    start = async (show_console = true) => {
-
-        // Get the number of lines
-        this.context.read_lines = await this.get_lines_number()
-
-        // We need to manage some future standard events
-        this.event.on('log/start', this.start_log);
-        this.event.on('log/running', this.update_log);
-        this.event.on('log/stop', this.end_log);
-        this.event.on('log/error', this.error_log);
-
-        // Dispatch generic starting event
-        this.event.emit('log/start')
-
-        // Dispatch specific starting event
-        this.event.emit(`log/start/${this.#ID}`, {logger: this})
-
-        if (show_console) {
-            this.#console.show()
-        }
-        dsb.ui.add_scrolling(this.#console, {cascade: false});
-
-        return this
-    }
-
-    get event() {
-        return this.#event
     }
 
     /**
@@ -156,8 +114,17 @@ class Logger {
      * @returns {number}
      * @constructor
      */
-    get ID() {
-        return this.#ID
+    get id() {
+        return this.#id
+    }
+
+    /**
+     * Read the parameters
+     *
+     * @returns #parameters
+     */
+    get parameters() {
+        return this.#parameters
     }
 
     /**
@@ -169,15 +136,6 @@ class Logger {
      */
     set parameters(object) {
         this.#parameters = object
-    }
-
-    /**
-     * Read the parameters
-     *
-     * @returns #parameters
-     */
-    get parameters() {
-        return this.#parameters
     }
 
     /**
@@ -202,6 +160,40 @@ class Logger {
 
     get file() {
         return this.#file
+    }
+
+    /**
+     * Return the running console status
+     *
+     * @returns {*}
+     */
+    get running() {
+        return this.console.running
+    }
+
+    /**
+     *
+     * @returns {Promise<Logger>}
+     */
+    start = (show_console = true) => {
+
+        // Get the number of lines
+        this.context.read_lines = this.get_lines_number()
+        // We need to manage some future events
+        Logger.event.on(`log/start/${this.#id}`, this.start_log);
+        Logger.event.on(`log/running/${this.#id}`, this.update_log);
+        Logger.event.on(`log/stop/${this.#id}`, this.end_log);
+        Logger.event.on(`log/error/${this.#id}`, this.error_log);
+
+        // Dispatch specific starting event
+        Logger.event.emit(`log/start/${this.#id}`, {logger: this})
+
+        if (show_console) {
+            this.#console.show()
+        }
+        dsb.ui.add_scrolling(this.#console, {cascade: false});
+
+        return this
     }
 
     /**
@@ -237,12 +229,12 @@ class Logger {
      * This method read file in a tail mode (ie starting at n lines from end)
      *
      * It throws
-     *           'log/running' and 'log/running/${context.ID}' events during reading
-     * and       'log/stop' and 'log/stop/${context.ID}'  events once reading has been done
+     *           'log/running/${context.ID}' events during reading
+     * and       'log/stop/${context.ID}'  events once reading has been done
      *
      */
 
-    read =  async () => {
+    read = async () => {
 
         /**
          * Bail early  if we're in pause
@@ -265,6 +257,7 @@ class Logger {
         if (!this.#once) {
             this.animate()
         }
+
         fetch(ajax.get + '?' + new URLSearchParams({
             action: 'logger',
             file: this.context.file,
@@ -284,7 +277,6 @@ class Logger {
                  */
                 let found_marker = false
                 if (json.content?.length > 0) {
-
                     json.content = json.content.map(item => item.replace('\n', ''))
 
                     // Detect end of reading
@@ -319,15 +311,13 @@ class Logger {
                      * We continue to read the file
                      *
                      */
-                    // Throw a new generic running event
-                    this.#event.emit('log/running', {logger: this, json: json})
 
-                    // and a new specific running event
-                    this.#event.emit(`log/running/${this.#ID}`, {logger: this, json: json})
+                    // Throw specific running event
+                    Logger.event.emit(`log/running/${this.#id}`, {logger: this, json: json})
 
                     // Relaunch the reading in few seconds
+                    this.#clearTimers()
                     if (!this.#once) {
-                        this.#clear_timers()
                         this.context.timers.read = setTimeout(this.read, this.#delays.read)
                     }
 
@@ -340,12 +330,8 @@ class Logger {
                         // if we had a marker in the text, we delete it to avoid publishing it.
                         json.content.pop()
                     }
-
-                    // Throw a new generic end event
-                    this.#event.emit('log/stop', {logger: this, json: json})
-
-                    // and a new specific end event
-                    this.#event.emit(`log/stop/${this.#ID}`, {logger: this, json: json})
+                    // Throw a new specific end event
+                    Logger.event.emit(`log/stop/${this.#id}`, {logger: this, json: json})
 
                     this.stop()
                 }
@@ -355,12 +341,8 @@ class Logger {
                  * We encounter an error... We need to stop
                  */
 
-                // Throw a new generic error event
-                this.#event.emit('log/error', this.context)
-
-                // and a new specific error event
-                this.#event.emit(`log/error/${this.#ID}`, this.context)
-
+                // Throw a new specific error event
+                Logger.event.emit(`log/error/${this.#id}`, this.context)
                 this.stop()
 
             })
@@ -374,15 +356,7 @@ class Logger {
      */
     stop = () => {
         this.context.status = 'end'
-        this.#clear_timers()
-
-        this.#event.off([
-            'log/running',
-            `log/running/${this.#ID}`,
-            'log/error',
-            `log/error/${this.#ID}`]
-        )
-
+        this.#clearTimers()
     }
 
     /**
@@ -390,7 +364,7 @@ class Logger {
      *
      * @param timers array of timers to clear (all,animate,read,wait)
      */
-    #clear_timers = (timers = ['all']) => {
+    #clearTimers = (timers = ['all']) => {
         if (timers.includes('all') || timers.includes('animate')) {
             clearTimeout(this.context.timers.animate)
         }
@@ -422,7 +396,7 @@ class Logger {
             return
         }
 
-        // Print the content (with additionnal) classes is required
+        // Print the content (with additional classes if required)
         this.#console.log(message, classes)
 
         // Keep the user focused on
@@ -447,6 +421,11 @@ class Logger {
      */
 
     animate = (animation = true, type = 'dotshorts') => {
+
+        // Bail early if there is only one run
+        if (this.#once) {
+            return
+        }
 
         let anime = {};
         const max = 80; //()=>{return Math.round(20 + Math.random() * 60)}
@@ -488,7 +467,7 @@ class Logger {
                 if (animation) {
                     this.context.timers.animate = setTimeout(anime[type], this.#delays.animate)
                 } else {
-                    this.#clear_timers('animate')
+                    this.#clearTimers('animate')
                 }
             }
         }
@@ -498,7 +477,7 @@ class Logger {
      * Event launched before reading
      *
      */
-    start_log = async () => {
+    start_log = async (data) => {
         // Keep the user focused on
         this.animate(true)
     }
@@ -509,7 +488,6 @@ class Logger {
      * @param data
      */
     update_log = async (data) => {
-
         if (data?.json?.read > 0) {
             // We print only if we have to
             await this.update({
@@ -540,7 +518,7 @@ class Logger {
      *
      *
      */
-    error_log = async (data) => {
+    error_log = async () => {
 
         await this.update(this.context, {
                 message: '---<br>' + new Date().toLocaleTimeString() + ': A problem occurred.',
@@ -548,15 +526,6 @@ class Logger {
             }
         )
         this.stop()
-    }
-
-    /**
-     * Return the running console status
-     *
-     * @returns {*}
-     */
-    get running() {
-        return this.console.running
     }
 
 }

@@ -1,32 +1,30 @@
 <?php
 	
-	/***********************************************************************************************************************
-	 *
-	 * Project : supervix4
-	 * file : Template.php
-	 *
-	 * @author        Christian Denat
-	 * @email contact@noleam.fr
-	 * --
-	 *
-	 * updated on :  1/18/22, 11:20 AM
-	 *
-	 * @copyright (c) 2022 noleam.fr
-	 *
-	 **********************************************************************************************************************/
+	/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : Template.php                                                                                                *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 11/06/2023  11:21                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
 	
 	namespace dashboard\template;
 	
 	use dashboard\assets\Asset;
-	use dashboard\assets\AssetsManager;
-	
-	use dashboard\hooks\Hooks;
-	use dashboard\Debug;
-	use dashboard\user\SessionManager;
-	
-	class Template {
+    use dashboard\assets\AssetsManager;
+    use dashboard\Debug;
+    use dashboard\hooks\Hooks;
+    use dashboard\user\SessionManager;
+
+    class Template {
 		/**
-		 * @var null|\dashboard\template\Template
+		 * @var null|Template
 		 *
 		 * @access private
 		 *
@@ -57,7 +55,7 @@
 		 * It's a Singleton , this method is used to retrieve the instance
 		 * initialisation : see parameters in constructor comments
 		 *
-		 * @return \dashboard\template\Template
+		 * @return Template
 		 * @access public
 		 *
 		 * @since  1.0
@@ -243,10 +241,7 @@
 			
 			//It's time to add the page footer.
 			self::instance()->include_block( 'footer' . ( ! empty( $slug ) ? '-' : '' ) . $slug );
-			
-			// Toast or bread ?
-			self::instance()->include_block( 'toast' . ( ! empty( $slug ) ? '-' : '' ) . $slug );
-			
+
 			/**
 			 * Fires after any HTML code
 			 *
@@ -305,7 +300,7 @@
 			}
 			
 			if ( Debug::is_debug_on() ) {
-				echo $this->comments( 'Template ' . $template );
+			//	echo $this->comments( 'Template ' . $template );
 			}
 			
 			/**
@@ -334,7 +329,7 @@
 			$this->clear_template_parameters();
 			
 			if ( Debug::is_debug_on() ) {
-				echo $this->end_comments();
+                //	echo $this->end_comments();
 			}
 			
 			echo ob_get_clean();
@@ -629,19 +624,20 @@
 		 *                          [
 		 *                             'pause' => [
 		 *                                  'action' => javascript method to call
-		 *                                  'text'   => tooltip text
-		 *                          ]
-		 *                          [
-		 *                             'play' => [
-		 *                                  'action' => javascript method to call
-		 *                                  'text'   => tooltip text
-		 *                          ]
-		 *
-		 * @return string|false
-		 * @access public
-		 *
-		 * @since  1.0
-		 */
+         *                                  'text'   => tooltip text
+         *                          ]
+         *                          [
+         *                             'play' => [
+         *                                  'action' => javascript method to call
+         *                                  'text'   => tooltip text
+         *                          ]
+         *
+         * @return string|false
+         * @access public
+         * @access public
+         *
+         * @since  1.0
+         */
 		public function add_console(
 			array $classes = [], array $data = [], string $style = '', string $id = '', string $content = '',
 			array $options = []
@@ -701,13 +697,21 @@
                     <button class="console-copy" title="<?= _( 'Copy content to the clipboard' ) ?>">
                         <i class="fa-regular fa-copy"></i>
                     </button>
-                    <button class="console-erase" title="<?= _( 'Clear console' ) ?>">
+                    <button class="console-export" title="<?= _( 'Export content to a file' ) ?>">
+                        <i class="fa-regular fa-download"></i>
+                    </button>
+                    <button class="console-erase" title="<?= _('Clear console') ?>">
                         <i class="fa-regular fa-eraser"></i>
                     </button>
                 </console-menu>
             </console>
-			<?php
-			return ob_get_clean();
-		}
-	}
+            <?php
+            return ob_get_clean();
+        }
+
+        public function inlineParameters($params): string
+        {
+            return htmlspecialchars(json_encode($params, JSON_THROW_ON_ERROR));
+        }
+    }
  

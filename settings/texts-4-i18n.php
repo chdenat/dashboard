@@ -1,82 +1,126 @@
 <?php
-	/*******************************************************************************************************************
-	 * Project : shelteradmin
-	 * file       : texts-4-i18n.php
-	 *
-	 * @author        : Christian Denat
-	 * @email         : contact@noleam.fr
-	 *
-	 * --
-	 *
-	 * updated on:  10/31/22, 5:03 PM
-	 *
-	 * @copyright (c) 2022 noleam.fr
-	 *
-	 ******************************************************************************************************************/
-	
-	/**
-	 * Define texts to translate in a <text-i18n></text-i18n> pseudo HTML element and then to be used
-	 * in Javascript modules.
-	 *
-	 * IN HTML, in this file, you should declare the texts to translate.
-	 *
-	 *      <text-i18n context="<some-context>"
-	 *                 data-title="<?= _( '<some title here>' ) ?>"
-	 *                 data-text="<?= _( '<some text here>' ) ?>"
-	 *                 data-other="<?= _( '<some other text here>' ) ?>">
-	 *      </text-i18n>
-	 *
-	 *
-	 * Then, on JS side us  dsb.ui.get_text_i18n  function to retrieve translated texts.
-	 *
-	 *       dsb.ui.get_text_i18n(<some-context>')         :  {
-	 *                                                              title:translation of '<some title here>'
-	 *                                                              text : translation of '<some text here>'
-	 *                                                        }
-	 *       dsb.ui.get_text_i18n(<some-context>','title') :  translation of '<some title here>'
-	 *       dsb.ui.get_text_i18n(<some-context>').title   :  translation of '<some title here>'
-	 *
-	 */
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : texts-4-i18n.php                                                                                            *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 02/07/2023  10:50                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+/**
+ * Define texts to translate in a <text-i18n></text-i18n> pseudo HTML element and then to be used
+ * in Javascript modules.
+ *
+ * IN HTML, in this file, you should declare the texts to translate.
+ *
+ *      <text-i18n context="<some-context>"
+ *                 data-title="<?= _( '<some title here>' ) ?>"
+ *                 data-text="<?= _( '<some text here>' ) ?>"
+ *                 data-other="<?= _( '<some other text here>' ) ?>">
+ *      </text-i18n>
+ *
+ *
+ * Then, on JS side us  dsb.ui.get_text_i18n  function to retrieve translated texts.
+ *
+ *       dsb.ui.get_text_i18n(<some-context>')         :  {
+ *                                                              title:translation of '<some title here>'
+ *                                                              text : translation of '<some text here>'
+ *                                                        }
+ *       dsb.ui.get_text_i18n(<some-context>','title') :  translation of '<some title here>'
+ *       dsb.ui.get_text_i18n(<some-context>').title   :  translation of '<some title here>'
+ *
+ */
 ?>
 
-<!-- User login, logout and change password -->
+<!--
+User login, logout and change password
+-->
 
 <text-i18n context="user/log-in"
-          data-title="<?= _( 'Log in' ) ?>"
-          data-text="<?= _( 'User %s has been logged in successfully!' ) ?>">
+           data-title="<?= _('Log in') ?>"
+           data-text="<?= _('User %s has been logged in successfully!') ?>">
 </text-i18n>
 
 <text-i18n context="user/log-out"
-          data-title="<?= _( 'Log Out' ) ?>"
-          data-text="<?= _( 'User %s has been logged out!' ) ?>">
+           data-title="<?= _('Log Out') ?>"
+           data-text="<?= _('User %s has been logged out!') ?>">
 </text-i18n>
 
 <text-i18n context="user/new-password"
-           data-title="<?= _( 'New password' ) ?>"
-           data-text="<?= _( 'Password changed for user %s.' ) ?>">
+           data-title="<?= _('New password') ?>"
+           data-text="<?= _('Password changed for user %s.') ?>">
 </text-i18n>
 
-<!-- Console -->
+<!--
+Console
+-->
 
 <text-i18n context="console/copy-text"
-           data-title="<?= _( 'Copy text' ) ?>"
-           data-text="<?= _( 'Console content copied to the clipboard!' ) ?>">
+           data-title="<?= _('Copy content') ?>"
+           data-text="<?= _('Console content copied to the clipboard!') ?>">
 </text-i18n>
-
 <text-i18n context="console/copy-text-error"
-           data-title="<?= _( 'Copy text' ) ?>"
-           data-text="<?= _( 'An error occurs during copy!' ) ?>">
+           data-title="<?= _('Copy content') ?>"
+           data-text="<?= _('An error occurs during copy!') ?>">
 </text-i18n>
-
+<text-i18n context="console/export-text"
+           data-title="<?= _('Export content') ?>"
+           data-text="<?= _('Console content exported!') ?>">
+</text-i18n>
 <text-i18n context="console/clear"
-           data-title="<?= _( 'Clear Console' ) ?>"
-           data-text="<?= _( 'Console content cleared!' ) ?>">
+           data-title="<?= _('Clear Console') ?>"
+           data-text="<?= _('Console content cleared!') ?>">
 </text-i18n>
 
-<!-- Language change -->
+<!--
+APEX CHART Translation
+-->
+
+<text-i18n context="chart/csv"
+           data-title="<?= _('Export data') ?>"
+           data-text="<?= _('The chart data has been exported to CSV!') ?>"
+           data-error="<?= _('Error during the CSV export!') ?>">
+</text-i18n>
+
+<text-i18n context="chart/svg"
+           data-title="<?= _('Export Chart') ?>"
+           data-text="<?= _('The chart has been exported to SVG format!') ?>"
+           data-error="<?= _('Error during the SVG export!') ?>">
+</text-i18n>
+
+<text-i18n context="toolbar/csv" data-text="<?= _('Export data in CSV format') ?>"></text-i18n>
+<text-i18n context="toolbar/svg" data-text="<?= _('Export chart in SVG format') ?>"></text-i18n>
+<text-i18n context="toolbar/zoom" data-text="<?= _('Selection Zoom') ?>"></text-i18n>
+<text-i18n context="toolbar/pan" data-text="<?= _('Panning') ?>"></text-i18n>
+<text-i18n context="toolbar/reset" data-text="<?= _('Reset Zoom') ?>"></text-i18n>
+
+<!--
+Language change
+ -->
 
 <text-i18n
-        context = "language/change"
-        data-title = "<?=_('New Language')?>"
-        data-text = "<?= _('Language set to %s!')?>">
+        context="language/change"
+        data-title="<?= _('New Language') ?>"
+        data-text="<?= _('Language set to %s!') ?>">
+</text-i18n>
+
+<!--
+Export
+-->
+<text-i18n
+        context="export/generic"
+        data-title="<?= _('Export to %s') ?>"
+        data-text="<?= _('Exported to %s!') ?>">
+</text-i18n>
+
+<text-i18n
+        context="export/clipboard"
+        data-title="<?= _('Clipboard Copy') ?>"
+        data-text="<?= _('Data copied into the clipboard!') ?>">
 </text-i18n>
