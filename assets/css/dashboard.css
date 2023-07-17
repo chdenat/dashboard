@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 15/07/2023  19:24
+ * Last updated on : 17/07/2023  18:38
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -69,8 +69,8 @@
     --dsb-gray-8: var(--bs-gray-800);
     --dsb-gray-9: var(--bs-gray-900);
 
-    --dsb-color-light: #fff;
-    --dsb-color-light-rgb: ff, ff, ff;
+    --dsb-color-light: #ffffff;
+    --dsb-color-light-rgb: 255, 255, 255;
     --dsb-color-dark: var(--bs-dark);
     --dsb-color-dark-rgb: 00, 00, 00;
 
@@ -1561,25 +1561,45 @@ footer {
 /*****************************************************************************************************************************************************
  * Toast
  */
-#dsb-toast, #dsb-permanent-toast {
 
-}
 
 .toast {
     font-family: var(--dsb-toast-font-family);
     font-size: var(--dsb-toast-font-size);
     box-shadow: var(--dsb-elevation);
     position: relative;
-    margin: var(--dsb-gutter);
+    margin: 0;
+    padding: var(--dsb-md-gutter);
     z-index: 1056;
 }
 
-.toast-header i {
-    margin-right: var(--dsb-md-gutter);
+.dsb-toast-header {
+    display: flex;
+    align-items: center;
+    gap: var(--dsb-md-gutter);
+}
+
+.toast [aria-label="Close"] {
+    color: inherit !important
+}
+
+.toast [aria-label="Close"] i {
+    margin-right: 0;
+    margin-left: var(--dsb-md-gutter);
+}
+
+.toast hr {
+    margin: var(--dsb-md-gutter) 0
 }
 
 .toast-body {
     display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+.bs-toaster {
+    color: inherit;
 }
 
 /*****************************************************************************************************************************************************

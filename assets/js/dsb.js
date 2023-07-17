@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/07/2023  12:12                                                                                *
+ * Last updated on : 17/07/2023  18:17                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -315,12 +315,13 @@ export var dsb = {
                 delay: delay,
                 template: `
 <div class="toast fade text-bg-%TYPE%" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header">
+    <div class="dsb-toast-header">
         <span class="bs-toaster-icon d-flex">%ICON%</span>
         <strong class="bs-toaster-title me-auto">%TITLE%</strong>
-        <small class="bs-toaster-timer text-muted">%TIMER%</small>
-        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        <small class="bs-toaster-timer">%TIMER%</small>
+        <a href="#" data-bs-dismiss="toast" aria-label="Close"><i class="fa-regular fa-xmark"></i></a>
     </div>
+    <hr>
     <div class="bs-toaster-text toast-body">
         %TEXT%
         <div class="bs-toaster-buttons">%BUTTONS%</div>
