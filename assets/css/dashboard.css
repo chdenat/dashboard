@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 20/07/2023  06:15
+ * Last updated on : 20/07/2023  10:09
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -621,6 +621,17 @@ legend {
 
 .btn-primary i {
     color: var(--dsb-primary-icon-color)
+}
+
+.btn.disabled, .btn:disabled, fieldset:disabled .btn {
+    color: var(--dsb-inactive-color);
+    pointer-events: none;
+    background-color: transparent;
+    border-color: var(--dsb-inactive-color);
+}
+
+.btn.disabled i, .btn:disabled i, fieldset:disabled .btn i {
+    color: var(--dsb-inactive-color);
 }
 
 .btn-warning {
