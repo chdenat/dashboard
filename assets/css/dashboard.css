@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 17/07/2023  18:38
+ * Last updated on : 20/07/2023  06:15
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -2011,6 +2011,11 @@ console.pause console-menu button:hover {
     color: var(--dsb-tab-color);
 }
 
+.nav-link[disabled], .nav-link.disabled {
+    color: var(--dsb-inactive-color);
+    cursor: pointer;
+}
+
 /* TODO couleur pour le select */
 .responsive-tabs .choices {
     display: none;
@@ -2171,6 +2176,10 @@ console.pause console-menu button:hover {
     max-width: 500px;;
 }
 
+.dsb-column.dsb-min-width-400 {
+    min-width: min(400px, 100%);
+    max-width: 400px;;
+}
 /*******************************************************************************
  * Misc
  */
