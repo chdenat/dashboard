@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 17/07/2023  18:17                                                                                *
+ * Last updated on : 23/07/2023  12:06                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -399,7 +399,13 @@ export var dsb = {
          */
         message: function (html) {
             this._element.querySelector('.modal-content').innerHTML = html
+            dsb.ui.show(this._element.querySelector('.modal-content'))
             return this
+        },
+
+        cleanMessage: function () {
+            this._element.querySelector('.modal-content').innerHTML = ''
+            dsb.ui.hide(this._element.querySelector('.modal-content'))
         }
         ,
 
@@ -416,6 +422,7 @@ export var dsb = {
         load: function (action, params = {}, custom = false) {
             this._parameters = params
             this._parameters['action'] = action
+            dsb.modal.cleanMessage()
             dsb.modal.resize()
 
             this._element.addEventListener('show.bs.modal', dsb.modal.loading_events)
