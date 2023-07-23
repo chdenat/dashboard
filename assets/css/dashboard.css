@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 21/07/2023  14:57
+ * Last updated on : 23/07/2023  12:05
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -450,8 +450,14 @@ btn-check:focus + .btn, .btn:focus {
     box-shadow: var(--bs-btn-focus-box-shadow);
 }
 
+.input-group-text {
+    border-radius: var(--dsb-xs-rounded);
+}
+
 .form-control {
     box-shadow: var(--dsb-input-shadow);
+    border-radius: var(--dsb-xs-rounded);
+
 }
 
 .form-control, .input-group-sm > .btn, .input-group-sm > .form-control, .input-group-sm > .form-select, .input-group-sm > .input-group-text {
