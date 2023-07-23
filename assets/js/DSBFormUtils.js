@@ -6,65 +6,81 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 21/07/2023  19:34                                                                                *
+ * Last updated on : 23/07/2023  12:06                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+/**
+ * HTMLFormElement prototype function to call a functon when a change hase been detected in a form
+ *
+ * @param callable : callback function
+ *
+ */
+const DSBFormDetectChange = function (callable) {
+    this.addEventListener('input', (event) => {
+        callable.call(null, this, event.target)   // this is the form, event.target the element we just changed
+    });
+}
 
-export class DSBFormUtils {
+export {DSBFormDetectChange}
 
-    static detectChange = (form, callable) => {
-        // get form
-        if (typeof form == "string") form = document.getElementById(form);
-        if (!form || !form.nodeName || form.nodeName.toLowerCase() != "form") return null;
-
-        let children = Array.from(form.elements)
-        children.forEach(child => {
-            switch (child.nodeName.toLowerCase()) {
-                case 'select':
-                case 'textarea':
-                case 'input':
-                    ['change', 'keyup', 'paste'].forEach(type => {
-                        child.addEventListener(type, event => {
-                            callable.call()
-                        })
-                    })
+/**
+ * HTMLFormElement prototype function to extract a form data to an object
+ *
+ * Detect all named element and create an object :
+ *     {
+ *         name1 : value1,
+ *         name2 : value2
+ *     }
+ *
+ * If name is in the forma <xxxx>--<yyyy> we create en attributes - object xxx (if does not exist) with attributes yyy
+ *
+ *    {
+ *        name1:value1,
+ *        ...
+ *        xxx:{
+ *               yyy:value
+ *        }
+ *    }
+ *
+ * @param flat   used to flat the object (alle elements at the same level (use carefully as some attributes can have the same name
+ *
+ *    Flat on (with xxx-yyy named element)  :
+ *    {
+ *        name1:value1,
+ *        ...
+ *        yyy:value
+ *
+ *    }
+ *
+ * @return {{}}
+ *
+ */
+const DSBFormExtractToObject = function (flat = false) {
+    let data = {}
+    let array = [...this.elements]
+    array.forEach(element => {
+        if ((element.type === 'radio' && element.checked) || (element.type !== 'radio' && element.type !== 'fieldset'
+            && element.name !== '')) {
+            const [chapter, name] = element.name.split('--')
+            let value = element.value.trim()
+            if (['true', 'on', true, '1'].includes(value.toLowerCase())) {
+                value = true
+            } else if (['false', 'off', false, ''].includes(value.toLowerCase())) {
+                value = false
             }
-        })
-
-    }
-
-    /**
-     * Prepare post with form data.
-     *
-     * @param form  form object
-     *
-     * @returns  object  of form elements  where name = aaa--bbb
-     *
-     * @since 1.0
-     *
-     */
-    static prepare = (form) => {
-        let data = {}
-        let array = [...form.elements]
-        array.forEach(element => {
-            if ((element.type === 'radio' && element.checked) || (element.type !== 'radio' && element.type !== 'fieldset'
-                && element.name !== '')) {
-                const [chapter, name] = element.name.split('--')
-                let value = element.value.trim()
-                if (['true', 'on'].includes(value.toLowerCase())) {
-                    value = true
-                } else if (['false', 'off'].includes(value.toLowerCase())) {
-                    value = false
-                }
-                if (name !== undefined) {
+            if (name !== undefined) {
+                if (flat) {
+                    data[name] = value
+                } else {
                     if (!data.hasOwnProperty(chapter)) {
                         data[chapter] = {}
                     }
                     data[chapter][name] = value
-                } else {
+                }
+            } else {
                     data[element.name] = value
                 }
             }
@@ -72,5 +88,4 @@ export class DSBFormUtils {
 
         return data
     }
-
-}
+export {DSBFormExtractToObject}
