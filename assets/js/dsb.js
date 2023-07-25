@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 23/07/2023  12:06                                                                                *
+ * Last updated on : 25/07/2023  08:41                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -1472,7 +1472,13 @@ export var dsb = {
 
         },
 
-
+        /**
+         * @deprecated Use DashboardTranslation instead
+         *
+         * @param context
+         * @param key
+         * @return {DOMStringMap|undefined|*}
+         */
         get_text_i18n: (context, key = null) => {
             const text = document.querySelector(`text-i18n[context="${context}"]`)
             if (key) {
