@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 25/07/2023  09:38                                                                                *
+ * Last updated on : 25/07/2023  09:54                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -17,10 +17,10 @@ export class DashboardTranslation {
     #translations = {}
 
     contructor(context = null) {
-        this.assign(context)
+        this.bind(context)
     }
 
-    assign = (context) => {
+    bind = (context) => {
         if (context !== null) {
             this.#element = document.querySelector(`text-i18n[context="${context}"]`)
             if (this.#element !== undefined) {
