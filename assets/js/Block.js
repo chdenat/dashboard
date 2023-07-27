@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/07/2023  08:32                                                                                *
+ * Last updated on : 27/07/2023  12:16                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -200,7 +200,9 @@ class Block {
     }
 
     get sameFile() {
-        return this.#file === this?.#old
+        if (this.#old === null) return false
+        // Sometimes, it one of theme, rarely both, ends with /index...  So...
+        return this?.#file.split('/index')[0] === this?.#old.split('/index')[0]
     }
 
     get container() {
@@ -549,7 +551,7 @@ class Block {
     loadPage = async (force, parameters = {}) => {
         let value = true
         // Load the link content in the right template
-        if (this.is_content && !this.nofile) {
+        if (this.is_content && !this.nofile && force) {
             Block.importPageController(this)
                 .then(result => {
                     // Once the page  has been loaded, it's time to initalise the page,
