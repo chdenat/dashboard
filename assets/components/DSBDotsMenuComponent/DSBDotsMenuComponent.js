@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 02/07/2023  10:08                                                                                *
+ * Last updated on : 27/07/2023  14:44                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -93,7 +93,7 @@ export class DSBDotsMenuComponent extends HTMLElement {
         const template = `
 <style>@import "/dashboard/assets/components/DSBDotsMenuComponent/style.css"</style>
     <div class="drop${this.direction}">
-        <a href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <a href="#" role="button" class="dsb-dot-menu-button" data-bs-toggle="dropdown" aria-expanded="false">
             <span>${this.title}</span><i class="${this.icon}"></i>
         </a>
         <ul class="dropdown-menu">
