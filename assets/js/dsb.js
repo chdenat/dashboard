@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 25/07/2023  08:41                                                                                *
+ * Last updated on : 28/07/2023  10:25                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -346,9 +346,11 @@ export var dsb = {
          */
         init: function () {
             this._element = document.querySelector('#dashboard-modal')
+            this._content = this._element.querySelector('.modal-content')
             this._dialog = this._element.querySelector('.modal-dialog')
             this._instance = new bootstrap.Modal(this._element, {focus: false})
-
+            this._block = new Block(this._content)
+            this._block.addons({event: Block.MODAL_EVENT, animation: null})
             return this
         },
 
@@ -385,29 +387,13 @@ export var dsb = {
         hide: function () {
             this._instance.hide()
             return this
-        }
-        ,
-
-        /**
-         * Change the modal content
-         *
-         * @param html
-         * @returns {dsb.modal}
-         *
-         * @since 1.0
-         *
-         */
-        message: function (html) {
-            this._element.querySelector('.modal-content').innerHTML = html
-            dsb.ui.show(this._element.querySelector('.modal-content'))
-            return this
         },
 
-        cleanMessage: function () {
+
+        initModal: async function () {
             this._element.querySelector('.modal-content').innerHTML = ''
             dsb.ui.hide(this._element.querySelector('.modal-content'))
-        }
-        ,
+        },
 
         /**
          * This function makes an Ajax call used to get the modal content
@@ -419,29 +405,23 @@ export var dsb = {
          * @since 1.0
          *
          */
-        load: function (action, params = {}, custom = false) {
+        load: async function (action, params = {}, custom = false) {
             this._parameters = params
-            this._parameters['action'] = action
-            dsb.modal.cleanMessage()
-            dsb.modal.resize()
+            await dsb.modal.initModal()
 
-            this._element.addEventListener('show.bs.modal', dsb.modal.loading_events)
-            this._element.addEventListener('shown.bs.modal', dsb.modal.load_events)
-
-            fetch(((custom) ? ajax.get : dsb_ajax.get) + '?' + new URLSearchParams({
-                action: action,
-                params: JSON.stringify(params),
-            })).then(function (response) {
-                return response.text()
-            }).then(async function (html) {
-                dsb.modal.message(html)
-                await Block.importChildren(document.getElementById('dashboard-modal'))
-                return true
-            }).catch((error) => {
-                console.error('Error:', error) // Print or not print ?
+            Block.event.on(`modal/loaded/${action}`, () => {
+                dsb.ui.show(this._content)
             })
-        }
-        ,
+
+            this._element.addEventListener('hidden.bs.modal', event => {
+                // this._content.classList.remove('loaded','loading')
+            })
+
+            this._block.addons({action: action, context: (custom) ? 'custom' : null})
+            console.log(this._parameters)
+            await this._block.load(true, this._parameters)
+        },
+
 
         /**
          * Load 2 specific events when the modal is laoding

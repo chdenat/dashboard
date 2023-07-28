@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/07/2023  12:16                                                                                *
+ * Last updated on : 28/07/2023  10:25                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -23,10 +23,11 @@ class Block {
 
     static #HOME = ''
     static #EXCEPTIONS = []
-    static #reserved = ['menu', 'content', 'pop-content']    // Special templates
+    static #reserved = ['menu', 'content', 'modal']    // Special templates
     static #use404 = false
     static event = BlockEvent
     static #TAG = 'BLOCK'
+    static MODAL_EVENT = 'modal'
     #ID = null
     #file = ''
     #directory = ''
@@ -37,11 +38,15 @@ class Block {
     #children = []
     #old = null
     #variable = null
-    animation = Animation
+    animation = null
     #page_path = '/pages/'
     #observer
     #defer;
     nofile;
+    TEMPLATE_ANIMATION = Animation
+    TEMPLATE_CONTEXT = 'dashboard'
+    TEMPLATE_ACTION = 'load-template'
+    TEMPLATE_EVENT = 'template'
 
     /**
      *
@@ -59,6 +64,11 @@ class Block {
      *
      */
     constructor(element = document, variable = null, file = null) {
+
+        this.eventRoot = this.TEMPLATE_EVENT
+        this.loadAction = this.TEMPLATE_ACTION
+        this.context = this.TEMPLATE_CONTEXT
+        this.animation = this.TEMPLATE_ANIMATION
 
         // If it is not a DOM element, we get it from the ID
         if (typeof element === 'string') {
@@ -471,12 +481,26 @@ class Block {
 
     }
 
+    //TODO name ???
     static reload_page(soft = true) {
         if (soft) {
             Block.importChildren()
             return
         }
         location.reload()
+    }
+
+    addons({event = null, context = null, action = null, animation = false}) {
+        if (event !== null) this.eventRoot = event
+        if (context !== null) this.context = context
+        if (action !== null) this.loadAction = action
+        if (animation !== false) this.animation = animation
+        console.log(this.animation)
+    }
+
+    removeContent = () => {
+        this.container.innerHTML = ''
+
     }
 
     /**
@@ -625,7 +649,7 @@ class Block {
             if (mutation.type === 'attributes' && mutation.attributeName === 'data-load-status') {
                 let status = mutation.target.dataset.loadStatus
                 if (status && status != mutation.oldValue && !found) {
-                    template.dispatchEvents(`template/${status}`)
+                    template.dispatchEvents(`${template.eventRoot}/${status}`)
                     found = true
                 }
             }
@@ -657,7 +681,7 @@ class Block {
             this.defer = defer
         }
 
-        if ((!this.is_content && this.nofile) || this.#defer) {
+        if ((!this.is_reserved && this.nofile) || this.#defer) {
             return false
         }
 
@@ -709,7 +733,7 @@ class Block {
         if (!this.sameFile) {
             if (null !== this?.#old) {
                 this.unloadAnimation(true)
-                Block.event.emit(`template/unload/${this?.#old}`.replace('//', '/'))
+                Block.event.emit(`${this.eventRoot}/unload/${this?.#old}`.replace('//', '/'))
             }
         }
 
@@ -727,8 +751,8 @@ class Block {
 
         let current = this
         // Step 3 : Load the template using ajax and children if there are some
-        await fetch(dsb_ajax.get + '?' + new URLSearchParams({
-            action: 'load-template',
+        await fetch(((this.context === 'dashboard') ? dsb_ajax.get : ajax.get) + '?' + new URLSearchParams({
+            action: this.loadAction,
             template: this.file,
             tab: this.tab,
             parameters: JSON.stringify(this.parameters)
@@ -742,19 +766,23 @@ class Block {
 
         }).then(async (html) => {
 
-            let [template, content] = html.split('###')
-            if (template) {
+            if (this.loadAction === this.TEMPLATE_ACTION) {
+                let [template, content] = html.split('###')
+                if (template) {
 
-                current.#templateCompletion(template)
-                //load content.
-                current.container.innerHTML = content;
+                    current.#templateCompletion(template)
+                    //load content.
+                    current.container.innerHTML = content;
 
-                // Step 4 : Check if we need to open some tab
-                if (null !== current.tab) {
-                    dsb.ui.show_tab(current.tab)
+                    // Step 4 : Check if we need to open some tab
+                    if (null !== current.tab) {
+                        dsb.ui.show_tab(current.tab)
+                    }
+                } else {
+                    Block.page404(current.container?.dataset?.templateId, this.file)
                 }
             } else {
-                Block.page404(current.container?.dataset?.templateId, this.file)
+                current.container.innerHTML = html;
             }
             current.loaded = true
 
@@ -825,35 +853,44 @@ class Block {
         }
     }
 
-    dispatchEvents = (type, file = this.file, directory = this.#directory) => {
+    dispatchEvents = (context, event = null, directory = this.#directory) => {
 
-        let generic_event = new Event(`${type}`)
+        if (event === null) {
+            event = (this.loadAction === this.TEMPLATE_ACTION) ? this.file : this.loadAction
+        }
+
+        // In each Event or Block Event, we pass the Block object (this)
+
+        // Context Event
+        let generic_event = new Event(`${context}`)
         generic_event.template = this;
         document.dispatchEvent(generic_event)
-        Block.event.emit(type, this);
+        Block.event.emit(context, this);
 
-        // template event if it is a reserved template
+        // Reserved blocks Event : context/#ID#
         if (this.is_reserved) {
-            Block.event.emit(`${type}/${this.ID}`, this);
-            let load_event = new Event(`${type}/${this.ID}`)
+            Block.event.emit(`${context}/${this.ID}`, this);
+            let load_event = new Event(`${context}/${this.ID}`)
             load_event.template = this
             document.dispatchEvent(load_event)
         }
 
-        if (file === null) {
+        // No specific event, exit...
+        if (event === null) {
             return
         }
 
-        // add some cleaning
-        file = file.startsWith('/') ? file.substring(1) : file
-        file.replace('//', '/')
+        // Before, we nead to some cleaning in event name
+        event = event.startsWith('/') ? event.substring(1) : event
+        event.replace('//', '/')
 
-        // Specific event
-        let load_event = new Event(`${type}/${file}`)
+        // Now emit specific events
+        // JS Event
+        let load_event = new Event(`${context}/${event}`)
         load_event.template = this
         document.dispatchEvent(load_event)
-        Block.event.emit(`${type}/${file}`, this);
-
+        // Block Event
+        Block.event.emit(`${context}/${event}`, this);
     }
 
     /**
@@ -884,7 +921,7 @@ class Block {
     loadingAnimation = () => {
         this.container.setAttribute('data-load-status', Animation.classes.loading)
         if (this.animate()) {
-            this.animation.loading(this.ID)
+            this.animation?.loading(this.ID)
         }
     }
 
@@ -895,7 +932,7 @@ class Block {
     loadedAnimation = () => {
         this.container.setAttribute('data-load-status', Animation.classes.loaded)
         if (this.animate()) {
-            this.animation.loaded(this.ID)
+            this.animation?.loaded(this.ID)
         }
     }
 
@@ -906,7 +943,7 @@ class Block {
     unloadAnimation = () => {
         this.container.setAttribute('data-load-status', Animation.classes.unload)
         if (this.animate()) {
-            this.animation.unloading(this.ID)
+            this.animation?.unloading(this.ID)
         }
     }
 
