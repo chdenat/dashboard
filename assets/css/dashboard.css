@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 24/07/2023  19:09
+ * Last updated on : 28/07/2023  18:01
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -197,7 +197,12 @@
     --dsb-menu-bg-color: var(--dsb-gray-2);
     --dsb-menu-color: var(--dsb-gray-8);
     --dsb-menu-border-color: transparent;
-    --dsb-menu-icon-color: var(--dsb-menu-color);
+
+    --dsb-menu-icon-color: var(--dsb-primary-color);
+    --dsb-menu-open-icon-color: var(--dsb-primary-color);
+    --dsb-menu-open-hover-icon-color: var(--dsb-primary-icon-color);
+    --dsb-menu-open-color: var(--dsb-menu-color);
+    --dsb-menu-open-hover-color: var(--dsb-menu-color);
 
     --dsb-menu-hover-color: var(--dsb-color-light);
     --dsb-menu-hover-bg-color: var(--dsb-primary-color);
@@ -214,6 +219,8 @@
     --dsb-menu-selected-icon-color: var(--dsb-color-light);
     --dsb-menu-selected-icon-hover-color: var(--dsb-color-light);
 
+    --dsb-menu-children-gap: 10px;
+    --dsb-menu-children-border: var(--dsb-border) var(--dsb-gray-4);
 
     --dsb-main-font-family: normal;
     --dsb-main-font-size: 0.85rem;
@@ -272,9 +279,6 @@
     --dsb-pop-menu-color: var(--dsb-gray-7);
     --dsb-pop-menu-border: var(--dsb-border) var(--dsb-main-border-color);
     --dsb-pop-menu-size: 0.8rem;
-
-    --dsb-menu-children-gap: 10px;
-    --dsb-menu-children-border: var(--dsb-border) var(--dsb-gray-4);
     --dsb-tab-color: var(--dsb-primary-color);
     --dsb-tab-active-color: var(--dsb-color-light);
     --dsb-tab-active-bg-color: var(--dsb-primary-color);
@@ -1335,10 +1339,8 @@ body:not(.logged-in) #user-dropdown:hover {
 
 #menu-container li i {
     min-width: var(--dsb-gutter);
-}
-
-#menu-container li i {
     margin-right: var(--dsb-xs-gutter);
+    color: var(--dsb-menu-icon-color);
 }
 
 
