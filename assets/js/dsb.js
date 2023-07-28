@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 28/07/2023  10:25                                                                                *
+ * Last updated on : 28/07/2023  14:30                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -349,8 +349,7 @@ export var dsb = {
             this._content = this._element.querySelector('.modal-content')
             this._dialog = this._element.querySelector('.modal-dialog')
             this._instance = new bootstrap.Modal(this._element, {focus: false})
-            this._block = new Block(this._content)
-            this._block.addons({event: Block.MODAL_EVENT, animation: null})
+
             return this
         },
 
@@ -407,6 +406,7 @@ export var dsb = {
          */
         load: async function (action, params = {}, custom = false) {
             this._parameters = params
+
             await dsb.modal.initModal()
 
             Block.event.on(`modal/loaded/${action}`, () => {
@@ -414,12 +414,16 @@ export var dsb = {
             })
 
             this._element.addEventListener('hidden.bs.modal', event => {
-                // this._content.classList.remove('loaded','loading')
+                this._content.classList.remove('loaded', 'loading')
             })
 
-            this._block.addons({action: action, context: (custom) ? 'custom' : null})
-            console.log(this._parameters)
-            await this._block.load(true, this._parameters)
+            const block = new Block(this._content, {
+                event: Block.MODAL_EVENT,
+                animation: null,
+                action: action,
+                context: (custom) ? 'custom' : null
+            })
+            await block.load(true, this._parameters)
         },
 
 
@@ -1224,20 +1228,6 @@ export var dsb = {
         },
         hide_overlay: () => {
             dsb.ui.backdrop.classList.remove('show')
-        },
-
-        show_intermediate_content: (event) => {
-            event.preventDefault()
-            let template = new Block('#popcont#', null, event.currentTarget.getAttribute('href'))
-            template.checkLink4Tab(event.currentTarget.getAttribute('href'))
-            template.load().then(r => dsb.ui.show_pop_content())
-
-
-            return false
-        },
-
-        hide_intermediate_content: () => {
-            dsb.ui.hide_pop_content()
         },
 
         show_refresh: (id) => {
