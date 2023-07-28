@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 28/07/2023  14:30                                                                                *
+ * Last updated on : 28/07/2023  15:12                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -335,7 +335,6 @@ export var dsb = {
     modal: {
         _element: null,
         _instance: null,
-        _parameters: null,
         /**
          * Init user modal
          *
@@ -398,14 +397,13 @@ export var dsb = {
          * This function makes an Ajax call used to get the modal content
          *
          * @param action The ajax action name
-         * @param params some params to send to Ajax
+         * @param parameters some params to send to Ajax
          * @param custom use DSB ajax or custom ajax
          *
          * @since 1.0
          *
          */
-        load: async function (action, params = {}, custom = false) {
-            this._parameters = params
+        load: async function (action, parameters = [], custom = false) {
 
             await dsb.modal.initModal()
 
@@ -423,50 +421,7 @@ export var dsb = {
                 action: action,
                 context: (custom) ? 'custom' : null
             })
-            await block.load(true, this._parameters)
-        },
-
-
-        /**
-         * Load 2 specific events when the modal is laoding
-         *
-         */
-        loading_events: () => {
-            // Throw a  generic load event
-            let generic = new Event('modal/loading')
-            generic.modal = dsb.modal
-            generic.parameters = dsb.modal._parameters.keys
-            document.dispatchEvent(generic)
-
-            // and a new specific running event
-            let specific = new Event(`modal/loading/${dsb.modal._parameters.action}`)
-            generic.modal = dsb.modal
-            generic.parameters = dsb.modal._parameters.keys
-            document.dispatchEvent(generic)
-
-            Block.event.emit(`modal/loading/${dsb.modal._parameters.action}`, dsb.modal)
-
-        },
-
-        /**
-         * Load 2 specific events when the modal has been shown
-         *
-         *
-         */
-        load_events: () => {
-            // Throw a  generic load event
-            let generic = new Event('modal/loaded')
-            generic.modal = dsb.modal
-            generic.parameters = dsb.modal._parameters.keys
-            document.dispatchEvent(generic)
-            // and a new specific running event
-
-            let specific = new Event(`modal/loaded/${dsb.modal._parameters.action}`)
-            specific.modal = dsb.modal
-            specific.parameters = dsb.modal._parameters.keys
-            document.dispatchEvent(specific)
-
-            Block.event.emit(`modal/loaded/${dsb.modal._parameters.action}`, dsb.modal)
+            await block.load(true, parameters)
         },
 
         /**
