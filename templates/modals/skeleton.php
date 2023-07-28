@@ -1,32 +1,30 @@
 <?php
-	
-	/***********************************************************************************************************************
- *
- * Project : supervix4
- * file : skeleton.php
- *
- * @author  Christian Denat
- * @email contact@noleam.fr
- * --
- *
- * updated on :  7/1/22, 4:44 PM
- *
- * @copyright (c) 2022 noleam.fr
- *
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : shelteradmin                                                                                             *
+ * File : skeleton.php                                                                                                *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 28/07/2023  09:59                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
  **********************************************************************************************************************/
-  
-	use dashboard\template\Template;
- 
+
+use dashboard\template\Template;
+
 ?>
 
-<?= Template::instance()->comments( "user management modal" ) ?>
+<?= Template::instance()->comments("user management modal") ?>
 
-<div class="modal fade"  data-bs-backdrop="static" data-bs-keyboard="false" id="dashboard-modal" tabindex="-1"
-     aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="dashboard-modal" tabindex="-1"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <block class="modal-content" data-template="" id="dsb-modal-content" data-template-id="#modal#"></block>
         </div>
     </div>
-</div>
 
 <?= Template::instance()->end_comments() ?>
