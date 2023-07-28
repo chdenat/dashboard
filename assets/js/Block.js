@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 28/07/2023  14:27                                                                                *
+ * Last updated on : 28/07/2023  15:41                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -47,6 +47,8 @@ class Block {
     TEMPLATE_CONTEXT = 'dashboard'
     TEMPLATE_ACTION = 'load-template'
     TEMPLATE_EVENT = 'template'
+
+    parameters = []
 
     /**
      *
@@ -677,7 +679,7 @@ class Block {
      *
      */
 
-    load = async (force = false, parameters = [], defer = null) => {
+    load = async (force = false, parameters = {}, defer = null) => {
 
         /*
          * Bail early if we have no file in any template except content
@@ -691,19 +693,14 @@ class Block {
         }
 
         /**
-         *  @since 1.1.0
+         * @since 1.6.3 : we merge all founded parameters
+         *                parameters set in php template have the priority in case of doublons
          */
         this.parameters = parameters
-
-        /**
-         * @since 1.6.0
-         */
-        if (this.parameters.length === 0) {
-            // Lets try to see if we have embedded parameters (declared in json)
-            if (this.#dom.container.dataset?.parameters) {
-                this.parameters = JSON.parse(this.#dom.container.dataset?.parameters)
-            }
+        if (this.#dom.container.dataset?.parameters) {
+            this.parameters = {...JSON.parse(this.#dom.container.dataset?.parameters), ...parameters}
         }
+
         /**
          * Maybe we need to redirect on home...
          */
