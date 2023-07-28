@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 20/07/2023  06:15                                                                                *
+ * Last updated on : 28/07/2023  14:40                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -161,32 +161,38 @@ export class DashboardUI {
     }
 
     static startFetchingAnimation = (element) => {
+        if (element != null && element !== undefined) {
+            if (!Array.isArray(element)) {
+                const old = element
+                element = []
+                element.push(old)
+            }
 
-        if (!Array.isArray(element)) {
-            const old = element
-            element = []
-            element.push(old)
+            element.forEach(item => {
+                item?.classList.add(this.FETCHING_CLASS)
+            })
         }
-
-        element.forEach(item => {
-            item?.classList.add(this.FETCHING_CLASS)
-        })
     }
 
     static stopFetchingAnimation = (element) => {
-        if (!Array.isArray(element)) {
-            const old = element
-            element = []
-            element.push(old)
-        }
+        if (element != null && element !== undefined) {
+            if (!Array.isArray(element)) {
+                const old = element
+                element = []
+                element.push(old)
+            }
 
-        element.forEach(item => {
-            item.classList.remove(this.FETCHING_CLASS)
-        })
+            element.forEach(item => {
+                item.classList.remove(this.FETCHING_CLASS)
+            })
+        }
     }
 
     static isFetchingAnimationInProgress = (element) => {
-        return element.classList.contains(this.FETCHING_CLASS)
+        if (element != null && element !== undefined) {
+            return element.classList.contains(this.FETCHING_CLASS)
+        }
+        return false
     }
 
     static startButtonAnimation = (button) => {
