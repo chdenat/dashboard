@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 28/07/2023  10:25                                                                                *
+ * Last updated on : 28/07/2023  14:27                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -53,22 +53,36 @@ class Block {
      * @param element could be an HTMLElement or a string
      *                If it is a string, it should be the data-template-id value
      *
-     * @param variable add to template file.
+     *
+     * @param options
+     *
+     *         @since 1.6.3
+     *
+     *         event   : event root name (by default 'template')
+     *         action  : the ajax action associated to the block template (default 'load-template')
+     *         context : used to contextualise template management (ie custom or dashboard actions, default 'dashboard')
+     *         animation : used to specify a Animation child class (default Animation)
+     *
+     *         @since 1.0.0
+     *
+     *         variable : add to template file (default null))
      *                when the template file is 'xxxx/yyyyy'        ==> we check this as template file, no variable
      *                when the template file is 'xxxx/yyyyy[zzz]'   ==> we check 'xxxx/yyyyy' as template file, zzz as
-     *     variable
-     * @param file    force a file instead the defind in data-template
-     *
-     * @since 1.0.0
-     *
+     *                variable
+     *         file:    force a file instead the defined in data-template (default  null)
      *
      */
-    constructor(element = document, variable = null, file = null) {
+    constructor(element = document, options) {
 
-        this.eventRoot = this.TEMPLATE_EVENT
-        this.loadAction = this.TEMPLATE_ACTION
-        this.context = this.TEMPLATE_CONTEXT
-        this.animation = this.TEMPLATE_ANIMATION
+
+        // Assign some variables with options value or default
+        this.eventRoot = options?.event ?? this.TEMPLATE_EVENT
+        this.loadAction = options?.action ?? this.TEMPLATE_ACTION
+        this.context = options?.context ?? this.TEMPLATE_CONTEXT
+        this.animation = options?.animation ?? this.TEMPLATE_ANIMATION
+        let file = options?.file ?? null
+        let variable = options?.variable ?? null
+
 
         // If it is not a DOM element, we get it from the ID
         if (typeof element === 'string') {
@@ -314,6 +328,8 @@ class Block {
      */
     static async loadBlockFromEvent(event) {
 
+        event.preventDefault(); // Cancel the native event
+
         // We check if the link has been bound to a reserved template
         for (const item in event.currentTarget.dataset) {
             if (this.#reserved.includes(item)) {
@@ -332,17 +348,14 @@ class Block {
                     let force = true
                     // Same file  : De we force a loading?
                     if (template.sameFile) {
-                        force = event.target.dataset.forceReload ?? false
+                        force = event.currentTarget.dataset.forceReload ?? false
                         // If reload not forced, we do nothing and say bye
                         if (!force) {
                             template.loaded = true
                         }
                     }
 
-                    // The events come from the menu, so, add an animation if it's only a tab template.
-                    //if (!template.is_content) {
                     Animation.loading('#content#')
-                    //}
 
                     let parameters = {}
                     let href = event.currentTarget.getAttribute('href')
@@ -364,7 +377,6 @@ class Block {
                     UI.setTitle(href)
 
                 }
-                event.preventDefault(); // Cancel the native event
             }
         }
         Animation.loaded('#content#')
@@ -490,14 +502,6 @@ class Block {
         location.reload()
     }
 
-    addons({event = null, context = null, action = null, animation = false}) {
-        if (event !== null) this.eventRoot = event
-        if (context !== null) this.context = context
-        if (action !== null) this.loadAction = action
-        if (animation !== false) this.animation = animation
-        console.log(this.animation)
-    }
-
     removeContent = () => {
         this.container.innerHTML = ''
 
@@ -603,7 +607,7 @@ class Block {
                     value = false
                 })
         } else {
-            this.load(force).then((ok) => {
+            this.load(force, parameters).then((ok) => {
                 if (ok) {
                     this.importDeferredBlock(ok => {
                         value = ok
@@ -644,6 +648,7 @@ class Block {
      */
     loadStatusObserver = (mutations) => {
         let template = this
+
         mutations.forEach(function (mutation) {
             let found = false
             if (mutation.type === 'attributes' && mutation.attributeName === 'data-load-status') {
@@ -919,6 +924,10 @@ class Block {
      *
      */
     loadingAnimation = () => {
+        if (this.animation === null || undefined) {
+            this.container.removeAttribute('data-load-status')
+            return
+        }
         this.container.setAttribute('data-load-status', Animation.classes.loading)
         if (this.animate()) {
             this.animation?.loading(this.ID)
@@ -930,9 +939,13 @@ class Block {
      *
      */
     loadedAnimation = () => {
+        if (this.animation === null || undefined) {
+            this.container.removeAttribute('data-load-status')
+            return
+        }
         this.container.setAttribute('data-load-status', Animation.classes.loaded)
         if (this.animate()) {
-            this.animation?.loaded(this.ID)
+            this.animation.loaded(this.ID)
         }
     }
 
@@ -941,9 +954,13 @@ class Block {
      *
      */
     unloadAnimation = () => {
+        if (this.animation === null || undefined) {
+            this.container.removeAttribute('data-load-status')
+            return
+        }
         this.container.setAttribute('data-load-status', Animation.classes.unload)
         if (this.animate()) {
-            this.animation?.unloading(this.ID)
+            this.animation.unloading(this.ID)
         }
     }
 
