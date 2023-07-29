@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 29/07/2023  12:54                                                                                *
+ * Last updated on : 29/07/2023  18:21                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -387,7 +387,7 @@ class Block {
             const href = location.pathname
             const template = new Block(`#content#`)
             template.file = href
-            await template.loadPage(true, {})
+            await template.loadPage(true, {force: true})
 
             // save file information
             template.#dom.container.setAttribute('data-template', template.file)
