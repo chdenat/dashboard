@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 29/07/2023  12:54                                                                                *
+ * Last updated on : 29/07/2023  18:20                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -23,7 +23,7 @@ export class DashboardMenu {
     static current_roles = []
     static json = null
     static openClass = 'openItem'
-    static  ALL_ROLES = ['logged', 'admin']
+    static  ALL_ROLES = ['logged', 'admin', 'superadmin']
 
     static change_id = (new_id) => {
         this.template_id = new_id
@@ -77,11 +77,13 @@ export class DashboardMenu {
                 }
             }
             if (!found) {
+                item = null
                 // lets see id it is an hidden one
                 if (location.hash === '#force') {
                     found = true
                     found_with_role = true
-                    item = null
+                } else {
+                    found_with_role = false
                 }
             }
 
@@ -89,7 +91,7 @@ export class DashboardMenu {
                 if (!found_with_role) {
                     // Nothing with role
                     //  we try to open the default if it is / | /home => pathname = null | home
-                    if (pathname === '' || pathname === 'home') {
+                    if (pathname === '' || pathname === '/home') {
                         item = document.querySelector(`[data-template-id="${template.ID}"] a[data-level*="menu-item"][data-default-page]`)
                         if (null !== item) {
                             found = true
@@ -133,6 +135,7 @@ export class DashboardMenu {
                     })
                 } else {
                     Block.loadBlockFromEvent().then(() => {
+
                     })
                 }
             } else {
