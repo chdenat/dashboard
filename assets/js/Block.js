@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 28/07/2023  15:41                                                                                *
+ * Last updated on : 29/07/2023  12:54                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -49,6 +49,8 @@ class Block {
     TEMPLATE_EVENT = 'template'
 
     parameters = []
+    Animation
+    '#content#'
 
     /**
      *
@@ -75,8 +77,6 @@ class Block {
      *
      */
     constructor(element = document, options) {
-
-
         // Assign some variables with options value or default
         this.eventRoot = options?.event ?? this.TEMPLATE_EVENT
         this.loadAction = options?.action ?? this.TEMPLATE_ACTION
@@ -330,57 +330,74 @@ class Block {
      */
     static async loadBlockFromEvent(event) {
 
-        event.preventDefault(); // Cancel the native event
+        if (event instanceof Event) {
+            event.preventDefault(); // Cancel the native event
 
-        // We check if the link has been bound to a reserved template
-        for (const item in event.currentTarget.dataset) {
-            if (this.#reserved.includes(item)) {
-                // If it s the case, lets'go
-                let template = Block.getBlock(`#${item}#`)
+            // We check if the link has been bound to a reserved template
+            for (const item in event.currentTarget.dataset) {
+                if (this.#reserved.includes(item)) {
+                    // If it s the case, lets'go
+                    let template = Block.getBlock(`#${item}#`)
 
-                if (undefined !== template) {
+                    if (undefined !== template) {
 
 
-                    // save old...
-                    template.historize = template
+                        // save old...
+                        template.historize = template
 
-                    // And now we work on the new content, we push the file and tab
-                    template.checkLink4Tab(event.currentTarget.getAttribute('href'))
+                        // And now we work on the new content, we push the file and tab
+                        template.checkLink4Tab(event.currentTarget.getAttribute('href'))
 
-                    let force = true
-                    // Same file  : De we force a loading?
-                    if (template.sameFile) {
-                        force = event.currentTarget.dataset.forceReload ?? false
-                        // If reload not forced, we do nothing and say bye
-                        if (!force) {
-                            template.loaded = true
+                        let force = true
+                        // Same file  : De we force a loading?
+                        if (template.sameFile) {
+                            force = event.currentTarget.dataset.forceReload ?? false
+                            // If reload not forced, we do nothing and say bye
+                            if (!force) {
+                                template.loaded = true
+                            }
                         }
+
+                        Animation.loading('#content#')
+
+                        let parameters = {}
+                        let href = event.currentTarget.getAttribute('href')
+                        // if data-allow-back is present, we inform the block by passing the caller
+                        let caller = null
+                        if (event.currentTarget.hasAttribute('data-allow-back')) {
+                            href = new URL(event.currentTarget.baseURI).pathname
+                            parameters.caller = href
+                        }
+
+                        await template.loadPage(force, parameters)
+
+                        // save file information
+                        template.#dom.container.setAttribute('data-template', template.file)
+
+                        //Add breadcrumbs
+                        UI.setBreadcrumbs(href)
+                        // Add Title
+                        UI.setTitle(href)
+
                     }
-
-                    Animation.loading('#content#')
-
-                    let parameters = {}
-                    let href = event.currentTarget.getAttribute('href')
-                    // if data-allow-back is present, we inform the block by passing the caller
-                    let caller = null
-                    if (event.currentTarget.hasAttribute('data-allow-back')) {
-                        href = new URL(event.currentTarget.baseURI).pathname
-                        parameters.caller = href
-                    }
-
-                    await template.loadPage(force, parameters)
-
-                    // save file information
-                    template.#dom.container.setAttribute('data-template', template.file)
-
-                    //Add breadcrumbs
-                    UI.setBreadcrumbs(href)
-                    // Add Title
-                    UI.setTitle(href)
-
                 }
             }
+        } else {
+            // We force a page
+            const href = location.pathname
+            const template = new Block(`#content#`)
+            template.file = href
+            await template.loadPage(true, {})
+
+            // save file information
+            template.#dom.container.setAttribute('data-template', template.file)
+
+            //Add breadcrumbs
+            UI.setBreadcrumbs(href)
+            // Add Title
+            UI.setTitle(href)
         }
+
         Animation.loaded('#content#')
     }
 
@@ -389,7 +406,8 @@ class Block {
      *
      * @param parent root (document by default)
      */
-    static importChildren = async function (parent = document) {
+    static
+    importChildren = async function (parent = document) {
         let blocks = Block.getFirstLevelEmbeddedBlocks(parent)
         if (blocks.length > 0) {
             let children = []
@@ -408,7 +426,8 @@ class Block {
         }
     }
 
-    static addBaseToTemplate = (block) => {
+    static
+    addBaseToTemplate = (block) => {
         if (block.dataset?.templateId === '#content#') {
             // In case it is  the content block, we push the baseUri or home if nothing
             const base = (block.dataset.template === '') ? (block.baseURI ? block.baseURI : Block.getHome()) : block.dataset.template
@@ -417,7 +436,8 @@ class Block {
         return block
     }
 
-    static importPageController = async (template) => {
+    static
+    importPageController = async (template) => {
         let parts = template.file.split('/')
         if (parts[parts.length - 1] === 'index') {
             parts.pop()
@@ -445,7 +465,8 @@ class Block {
      * @since 1.6
      *
      */
-    static getFirstLevelEmbeddedBlocks = (node = document, tag = Block.#TAG) => {
+    static
+    getFirstLevelEmbeddedBlocks = (node = document, tag = Block.#TAG) => {
         const all = node.querySelectorAll(`:scope ${tag}`)
         const parents = node.querySelectorAll(`:scope ${tag} ${tag}`)
         return Array.from(all).filter(x => !Array.from(parents).includes(x))
@@ -456,7 +477,8 @@ class Block {
      *
      * @param template
      */
-    static addBlockToList = (block = this) => {
+    static
+    addBlockToList = (block = this) => {
         blocksList[block.ID] = block
     }
 
@@ -465,7 +487,8 @@ class Block {
      *
      * @param key  key could be a template ID or a template object
      */
-    static removeBlockFromList = (key = this) => {
+    static
+    removeBlockFromList = (key = this) => {
         let id = key
         if (key instanceof Block) {
             id = key.ID
@@ -483,11 +506,13 @@ class Block {
      * @param key
      * @returns {*}
      */
-    static getBlock = (key) => {
+    static
+    getBlock = (key) => {
         return blocksList[key]
     }
 
-    static async reloadPage(url) {
+    static
+    async reloadPage(url) {
         let t = new Block(document.querySelector('[data-template-id="#content#"]'))
         t.load(true).then(() => {
             UI.setBreadcrumbs(t)
@@ -495,7 +520,7 @@ class Block {
 
     }
 
-    //TODO name ???
+//TODO name ???
     static reload_page(soft = true) {
         if (soft) {
             Block.importChildren()

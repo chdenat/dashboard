@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/07/2023  10:30                                                                                *
+ * Last updated on : 29/07/2023  12:54                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -76,6 +76,14 @@ export class DashboardMenu {
                     break
                 }
             }
+            if (!found) {
+                // lets see id it is an hidden one
+                if (location.hash === '#force') {
+                    found = true
+                    found_with_role = true
+                    item = null
+                }
+            }
 
             if (!found) {
                 if (!found_with_role) {
@@ -98,30 +106,35 @@ export class DashboardMenu {
 // If we found something, we'll open the right menu
 // else we redirect to 404.
             if (found || found_with_role && item) {
-                let levels = item.dataset.level.split('-')
-                let id = 'menu-item-'
-                levels.slice(2).forEach(level => {  // remove the 2 first, 'menu' and 'item'
-                    id += level
-                    // try to click on item defined as href=#<level-x-x>
-                    let item = document.querySelector(`[href="#${id}"]`)
-                    // or id= <level-x-x>
-                    if (null === item) {
-                        item = document.querySelector(`[data-level=${id}]`)
-                    }
+                if (item !== null) {
+                    let levels = item.dataset.level.split('-')
+                    let id = 'menu-item-'
+                    levels.slice(2).forEach(level => {  // remove the 2 first, 'menu' and 'item'
+                        id += level
+                        // try to click on item defined as href=#<level-x-x>
+                        let item = document.querySelector(`[href="#${id}"]`)
+                        // or id= <level-x-x>
+                        if (null === item) {
+                            item = document.querySelector(`[data-level=${id}]`)
+                        }
 
-                    // Click on
-                    let link = item.getAttribute('href')
-                    if (link.startsWith('#menu')) {
-                        // Menu section : we click to open it.
-                        item.click()
-                    } else {
-                        // Menu item : we do not click but simulate
-                        this.click(item, true)
-                        dsb.ui.show_tab(Block._check_link(link).tab)
-                    }
-                    id += '-'
+                        // Click on
+                        let link = item.getAttribute('href')
+                        if (link.startsWith('#menu')) {
+                            // Menu section : we click to open it.
+                            item.click()
+                        } else {
+                            // Menu item : we do not click but simulate
+                            this.click(item, true)
+                            dsb.ui.show_tab(Block._check_link(link).tab)
+                        }
+                        id += '-'
 
-                })
+                    })
+                } else {
+                    Block.loadBlockFromEvent().then(() => {
+                    })
+                }
             } else {
                 Block.page404('#content#', origin)
             }
