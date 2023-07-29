@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 28/07/2023  18:01
+ * Last updated on : 29/07/2023  08:18
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -141,8 +141,8 @@
     /***************************************************************************
      * Console
      */
-    --dsb-console-bg-color: var(--dsb-gray-8);
-    --dsb-console-pause-bg-color: var(--dsb-gray-6);
+    --dsb-console-bg-color: var(--dsb-gray-7);
+    --dsb-console-pause-bg-color: var(--dsb-gray-5);
     --dsb-console-color: var(--dsb-gray-2);
     --dsb-console-scrollbar-color: var(--bs-gray-500);
     --dsb-console-scrollbar-hover-color: var(--dsb-console-color);
@@ -251,8 +251,8 @@
     --dsb-box-shadow: 0 0 0 0 transparent;
 
     --dsb-backdrop-index: 1055;
-    --dsb-backdrop-opacity: 0.4;
-    --dsb-backdrop-color: var(--dsb-color-dark-rgb);
+    --dsb-backdrop-opacity: 0.55;
+    --dsb-backdrop-color: var(--dsb-primary-color);
 
     --dsb-main-border-color: var(--dsb-gray-4);
     --dsb-main-border: var(--dsb-border) var(--dsb-main-border-color);
@@ -1588,6 +1588,15 @@ footer {
 .modal .modal-footer, .modal .modal-footer > div {
     display: flex;
     gap: var(--dsb-gutter);
+}
+
+modal-backdrop.show {
+    opacity: var(--dsb-backdrop-opacity);
+}
+
+.modal-backdrop {
+    --bs-backdrop-bg: var(--dsb-backdrop-color);
+    --bs-backdrop-opacity: var(--dsb-backdrop-opacity);
 }
 
 /*****************************************************************************************************************************************************
