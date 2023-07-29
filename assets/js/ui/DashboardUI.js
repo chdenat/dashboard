@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 28/07/2023  14:40                                                                                *
+ * Last updated on : 29/07/2023  20:04                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -364,7 +364,7 @@ export class DashboardUI {
             href = item
         } else if (item instanceof Block) {
             href = item.file
-        } else {
+        } else if (href !== undefined) {
             href = item.getAttribute('href')
         }
 
