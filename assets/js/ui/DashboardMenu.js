@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 30/07/2023  11:44                                                                                *
+ * Last updated on : 30/07/2023  18:43                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -24,9 +24,9 @@ export class DashboardMenu {
     static current_roles = []
     static json = null
     static openClass = 'openItem'
-    static  ALL_ROLES = ['logged', 'admin', 'superadmin']
+    static  allRoles = ['logged', 'admin', 'superadmin']
 
-    static change_id = (new_id) => {
+    static setID = (new_id) => {
         this.template_id = new_id
     }
 
@@ -42,7 +42,7 @@ export class DashboardMenu {
      * @param pathname
      */
     static  synchronize = (template, pathname = '') => {
-        this.change_id(template.ID)
+        this.setID(template.ID)
 
         DashboardMenu.getJSON().then(data => {
             // If there is no pathname, we use the window location
@@ -50,43 +50,40 @@ export class DashboardMenu {
                 pathname = `${window.location.pathname}${window.location.hash}`
             }
             let origin = pathname
-            pathname = this._clean_path(pathname)
+            pathname = this.#cleanValue(pathname)
 
             let found = false               // found in the menu
-            let found_with_role = false     // found with a specific role if not in menu
-            let item = {}
+            let foundWithRole = false     // found with a specific role if not in menu
 
-// We try as is,then without hash and finally without index.
+            let item = {}
+            let menuItem = {}
+            // Let's find the right entry in the menu
+            // We try as is,then without hash and finally without index.
+
             for (let key of [' ', '#', 'index']) {
                 pathname = pathname.split(key)[0]
                 // Some entry in the menu ?
-                item = document.querySelector(`[data-template-id="${template.ID}"] a[data-level*="menu-item-"][href*="${pathname}"]`)
-                if (null !== item) {
-                    // Yes, so we clean and check it
-                    if (pathname === this._clean_path(item.getAttribute('href').split(key)[0])) {
-                        found = true
-                        break
-                    }
+                menuItem = this.findMenuItemByKey(DashboardMenu.json.menu, 'href', pathname, [], true)
+                found = menuItem.length > 0
+                if (found) break
 
-                } else if (!dsb.session.active()) {
+                // OK so may-be session is inactive, let's search id there is one bound to a role
+                if (!found && !dsb.session.active()) {
                     // Nothing... May be the user need to be logged in to see this item in the menu ...
-                    found_with_role = this.find_items_with_roles(DashboardMenu.json.menu, 'href', pathname, this.all_roles(), true).length > 0
-
-                }
-                if (found || found_with_role) {
-                    break
+                    menuItem = this.findMenuItemByKey(DashboardMenu.json.menu, 'href', pathname, DashboardMenu.allRoles, true)
+                    foundWithRole = menuItem.length > 0
+                    if (foundWithRole) break
                 }
             }
 
             if (!found) {
-                if (!found_with_role) {
+                if (!foundWithRole) {
                     // Nothing with role
                     //  we try to open the default if it is / | /home => pathname = null | home
-                    if (pathname === '' || pathname === '/home') {
-                        item = document.querySelector(`[data-template-id="${template.ID}"] a[data-level*="menu-item"][data-default-page]`)
-                        if (null !== item) {
-                            found = true
-                        }
+                    if (pathname === '' || pathname === 'home' || pathname === 'pages/home') {
+                        menuItem = this.findMenuItemByKey(DashboardMenu.json.menu, 'default', true, [], true)
+                        found = menuItem.length > 0
+                        pathname = this.#cleanValue(menuItem[0].data.href)
                     }
                 } else {
                     // We find an entry with the role : we load the modal and pass some parameters
@@ -96,44 +93,50 @@ export class DashboardMenu {
                     return
                 }
             }
-// If we found something, we'll open the right menu
-// else we redirect to 404.
-            if (found || found_with_role && item) {
-                let levels = item.dataset.level.split('-')
-                let id = 'menu-item-'
-                levels.slice(2).forEach(level => {  // remove the 2 first, 'menu' and 'item'
-                    id += level
-                    // try to click on item defined as href=#<level-x-x>
-                    let item = document.querySelector(`[href="#${id}"]`)
-                    // or id= <level-x-x>
-                    if (null === item) {
-                        item = document.querySelector(`[data-level=${id}]`)
-                    }
 
-                    // Click on
-                    let link = item.getAttribute('href')
-                    if (link.startsWith('#menu')) {
-                        // Menu section : we click to open it.
-                        item.click()
-                    } else {
-                        // Menu item : we do not click but simulate
-                        this.click(item, true)
-                        dsb.ui.show_tab(Block._check_link(link).tab)
-                    }
-                    id += '-'
+            console.log(found, foundWithRole, menuItem)
 
-                })
+            // If we found something, we'll open the right menu
+            // else we redirect to 404.
+            if (found || foundWithRole) {
+                item = document.querySelector(`[data-template-id="${template.ID}"] a[data-level*="menu-item-"][href*="${pathname}"]`)
+                if (item !== null) {
+                    // Item found ie it exists in the menu block
+                    let levels = item.dataset.level.split('-')
+                    let id = 'menu-item-'
+                    levels.slice(2).forEach(level => {  // remove the 2 first, 'menu' and 'item'
+                        id += level
+                        // try to click on item defined as href=#<level-x-x>
+                        let item = document.querySelector(`[href="#${id}"]`)
+                        // or id= <level-x-x>
+                        if (null === item) {
+                            item = document.querySelector(`[data-level=${id}]`)
+                        }
+
+                        // we search the link
+                        let link = item.getAttribute('href')
+
+                        if (link?.startsWith('#menu')) {
+                            // Menu section : we click to open it.
+                            item.click()
+                        } else {
+                            // Menu item : we do not click but simulate
+                            this.click(item, true)
+                            dsb.ui.show_tab(Block._check_link(link).tab)
+                        }
+                        id += '-'
+
+                    })
+                } else {
+                    // Item is hidden
+                    this.click(menuItem[0].data, true)
+                    dsb.ui.show_tab(Block._check_link(menuItem[0].data.href).tab)
+
+                }
             } else {
                 Block.page404('#content#', origin)
             }
         })
-    }
-
-    /**
-     * Get all roles
-     */
-    static all_roles = () => {
-        return DashboardMenu.ALL_ROLES
     }
 
     /**
@@ -148,29 +151,31 @@ export class DashboardMenu {
      * @param roles
      * @param single
      */
-    static find_items_with_roles = (obj = {}, key, value, roles = []) => {
+    static findMenuItemByKey = (obj = {}, key, value, roles = []) => {
         const result = []
-        let used_roles = {}
+        let usedRoles = {}
+        const haveRoles = roles.length > 0
         const recursive = (obj = {}) => {
             if (!obj || typeof obj !== 'object') {
                 return
             }
             // If no roles in input or no roles in data, search is enabled
-            let search = roles.length === 0 || obj.roles === undefined
+            let search = obj.roles === undefined
 
-            if (obj?.roles !== undefined && roles.length > 0) {
+            if (obj?.roles !== undefined) {
                 // If there are some roles, we try to see if roles in data are
                 //  included in input roles
-                used_roles = obj.roles.filter(x => roles.includes(x))
-                search = used_roles.length > 0
+                console.log(roles)
+                usedRoles = obj.roles.filter(x => roles.includes(x))
+                if (Object.keys(usedRoles).length > 0) {
+                    search = haveRoles // Reject if role=[] and we found roles
+                }
             }
 
             // search is enabled
             if (search) {
-                // key and value match... OK we get'em
-
-                if (this._clean_path(obj[key]) === this._clean_path(value)) {
-                    result.push({data: obj, roles: used_roles})
+                if (this.#cleanValue(obj[key]) === this.#cleanValue(value)) {
+                    result.push({data: obj, roles: usedRoles})
                 }
                 // Lets'trayt
                 Object.keys(obj).forEach(function (k) {
@@ -196,20 +201,27 @@ export class DashboardMenu {
      */
     static click = (item, historize = false) => {
         // it's the link ?  Manage history (and add url in the browser bar)
-        if (item?.dataset?.level && !item.classList.contains(this.openClass)) {
-            // Mark new menu item open
-            document.querySelector(`.${this.openClass}[href]`)?.classList.remove(this.openClass)
-            item.classList.add(this.openClass)
+        if (item instanceof HTMLElement) {
+            if (item?.dataset?.level && !item.classList.contains(this.openClass)) {
+                // Mark new menu item open
+                document.querySelector(`.${this.openClass}[href]`)?.classList.remove(this.openClass)
+                item.classList.add(this.openClass)
 
-            if (historize) {
-                dsb.page.add_to_history_from_menu(item)
+                if (historize) {
+                    dsb.page.add_to_history_from_menu(item)
+                }
+                //Add breadcrumbs
+                UI.setBreadcrumbs(item)
+                // Add Title
+                UI.setTitle(item)
             }
+        } else {
+            // we assume it is a menu element
 
             //Add breadcrumbs
-            UI.setBreadcrumbs(item)
+            UI.setBreadcrumbs(item.href)
             // Add Title
-            UI.setTitle(item)
-
+            UI.setTitle(item.name)
         }
 
 
@@ -262,8 +274,8 @@ export class DashboardMenu {
      *
      * @private
      */
-    static _clean_path = (path) => {
-        if (path) {
+    static #cleanValue = (path) => {
+        if (path && typeof path === 'string') {
             if (path.startsWith('/')) {
                 path = path.substring(1)
             }
