@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 28/07/2023  15:12                                                                                *
+ * Last updated on : 30/07/2023  19:00                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -1539,8 +1539,8 @@ export var dsb = {
         })
         // Once menu has been loaded, we initialise some functionalities
         Block.event.on('template/loaded/blocks/menu', (block) => {
-            Menu.init(block).then(() => {
-                Menu.synchronize(block, Menu.pathname)
+            Menu.init(block).then(async () => {
+                await Menu.synchronize(block, Menu.pathname)
                 dsb.ui.show(document.querySelector('.small-device #menu-container'))
             })
         })
