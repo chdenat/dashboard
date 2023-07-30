@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 30/07/2023  18:46                                                                                *
+ * Last updated on : 30/07/2023  19:28                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -41,7 +41,7 @@ export class DashboardMenu {
      * @param template
      * @param pathname
      */
-    static  synchronize = (template, pathname = '') => {
+    static  synchronize = async (template, pathname = '') => {
         this.setID(template.ID)
 
         DashboardMenu.getJSON().then(data => {
@@ -64,7 +64,12 @@ export class DashboardMenu {
                 pathname = pathname.split(key)[0]
                 // Some entry in the menu ?
                 menuItem = this.findMenuItemByKey(DashboardMenu.json.menu, 'href', pathname, [], true)
-                found = menuItem.length > 0
+                if (dsb.session.active()) {
+                    found = menuItem.length > 0
+                } else {
+                    found = menuItem.length > 0 && menuItem[0].roles.length === 0
+                }
+
                 if (found) break
 
                 // OK so may-be session is inactive, let's search id there is one bound to a role
@@ -151,7 +156,7 @@ export class DashboardMenu {
      */
     static findMenuItemByKey = (obj = {}, key, value, roles = []) => {
         const result = []
-        let usedRoles = {}
+        let usedRoles = []
         const haveRoles = roles.length > 0
         const recursive = (obj = {}) => {
             if (!obj || typeof obj !== 'object') {
@@ -163,10 +168,14 @@ export class DashboardMenu {
             if (obj?.roles !== undefined) {
                 // If there are some roles, we try to see if roles in data are
                 //  included in input roles
-                usedRoles = obj.roles.filter(x => roles.includes(x))
-                if (Object.keys(usedRoles).length > 0) {
-                    search = haveRoles // Reject if role=[] and we found roles
-                }
+                usedRoles = obj.roles.filter(x => {
+                    if (roles.length) return roles.includes(x)
+                    return true
+                })
+                // if (Object.keys(usedRoles).length > 0) {
+                //     search = haveRoles // Reject if role=[] and we found roles
+                // }
+                search = (Object.keys(usedRoles).length > 0)
             }
 
             // search is enabled
