@@ -6,12 +6,13 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 29/07/2023  18:20                                                                                *
+ * Last updated on : 30/07/2023  11:10                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 import {Block} from '/dashboard/assets/js/Block.js'
+import {DashboardUtils as Utils} from '/dashboard/assets/js/DashboardUtils.js'
 import {DashboardUI as UI} from '/dashboard/assets/js/ui/DashboardUI.js'
 
 //import * as bootstrap from 'bootstrap'
@@ -298,15 +299,13 @@ export class DashboardMenu {
 
     static getJSON = async () => {
         if (DashboardMenu.json === null) {
-            await fetch((dsb_ajax.get) + '?' + new URLSearchParams({
-                action: 'read-json-menu',
-            })).then(function (response) {
-                return response.json()
-            }).then(function (data) {
-                DashboardMenu.json = data
-            }).catch((error) => {
-                console.error('Error:', error) // Print or not print ?
-            })
+            let menu = await Utils.readJSON(`${dsb.instance.appPath}templates/menu.json`)
+            let hidden = await Utils.readJSON(`${dsb.instance.appPath}templates/hidden-pages.json`)
+            if (hidden) {
+                menu.hidden = hidden
+            }
+            DashboardMenu.json = menu
+
         }
         return DashboardMenu.json
     }
