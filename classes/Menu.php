@@ -1,33 +1,32 @@
 <?php
 	
-	/***********************************************************************************************************************
-	 *
-	 * Project : supervix4
-	 * file : Menu.php
-	 *
-	 * @author        Christian Denat
-	 * @email contact@noleam.fr
-	 * --
-	 *
-	 * updated on :  1/19/22, 11:53 PM
-	 *
-	 * @copyright (c) 2022 noleam.fr
-	 *
-	 **********************************************************************************************************************/
+	/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : Menu.php                                                                                                    *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 30/07/2023  12:12                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
 	
 	namespace dashboard;
 	
 	use dashboard\template\Template;
-	use dashboard\user\SessionManager;
-	
-	class Menu {
+    use dashboard\user\SessionManager;
+
+    class Menu {
 		/**
 		 * @var array|mixed
 		 */
 		private static array  $menu;
 		private static string $json;
 		/**
-		 * @var \dashboard\Menu|null
+		 * @var Menu|null
 		 */
 		private static ?Menu $instance = null;
 		private int          $chapter  = 0;
@@ -42,7 +41,7 @@
 		/**
 		 * It's a Singleton , this method is used to retrieve the instance
 		 *
-		 * @return \dashboard\Menu
+		 * @return Menu
 		 *
 		 * @since  1.0
 		 *
@@ -151,7 +150,7 @@
          *
 		 */
         private function localize_item($item) : string {
-            return  $item['lang'][CURRENT_LANG]??($item['text'] ?? 'no text' );
+            return $item['lang'][CURRENT_LANG] ?? ($item['text'] ?? '');
         }
         
 		private function show_level( $item, $level = 1, $id = 'menu-item', $roles = [ 'logged' ] ) {
