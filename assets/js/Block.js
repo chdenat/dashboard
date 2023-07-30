@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 29/07/2023  19:19                                                                                *
+ * Last updated on : 30/07/2023  12:11                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -301,15 +301,16 @@ class Block {
      * @param url
      */
     static page404 = (template_id, url) => {
-        let t = new Block(document.querySelector(`[data-template-id="${template_id}"]`))
 
-        if (t.is_content && !Block.#use404) {
-            return
+        if (url !== '') { // some modals send a page404 before loading, avoid flickering
+            let t = new Block(document.querySelector(`[data-template-id="${template_id}"]`))
+
+            if (t.is_content && !Block.#use404) {
+                return
+            }
+            t.checkLink4Tab(`${t.#page_path}404`)
+            t.load(true, {url: url}).then(() => Block.use404())
         }
-
-        t.checkLink4Tab(`${t.#page_path}404`)
-        t.load(true, {url: url}).then(() => Block.use404())
-
 
     }
 
