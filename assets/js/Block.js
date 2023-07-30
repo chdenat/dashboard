@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 30/07/2023  12:11                                                                                *
+ * Last updated on : 30/07/2023  19:52                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -352,7 +352,9 @@ class Block {
                         let force = true
                         // Same file  : De we force a loading?
                         if (template.sameFile) {
-                            force = event.currentTarget.dataset.forceReload ?? false
+                            if (event.currentTarget?.dataset?.forceReload === 'false') {
+                                force = false
+                            }
                             // If reload not forced, we do nothing and say bye
                             if (!force) {
                                 template.loaded = true
