@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 30/07/2023  18:43                                                                                *
+ * Last updated on : 30/07/2023  18:46                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -94,8 +94,6 @@ export class DashboardMenu {
                 }
             }
 
-            console.log(found, foundWithRole, menuItem)
-
             // If we found something, we'll open the right menu
             // else we redirect to 404.
             if (found || foundWithRole) {
@@ -165,7 +163,6 @@ export class DashboardMenu {
             if (obj?.roles !== undefined) {
                 // If there are some roles, we try to see if roles in data are
                 //  included in input roles
-                console.log(roles)
                 usedRoles = obj.roles.filter(x => roles.includes(x))
                 if (Object.keys(usedRoles).length > 0) {
                     search = haveRoles // Reject if role=[] and we found roles
