@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 29/07/2023  08:18
+ * Last updated on : 02/08/2023  17:04
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -896,10 +896,13 @@ a:not(.btn).animation.doing {
 .simple-accordion {
     display: inline-flex;
     text-decoration: none;
-    padding-bottom: var(--dsb-xs-gutter);
     border: none;
     font-weight: normal;
     align-items: center;
+}
+
+.simple-accordion:not(.no-animation) {
+    padding-bottom: var(--dsb-xs-gutter);
 }
 
 .simple-accordion-content {
@@ -916,13 +919,16 @@ a:not(.btn).animation.doing {
     content: "\f106";
     width: unset;
     height: unset;
-    transition: all .2s ease-in-out;
-    transform: rotate(90deg);
     margin-right: var(--dsb-md-gutter);
     margin-bottom: 0;
 }
 
-.simple-accordion[aria-expanded="true"]:before {
+.simple-accordion:not(.no-animation):before {
+    transition: all .2s ease-in-out;
+    transform: rotate(90deg);
+}
+
+.simple-accordion[aria-expanded="true"]:not(.no-animation):before {
     transform: rotate(180deg);
     margin-bottom: 3px;
 }
