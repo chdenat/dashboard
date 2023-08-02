@@ -8,7 +8,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 30/07/2023  16:22                                                                                *
+ * Last updated on : 02/08/2023  17:03                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -152,8 +152,11 @@ class Menu {
         ob_start();
         $sub_level = 0;
 
-        $hidden = ($item['hidden'] ?? false) ? 'class="dsb-hide"' : '';
-        $visible = !($item['hidden']) ?? true;
+        $visible = true;
+        if (isset($item['hidden'])) {
+            $visible = !($item['hidden']) ?? true;
+
+        }
 
         if ($this->can_use_item($item, $roles)) {
 
@@ -161,7 +164,7 @@ class Menu {
                 // Any children ? it is a new level, we print head
                 $id = sprintf('%s-%d', $id, $level++);
                 if ($visible) { ?>
-                    <li <?= $hidden ?>>
+                    <li>
                         <a href="#<?= $id ?>" data-bs-toggle="collapse" aria-expanded="false">
                             <?= $item['icon'] ?? '' ?>
                             <span><?= $this->localize_item($item) ?></span>
@@ -195,7 +198,7 @@ class Menu {
                     $dataset[] = sprintf('data-%s="%s" ', $key, $value);
                 }
                 if ($visible) { ?>
-                    <li <?= $hidden ?>>
+                    <li>
                         <a <?= $data_content ?> <?= $href ?> <?= $default ?> <?= implode(' ', $dataset)
                         ?>>
                             <?= $item['icon'] ?? '' ?>
