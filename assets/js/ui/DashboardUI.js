@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 29/07/2023  20:04                                                                                *
+ * Last updated on : 02/08/2023  19:17                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -364,11 +364,12 @@ export class DashboardUI {
             href = item
         } else if (item instanceof Block) {
             href = item.file
-        } else if (href !== undefined) {
+        } else {
             href = item.getAttribute('href')
         }
 
         const path = Utils.findPathInObject(Menu.json, href)
+
         let current = Menu.json
         let breadcrumb = []
 
