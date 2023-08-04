@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 30/07/2023  10:47                                                                                *
+ * Last updated on : 04/08/2023  17:58                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -111,6 +111,8 @@ class Dashboard {
                                 if (Object.values(module)[0]?.module) {
                                     // We use object with module attribute, so we're able
                                     // to create the exported variable, populate it and init it
+
+                                    // NO MORE USED... Let'see
                                     imported = Object.values(module)[0]
                                     window[imported.module] = imported
                                     imported.init()
@@ -132,12 +134,14 @@ class Dashboard {
                                             window[name].attachEvents()
                                         }
                                         // Add detachEvents and clear page
-                                        Block.event.on(`template/unload/pages/${page}/index`, () => {
+                                        Block.event.on(`template/unload/pages/${page}/index`, (event, data) => {
+                                            console.log(event, data)
                                             if (undefined !== window[name] && undefined !== window[name]['detachEvents']) {
                                                 window[name]['detachEvents']()
                                             }
                                             window[name] = undefined
-                                        })
+                                            delete (window[name])
+                                        }, {priority: 999})
                                     }
                                     // Finally we pass it to the caller
                                     return window[name]
