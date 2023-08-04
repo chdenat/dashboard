@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 04/08/2023  17:58                                                                                *
+ * Last updated on : 04/08/2023  18:01                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -135,7 +135,6 @@ class Dashboard {
                                         }
                                         // Add detachEvents and clear page
                                         Block.event.on(`template/unload/pages/${page}/index`, (event, data) => {
-                                            console.log(event, data)
                                             if (undefined !== window[name] && undefined !== window[name]['detachEvents']) {
                                                 window[name]['detachEvents']()
                                             }
