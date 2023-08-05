@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 30/07/2023  19:00                                                                                *
+ * Last updated on : 05/08/2023  17:46                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -319,13 +319,13 @@ export var dsb = {
         <span class="bs-toaster-icon d-flex">%ICON%</span>
         <strong class="bs-toaster-title me-auto">%TITLE%</strong>
         <small class="bs-toaster-timer">%TIMER%</small>
-        <a href="#" data-bs-dismiss="toast" aria-label="Close"><i class="fa-regular fa-xmark"></i></a>
     </div>
-    <hr>
     <div class="bs-toaster-text toast-body">
         %TEXT%
         <div class="bs-toaster-buttons">%BUTTONS%</div>
-    </div>
+    </div>       
+     <a href="#" data-bs-dismiss="toast" aria-label="Close"><i class="fa-regular fa-xmark"></i></a>
+
 </div>
 `,
             })
