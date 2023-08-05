@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 05/08/2023  17:50
+ * Last updated on : 05/08/2023  19:06
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -764,7 +764,7 @@ a:not(.btn).animation.doing {
     padding: 0;
     border-radius: var(--dsb-list-rounded) !important;
     color: var(--dsb-list-item-color);
-    background: var(--dsb-list-item-even-bg-color);
+    background-color: var(--dsb-list-item-even-bg-color);
     border: none;
 }
 
