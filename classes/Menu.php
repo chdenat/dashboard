@@ -8,7 +8,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 02/08/2023  17:03                                                                                *
+ * Last updated on : 05/08/2023  11:40                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -185,6 +185,14 @@ class Menu {
                 $default = ($item['default'] ?? false) ? 'data-default-page' : '';
                 $href = ($item['href'] ?? false) ? sprintf('href="%s"', $item['href']) : '';
                 $data_content = (($item['href'] ?? false)) ? 'data-content' : '';
+                $_id = $item['id'] ?? '';
+                if (!empty($_id)) {
+                    $_id = sprintf('id="%s"', $_id);
+                }
+                $class = $item['class'] ?? '';
+                if (!empty($class)) {
+                    $class = sprintf('class="%s"', $class);
+                }
                 $dataset = [];
                 $item['dataset'] = $item['dataset'] ?? [];
                 $item['dataset']['level'] = sprintf('%s-%d', $id, $level);
@@ -199,7 +207,8 @@ class Menu {
                 }
                 if ($visible) { ?>
                     <li>
-                        <a <?= $data_content ?> <?= $href ?> <?= $default ?> <?= implode(' ', $dataset)
+                        <a <?= $_id ?> <?= $data_content ?> <?= $href ?> <?= $default ?> <?= $class ?>  <?= implode(' ',
+                            $dataset)
                         ?>>
                             <?= $item['icon'] ?? '' ?>
                             <span><?= $this->localize_item($item) ?></span>
