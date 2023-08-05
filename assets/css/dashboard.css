@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 05/08/2023  12:22
+ * Last updated on : 05/08/2023  17:50
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -251,7 +251,6 @@
     --dsb-box-shadow: 0 0 0 0 transparent;
 
     --dsb-backdrop-index: var(--dsb-modal-zindex);
-    --dsb-backdrop-opacity: 0.35;
     --dsb-backdrop-color: var(--dsb-primary-color);
 
     --dsb-main-border-color: var(--dsb-gray-4);
@@ -1118,7 +1117,7 @@ body:not(.logged-in) #user-dropdown:hover {
 }
 
 #content.loading {
-    opacity: 0.04;
+    opacity: 0.85;
 }
 
 #content.loaded {
@@ -1395,6 +1394,7 @@ body:not(.logged-in) #user-dropdown:hover {
  */
 
 #loader {
+
     position: absolute;
     z-index: calc(var(--dsb-loader-zindex) - 10);
     width: 100%;
@@ -1404,7 +1404,8 @@ body:not(.logged-in) #user-dropdown:hover {
     opacity: 0;
     visibility: collapse;
     cursor: wait;
-    transition: opacity 1s, visibility 1s;
+    transition-property: opacity, visibility;
+    transition-duration: 1s, 0.2s;
     transition-delay: 0.1s, 0.1s;
 }
 
@@ -1626,8 +1627,10 @@ modal-backdrop.show {
     box-shadow: var(--dsb-elevation);
     position: relative;
     margin: 0;
-    padding: var(--dsb-md-gutter);
+    padding: var(--dsb-gutter);
     z-index: 1056;
+    display: flex;
+    justify-content: space-between;
 }
 
 .dsb-toast-header {
@@ -2181,6 +2184,7 @@ console.pause console-menu button:hover {
     .dsb-row {
         flex-direction: row;
     }
+
     .dsb-column {
         --dsb-column-number: 1;
     }
@@ -2244,6 +2248,7 @@ console.pause console-menu button:hover {
     min-width: min(400px, 100%);
     max-width: 400px;;
 }
+
 /*******************************************************************************
  * Misc
  */
@@ -2367,12 +2372,7 @@ text-i18n {
 
 .fetching > * {
     opacity: var(--dsb-fetching-color-1-opacity);
-    animation: dsb-fade-in 5s ease-out;
-}
-
-.fetching > * {
-    opacity: var(--dsb-fetching-color-opacity);
-    animation: dsb-fade-in 5s ease-out;
+    animation: dsb-fade-in 2s ease-out;
 }
 
 @keyframes shine {
