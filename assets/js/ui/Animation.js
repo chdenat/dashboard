@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/07/2023  11:05                                                                                *
+ * Last updated on : 29/07/2023  19:17                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -42,7 +42,7 @@ class Animation {
         this.#template = new Block(template_id)
         if (this.#template.animate() && this.loader) {
             Animation.#remove_classes(this.#template.container)
-            this.#template.container.classList.add(Animation.classes.loading)
+            this.#template.container?.classList.add(Animation.classes.loading)
             this.loader?.classList.add(Animation.classes.running)
         }
     }
@@ -54,7 +54,7 @@ class Animation {
 
         if (/*this.#template.animate() &&*/ this.loader) {
             Animation.#remove_classes(this.#template.container)
-            this.#template.container.classList.add(Animation.classes.loaded)
+            this.#template.container?.classList.add(Animation.classes.loaded)
             this.loader?.classList.remove(Animation.classes.running)
         }
     }
@@ -65,7 +65,7 @@ class Animation {
 
         if (/*this.#template.animate() &&*/ this.loader) {
             Animation.#remove_classes(this.#template.container)
-            this.#template.container.classList.add(Animation.classes.unload)
+            this.#template.container?.classList.add(Animation.classes.unload)
             this.loader?.classList.remove(Animation.classes.running)
         }
     }

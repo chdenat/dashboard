@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/07/2023  08:32                                                                                *
+ * Last updated on : 27/07/2023  11:24                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -127,17 +127,20 @@ export class User {
             }
         }
         const form = document.getElementById('logout-confirm')
-        const from_session_modal = (null === form) // if false, we don not use a modal
+        const outsideLogoutMenu = (null === form) // if false, we don not use a modal
         let form_data = {}
 
-        if (from_session_modal) {
-            // call from the exit session soon modal
+        if (outsideLogoutMenu) {
+            // called from outside logoput menu
+            if (dsb.session.context.user === undefined) {
+                return
+            }
             form_data = {
                 user: dsb.session.context.user,
                 action: 'logout',
             }
         } else {
-            // call from the 'normal' logout modal
+            // called from the 'normal' logout modal
             form_data = {
                 headers: {'Content-Type': 'multipart/form-data'},
                 user: form.user.value,
@@ -157,7 +160,7 @@ export class User {
             .then(response => response.json())
             .then(data => {
                 if (data.logout) {
-                    if (!from_session_modal) {
+                    if (!outsideLogoutMenu) {
                         dsb.modal.hide()
                     }
 

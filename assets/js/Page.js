@@ -6,18 +6,20 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/07/2023  09:45                                                                                *
+ * Last updated on : 25/07/2023  08:50                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 import {dsb} from '/dashboard/assets/js/dsb.js'
 import {Animation} from '/dashboard/assets/js/ui/Animation.js'
+import {DashboardTranslation} from '/dashboard/assets/js/ui/DashboardTranslation.js'
 
 export class Page {
 
     #template = null
     #page = null
+    translation = new DashboardTranslation()
 
     constructor(page, template) {
         this.#page = page

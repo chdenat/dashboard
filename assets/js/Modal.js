@@ -1,18 +1,21 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : dashboard                                                                                                *
+ * Project : shelteradmin                                                                                             *
  * File : Modal.js                                                                                                    *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 26/02/2023  10:46                                                                                *
+ * Last updated on : 28/07/2023  10:00                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-import {Block} from "Block";
+// NOT FUNCTIONAL DO NO USE
+
+
+import {Block} from '/dashboard/assets/js/Block.js'
 
 class Modal {
 
@@ -59,6 +62,14 @@ class Modal {
         this.#dom_modal.addEventListener('modal/loaded', this.loaded_event)
 
         this.load()
+    }
+
+    get instance() {
+        return this.#instance
+    }
+
+    get element() {
+        return this.#dom_modal
     }
 
     /**
@@ -136,6 +147,7 @@ class Modal {
             console.error('Error:', error); // Print or not print ?
         })
     }
+
     /**
      * Load 2 specific events when the modal is laoding
      *
@@ -171,6 +183,7 @@ class Modal {
         generic.parameters = this.#parameters.keys
         this.#dom_modal.dispatchEvent(specific)
     }
+
     /**
      * Load 2 specific events when the modal has been hidden
      *
@@ -189,6 +202,7 @@ class Modal {
         generic.parameters = this.#parameters.keys
         this.#dom_modal.dispatchEvent(specific)
     }
+
     /**
      * Add the possibility to resize a modal
      *
@@ -203,14 +217,6 @@ class Modal {
             _dialog.classList.add(`modal-${size}`);
         }
 
-    }
-
-    get instance() {
-        return this.#instance
-    }
-
-    get element() {
-        return this.#dom_modal
     }
 }
 
