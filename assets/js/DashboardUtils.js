@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 30/07/2023  11:11                                                                                *
+ * Last updated on : 08/08/2023  19:18                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -30,7 +30,6 @@ export class DashboardUtils {
     }
 
     static readJSON = async (file) => {
-        // Send the halt command
         return fetch(file, {
             method: 'GET',
         }).then(response => {
