@@ -2,19 +2,22 @@
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : dashboard                                                                                                *
+ * Project : shelteradmin                                                                                             *
  * File : dashboard-config.php                                                                                        *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 25/05/2023  18:14                                                                                *
+ * Last updated on : 09/08/2023  18:40                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
 /** Bootstrap directory */
+
+use dashboard\Debug;
+
 const BOOTSTRAP = 'bootstrap';
 /** Font Awesome directory */
 const FAWESOME = 'fontawesome';
@@ -137,7 +140,8 @@ const C_AJAX_POST = C_URL . 'classes/ajax/post.php';
  */
 
 if (!defined('FAVICON')) {
-    define('FAVICON', C_URL . 'assets/images/favicon/');
+    define('FAVICON', C_URL . 'assets/images/favicons/');
+    Debug::print(C_URL);
 }
 
 
