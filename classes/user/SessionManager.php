@@ -1,19 +1,18 @@
 <?php
 	
-	/***********************************************************************************************************************
-	 *
-	 * Project : supervix4
-	 * file : SessionManager.php
-	 *
-	 * @author        Christian Denat
-	 * @email contact@noleam.fr
-	 * --
-	 *
-	 * updated on :  2/3/22, 10:35 AM
-	 *
-	 * @copyright (c) 2022 noleam.fr
-	 *
-	 **********************************************************************************************************************/
+	/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : SessionManager.php                                                                                          *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 11/08/2023  17:12                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
 	
 	
 	/**
@@ -36,7 +35,7 @@
 		/**
 		 * It's a Singleton , this method is used to retrieve the instance
 		 *
-		 * @return \dashboard\user\SessionManager
+		 * @return SessionManager
 		 *
 		 * @since  1.0
 		 */
@@ -107,7 +106,11 @@
 		private function set_session_cookie( $lifetime )
 		: void {
 			if ( isset( $_COOKIE[ session_name() ] ) ) {
-				setcookie( session_name(), $_COOKIE[ session_name() ], time() + $lifetime, '/' );
+                setcookie(session_name(), $_COOKIE[session_name()], [
+                    'expires' => time() + 86400,
+                    'path' => '/',
+                    'samesite' => 'None'
+                ]);
 			}
 		}
 		
