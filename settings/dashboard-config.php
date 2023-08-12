@@ -2,7 +2,7 @@
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : dashboard                                                                                                *
+ * Project : shelteradmin                                                                                             *
  * File : dashboard-config.php                                                                                        *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
