@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/07/2023  12:12                                                                                *
+ * Last updated on : 05/08/2023  17:46                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -315,16 +315,17 @@ export var dsb = {
                 delay: delay,
                 template: `
 <div class="toast fade text-bg-%TYPE%" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header">
+    <div class="dsb-toast-header">
         <span class="bs-toaster-icon d-flex">%ICON%</span>
         <strong class="bs-toaster-title me-auto">%TITLE%</strong>
-        <small class="bs-toaster-timer text-muted">%TIMER%</small>
-        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        <small class="bs-toaster-timer">%TIMER%</small>
     </div>
     <div class="bs-toaster-text toast-body">
         %TEXT%
         <div class="bs-toaster-buttons">%BUTTONS%</div>
-    </div>
+    </div>       
+     <a href="#" data-bs-dismiss="toast" aria-label="Close"><i class="fa-regular fa-xmark"></i></a>
+
 </div>
 `,
             })
@@ -334,7 +335,6 @@ export var dsb = {
     modal: {
         _element: null,
         _instance: null,
-        _parameters: null,
         /**
          * Init user modal
          *
@@ -345,6 +345,7 @@ export var dsb = {
          */
         init: function () {
             this._element = document.querySelector('#dashboard-modal')
+            this._content = this._element.querySelector('.modal-content')
             this._dialog = this._element.querySelector('.modal-dialog')
             this._instance = new bootstrap.Modal(this._element, {focus: false})
 
@@ -384,97 +385,43 @@ export var dsb = {
         hide: function () {
             this._instance.hide()
             return this
-        }
-        ,
+        },
 
-        /**
-         * Change the modal content
-         *
-         * @param html
-         * @returns {dsb.modal}
-         *
-         * @since 1.0
-         *
-         */
-        message: function (html) {
-            this._element.querySelector('.modal-content').innerHTML = html
-            return this
-        }
-        ,
+
+        initModal: async function () {
+            this._element.querySelector('.modal-content').innerHTML = ''
+            dsb.ui.hide(this._element.querySelector('.modal-content'))
+        },
 
         /**
          * This function makes an Ajax call used to get the modal content
          *
          * @param action The ajax action name
-         * @param params some params to send to Ajax
+         * @param parameters some params to send to Ajax
          * @param custom use DSB ajax or custom ajax
          *
          * @since 1.0
          *
          */
-        load: function (action, params = {}, custom = false) {
-            this._parameters = params
-            this._parameters['action'] = action
-            dsb.modal.resize()
+        load: async function (action, parameters = [], custom = false) {
 
-            this._element.addEventListener('show.bs.modal', dsb.modal.loading_events)
-            this._element.addEventListener('shown.bs.modal', dsb.modal.load_events)
+            await dsb.modal.initModal()
 
-            fetch(((custom) ? ajax.get : dsb_ajax.get) + '?' + new URLSearchParams({
-                action: action,
-                params: JSON.stringify(params),
-            })).then(function (response) {
-                return response.text()
-            }).then(async function (html) {
-                dsb.modal.message(html)
-                await Block.importChildren(document.getElementById('dashboard-modal'))
-                return true
-            }).catch((error) => {
-                console.error('Error:', error) // Print or not print ?
+            Block.event.on(`modal/loaded/${action}`, () => {
+                dsb.ui.show(this._content)
             })
-        }
-        ,
 
-        /**
-         * Load 2 specific events when the modal is laoding
-         *
-         */
-        loading_events: () => {
-            // Throw a  generic load event
-            let generic = new Event('modal/loading')
-            generic.modal = dsb.modal
-            generic.parameters = dsb.modal._parameters.keys
-            document.dispatchEvent(generic)
+            this._element.addEventListener('hidden.bs.modal', event => {
+                this._content.classList.remove('loaded', 'loading')
+            })
 
-            // and a new specific running event
-            let specific = new Event(`modal/loading/${dsb.modal._parameters.action}`)
-            generic.modal = dsb.modal
-            generic.parameters = dsb.modal._parameters.keys
-            document.dispatchEvent(generic)
-
-            Block.event.emit(`modal/loading/${dsb.modal._parameters.action}`, dsb.modal)
-
-        },
-
-        /**
-         * Load 2 specific events when the modal has been shown
-         *
-         *
-         */
-        load_events: () => {
-            // Throw a  generic load event
-            let generic = new Event('modal/loaded')
-            generic.modal = dsb.modal
-            generic.parameters = dsb.modal._parameters.keys
-            document.dispatchEvent(generic)
-            // and a new specific running event
-
-            let specific = new Event(`modal/loaded/${dsb.modal._parameters.action}`)
-            specific.modal = dsb.modal
-            specific.parameters = dsb.modal._parameters.keys
-            document.dispatchEvent(specific)
-
-            Block.event.emit(`modal/loaded/${dsb.modal._parameters.action}`, dsb.modal)
+            const block = new Block(this._content, {
+                event: Block.MODAL_EVENT,
+                animation: null,
+                action: action,
+                context: (custom) ? 'custom' : null
+            })
+            await block.load(true, parameters)
         },
 
         /**
@@ -1238,20 +1185,6 @@ export var dsb = {
             dsb.ui.backdrop.classList.remove('show')
         },
 
-        show_intermediate_content: (event) => {
-            event.preventDefault()
-            let template = new Block('#popcont#', null, event.currentTarget.getAttribute('href'))
-            template.checkLink4Tab(event.currentTarget.getAttribute('href'))
-            template.load().then(r => dsb.ui.show_pop_content())
-
-
-            return false
-        },
-
-        hide_intermediate_content: () => {
-            dsb.ui.hide_pop_content()
-        },
-
         show_refresh: (id) => {
             let item = document.querySelector(`#${id} button .refresh`)
             if (item) {
@@ -1464,7 +1397,13 @@ export var dsb = {
 
         },
 
-
+        /**
+         * @deprecated Use DashboardTranslation instead
+         *
+         * @param context
+         * @param key
+         * @return {DOMStringMap|undefined|*}
+         */
         get_text_i18n: (context, key = null) => {
             const text = document.querySelector(`text-i18n[context="${context}"]`)
             if (key) {
@@ -1600,8 +1539,8 @@ export var dsb = {
         })
         // Once menu has been loaded, we initialise some functionalities
         Block.event.on('template/loaded/blocks/menu', (block) => {
-            Menu.init(block).then(() => {
-                Menu.synchronize(block, Menu.pathname)
+            Menu.init(block).then(async () => {
+                await Menu.synchronize(block, Menu.pathname)
                 dsb.ui.show(document.querySelector('.small-device #menu-container'))
             })
         })

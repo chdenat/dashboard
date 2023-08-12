@@ -13,6 +13,7 @@
     "DashboardMenu": "/dashboard/assets/js/ui/DashboardMenu.js",
     "DashboardExportUtils": "/dashboard/assets/js/DashboardExportUtils.js",
     "DashboardResponsiveTabs": "/dashboard/assets/js/ui/DashboardResponsiveTabs.js",
+    "DashboardTranslation": "/dashboard/assets/js/ui/Dashboardtranslation.js",
     "DashboardUI": "/dashboard/assets/js/ui/DashboardUI.js",
     "DashboardUtils": "/dashboard/assets/js/DashboardUtils.js",
     "DashboardWebComponentsManager": "/dashboard/assets/js/ui/DashboardWebComponentsManager.js",

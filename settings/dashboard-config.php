@@ -8,13 +8,14 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 25/05/2023  18:14                                                                                *
+ * Last updated on : 12/08/2023  09:53                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
 /** Bootstrap directory */
+
 const BOOTSTRAP = 'bootstrap';
 /** Font Awesome directory */
 const FAWESOME = 'fontawesome';
@@ -137,7 +138,7 @@ const C_AJAX_POST = C_URL . 'classes/ajax/post.php';
  */
 
 if (!defined('FAVICON')) {
-    define('FAVICON', C_URL . 'assets/images/favicon/');
+    define('FAVICON', C_URL . 'assets/images/favicons/');
 }
 
 

@@ -1,29 +1,37 @@
 <?php
-	
-	/**********************************************************************************************************************
+
+/**********************************************************************************************************************
  *                                                                                                                    *
- * Project : dashboard                                                                                                *
+ * Project : shelteradmin                                                                                             *
  * File : favicon.php                                                                                                 *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 25/02/2023  11:59                                                                                *
+ * Last updated on : 09/08/2023  19:22                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-use dashboard\template\Template;
-
 ob_start();
-echo Template::instance()->comments('fav icon');
 ?>
-    <link rel="icon" href="data:,">
-    <link rel="apple-touch-icon" sizes="180x180" href="<?= FAVICON ?>apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="<?= FAVICON ?>favicon-32x32.png">
+    <!-- generics -->
     <link rel="icon" type="image/png" sizes="16x16" href="<?= FAVICON ?>favicon-16x16.png">
-    <!--    <link rel="manifest" href="--><?php //=FAVICON?><!--site.webmanifest">-->
+    <link rel="icon" href="<?= FAVICON ?>favicon-32x32.png" sizes="32x32">
+    <link rel="icon" href="<?= FAVICON ?>favicon-57x57.png" sizes="57x57">
+    <link rel="icon" href="<?= FAVICON ?>favicon-76x76.png" sizes="76x76">
+    <link rel="icon" href="<?= FAVICON ?>favicon-96x96.png" sizes="96x96">
+    <link rel="icon" href="<?= FAVICON ?>favicon-128x128.png" sizes="128x128">
+    <link rel="icon" href="<?= FAVICON ?>favicon-192x192.png" sizes="192x192">
+    <link rel="icon" href="<?= FAVICON ?>favicon-228x228.png" sizes="228x228">
+
+    <!-- Android -->
+    <link rel="shortcut icon" sizes="196x196" href=“<?= FAVICON ?>favicon-196x196.png">
+
+    <!-- iOS -->
+    <link rel="apple-touch-icon" href="<?= FAVICON ?>favicon-120x120.png" sizes="120x120">
+    <link rel="apple-touch-icon" href="<?= FAVICON ?>favicon-152x152.png" sizes="152x152">
+    <link rel="apple-touch-icon" href="<?= FAVICON ?>favicon-180x180.png" sizes="180x180">
 <?php
-echo Template::instance()->end_comments();
 echo ob_get_clean();

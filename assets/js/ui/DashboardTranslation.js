@@ -1,47 +1,40 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Project : dashboard                                                                                                *
- * File : DashboardUtils.js                                                                                           *
+ * File : DashboardTranslation.js                                                                                     *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 08/08/2023  19:18                                                                                *
+ * Last updated on : 25/07/2023  09:54                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-export class DashboardUtils {
+export class DashboardTranslation {
+    #element = null
+    #translations = {}
 
-    static findPathInObject = (obj, target) => {
-        function helper(obj, target, path) {
-            if (typeof obj !== 'object' || obj === null) return null;
-            for (const key in obj) {
-                const newPath = [...path, key];
-                if (obj[key] === target) return newPath;
-                const result = helper(obj[key], target, newPath);
-                if (result) return result;
-            }
-            return null;
-        }
-
-        return helper(obj, target, []);
+    contructor(context = null) {
+        this.bind(context)
     }
 
-    static readJSON = async (file) => {
-        return fetch(file, {
-            method: 'GET',
-        }).then(response => {
-            if (!response.ok) {
-                throw Error(response.statusText)
-            }
-            return (response.json())
-        })
-            .catch(error => {
-                    console.error(error)
-                    return false
+    bind = (context) => {
+        if (context !== null) {
+            this.#element = document.querySelector(`text-i18n[context="${context}"]`)
+            if (this.#element !== undefined) {
+                // Delete existing properties
+                for (const [property, value] of Object.entries(this.#translations)) {
+                    delete this[property]
                 }
-            )
+
+                // Add new translations
+                this.#translations = this.#element?.dataset
+                for (const [property, value] of Object.entries(this.#translations)) {
+                    Object.defineProperty(this, property, {value: value, configurable: true})
+                }
+            }
+        }
     }
 }

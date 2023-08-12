@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/07/2023  10:30                                                                                *
+ * Last updated on : 02/08/2023  19:17                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -161,32 +161,38 @@ export class DashboardUI {
     }
 
     static startFetchingAnimation = (element) => {
+        if (element != null && element !== undefined) {
+            if (!Array.isArray(element)) {
+                const old = element
+                element = []
+                element.push(old)
+            }
 
-        if (!Array.isArray(element)) {
-            const old = element
-            element = []
-            element.push(old)
+            element.forEach(item => {
+                item?.classList.add(this.FETCHING_CLASS)
+            })
         }
-
-        element.forEach(item => {
-            item?.classList.add(this.FETCHING_CLASS)
-        })
     }
 
     static stopFetchingAnimation = (element) => {
-        if (!Array.isArray(element)) {
-            const old = element
-            element = []
-            element.push(old)
-        }
+        if (element != null && element !== undefined) {
+            if (!Array.isArray(element)) {
+                const old = element
+                element = []
+                element.push(old)
+            }
 
-        element.forEach(item => {
-            item.classList.remove(this.FETCHING_CLASS)
-        })
+            element.forEach(item => {
+                item.classList.remove(this.FETCHING_CLASS)
+            })
+        }
     }
 
     static isFetchingAnimationInProgress = (element) => {
-        return element.classList.contains(this.FETCHING_CLASS)
+        if (element != null && element !== undefined) {
+            return element.classList.contains(this.FETCHING_CLASS)
+        }
+        return false
     }
 
     static startButtonAnimation = (button) => {
@@ -363,6 +369,7 @@ export class DashboardUI {
         }
 
         const path = Utils.findPathInObject(Menu.json, href)
+
         let current = Menu.json
         let breadcrumb = []
 
@@ -386,6 +393,30 @@ export class DashboardUI {
                 + breadcrumb.join('<i class="fa-regular fa-chevron-right"></i>'
                 )
         }
+
+    }
+
+    static disable = (element) => {
+        if (!(element instanceof HTMLElement)) {
+            element = document.querySelector(stick)
+            if (stick === null) {
+                element
+            }
+        }
+
+        element.classList.add('disabled')
+        element.setAttribute('disabled', '')
+    }
+    static enable = (element) => {
+        if (!(element instanceof HTMLElement)) {
+            element = document.querySelector(stick)
+            if (stick === null) {
+                element
+            }
+        }
+
+        element.classList.remove('disabled')
+        element.removeAttribute('disabled')
 
     }
 }
