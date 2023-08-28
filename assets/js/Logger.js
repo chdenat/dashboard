@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/07/2023  10:30                                                                                *
+ * Last updated on : 28/08/2023  19:15                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -336,6 +336,9 @@ class Logger {
                     this.stop()
                 }
             })
+            .finally(() => {
+                this.#loop++
+            })
             .catch(error => {
                 /**
                  * We encounter an error... We need to stop
@@ -346,9 +349,6 @@ class Logger {
                 this.stop()
 
             })
-
-        this.#loop++
-
     }
 
     /**
