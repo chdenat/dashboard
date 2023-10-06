@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 28/08/2023  19:15                                                                                *
+ * Last updated on : 06/10/2023  19:34                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -178,9 +178,9 @@ class Logger {
     start = (show_console = true) => {
 
         // Get the number of lines
-        this.context.read_lines = this.get_lines_number()
+        this.context.read_lines = this.getFileLinesNumber()
         // We need to manage some future events
-        Logger.event.on(`log/start/${this.#id}`, this.start_log);
+        Logger.event.once(`log/start/${this.#id}`, this.start_log);
         Logger.event.on(`log/running/${this.#id}`, this.update_log);
         Logger.event.on(`log/stop/${this.#id}`, this.end_log);
         Logger.event.on(`log/error/${this.#id}`, this.error_log);
@@ -203,10 +203,10 @@ class Logger {
      * @returns {Promise<void>}
      *
      */
-    get_lines_number = async (file = this.#file) => {
+    getFileLinesNumber = async (file = this.#file) => {
         // Get log file size
         let value = 0
-        await fetch(ajax.get + '?' + new URLSearchParams({
+        return await fetch(ajax.get + '?' + new URLSearchParams({
             action: 'lines-number',
             file: file,
         })).then(response => {
@@ -216,13 +216,12 @@ class Logger {
             return response;
         }).then(response => response.json())
             .then(json => {
-                value = json.total
+                return json.total
             })
             .catch(error => {
                 return false
             })
 
-        return value
     }
 
     /**
@@ -336,9 +335,6 @@ class Logger {
                     this.stop()
                 }
             })
-            .finally(() => {
-                this.#loop++
-            })
             .catch(error => {
                 /**
                  * We encounter an error... We need to stop
@@ -349,6 +345,9 @@ class Logger {
                 this.stop()
 
             })
+
+        this.#loop++
+
     }
 
     /**
@@ -478,6 +477,7 @@ class Logger {
      *
      */
     start_log = async (data) => {
+        this.update({clear: true})
         // Keep the user focused on
         this.animate(true)
     }
@@ -488,6 +488,7 @@ class Logger {
      * @param data
      */
     update_log = async (data) => {
+
         if (data?.json?.read > 0) {
             // We print only if we have to
             await this.update({
@@ -507,7 +508,6 @@ class Logger {
      * @param data
      */
     end_log = async (data) => {
-
         // We update with the last data from file
         await this.update_log(data)
 
