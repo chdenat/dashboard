@@ -1,30 +1,28 @@
 <?php
 	
-	/***********************************************************************************************************************
-	 *
-	 * Project : supervix4
-	 * file : loader.php
-	 *
-	 * @author        Christian Denat
-	 * @email contact@noleam.fr
-	 * --
-	 *
-	 * updated on :  1/27/22, 7:21 PM
-	 *
-	 * @copyright (c) 2022 noleam.fr
-	 *
-	 **********************************************************************************************************************/
+	/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : dashboard                                                                                                *
+ * File : loader.php                                                                                                  *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 19/10/2023  10:10                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
 	
 	
 	// Init errors management
-	
-	use dashboard\Dashboard;
-	use dashboard\assets\AssetsManager;
-	use dashboard\hooks\Hooks;
-	use dashboard\template\Template;
-	use dashboard\URIManager;
-	
-	/**
+
+use dashboard\assets\AssetsManager;
+use dashboard\hooks\Hooks;
+use dashboard\template\Template;
+use dashboard\URIManager;
+
+/**
 	 * Used to initialize the error log in a specific file, located in ABSPATH and named errors.log
 	 *
 	 * @param  bool  $debug  : If false theres is no log. Default is DEBUG global value
@@ -62,23 +60,34 @@
 		 * So we replace the things to make it working.
 		 */
 		$class = str_replace( '\\', '/', $class );
+
 		/**
 		 * Class contains the namespace, so if it is found in it, we know where is the class
 		 */
 		
 		// For the dashboard, the namespace is hardcoded to 'dashboard' but it can differ in the custom part
 		if ( str_contains( $class, 'dashboard' ) ) {
+            // dashboard
 			$class = str_replace( [ 'dashboard', '\\' ], [ '/' . D_NAME . '/classes', '/' ], $class );
 		} elseif ( str_contains( $class, C_NAMESP ) ) {
+            // classes on client
 			$class = str_replace( [ C_NAMESP, '\\', ], [ '/' . C_NAME . '/classes', '/' ], $class );
 		} elseif ( str_contains( $class, 'phpseclib' ) ) {
+            // phpseclib
 			$class = str_replace( [ 'phpseclib', '\\' ], [ '/' . D_NAME . '/classes/vendor/phpseclib', '/' ], $class );
 		} elseif ( str_contains( $class, 'ConstantTime' ) ) {
+            // ParagonIE
 			$class = str_replace( [ 'ParagonIE/ConstantTime', '\\' ], [
 				'/' . D_NAME . '/classes/vendor/ConstantTime',
 				'/',
 			],                    $class );
-		}
+        } elseif (str_contains($class, 'CrontabManager')) {
+            // TiBeN/CrontabManager
+            $class = str_replace(['TiBeN/CrontabManager', '\\'], [
+                '/' . D_NAME . '/classes/vendor/CrontabManager',
+                '/',
+            ], $class);
+        }
 		
 		require_once ABSPATH . $class . '.php';
 	}
@@ -118,4 +127,3 @@
 			require_once CSETTINGS_DIR . 'texts-4-i18n.php';
 		}
 	},1 );
-
