@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 18/10/2023  17:59                                                                                *
+ * Last updated on : 22/10/2023  19:16                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -949,7 +949,7 @@ export var dsb = {
                 if (!(element instanceof HTMLElement) && element.includes('#')) {
                     element = document.querySelector(element)
                 }
-
+                element.classList.add('disabled')
                 element.setAttribute('disabled', '')
             }
             return dsb.ui
@@ -960,7 +960,7 @@ export var dsb = {
                 if (!(element instanceof HTMLElement) && element.includes('#')) {
                     element = document.querySelector(element)
                 }
-
+                element.classList.remove('disabled')
                 element.removeAttribute('disabled')
             }
             return dsb.ui
