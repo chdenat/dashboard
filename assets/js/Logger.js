@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 03/11/2023  19:40                                                                                *
+ * Last updated on : 03/11/2023  20:08                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -45,6 +45,13 @@ class Logger {
     #erase = true;
     #anim_iter = 0
     #parameters = {}
+
+    // Some return codes
+    static OK = 1
+    static KO = 0
+    static ERROR = 2
+    static ABORT = 3
+    static STOP = 4
 
     /**
      *
@@ -279,21 +286,26 @@ class Logger {
                  * and update some context data
                  */
                 let found_marker = false
+                let result = null
                 if (json.content?.length > 0) {
                     json.content = json.content.map(item => item.replace('\n', ''))
 
                     // Detect end of reading
                     if (json.content.includes(this.#markers.OK)) {
                         found_marker = true
+                        result = Logger.OK
                     } else if (json.content.includes(this.#markers.ABORT)) {
                         found_marker = true
-                        this.context.error = this.#errors.KO
+                        this.context.error = this.#errors.ABORT
+                        result = Logger.ABORT
                     } else if (json.content.includes(this.#markers.KO)) {
                         found_marker = true
                         this.context.error = this.#errors.KO
+                        result = Logger.KO
                     } else if (json.content.includes(this.#markers.STOP)) {
                         found_marker = true
                         this.context.error = this.#errors.STOP
+                        result = this.STOP
                     }
 
                     // A marker has been found, let's stop
@@ -316,7 +328,7 @@ class Logger {
                      */
 
                     // Throw specific running event
-                    Logger.event.emit(`log/running/${this.#id}`, {logger: this, json: json})
+                    Logger.event.emit(`log/running/${this.#id}`, {logger: this, json: json, return: result})
 
                     // Relaunch the reading in few seconds
                     this.#clearTimers()
@@ -334,7 +346,7 @@ class Logger {
                         json.content.pop()
                     }
                     // Throw a new specific end event
-                    Logger.event.emit(`log/stop/${this.#id}`, {logger: this, json: json})
+                    Logger.event.emit(`log/stop/${this.#id}`, {logger: this, json: json, return: result})
 
                     this.stop()
                 }
