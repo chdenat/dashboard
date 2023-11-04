@@ -1,16 +1,16 @@
-/*
- *
- * Project : dashboard
- * File : dashboard.css
- *
- * @author: Christian Denat
- * @email: contact@noleam.fr
- *
- * Last updated on : 05/08/2023  19:06
- *
- * Copyright (c) 2023 - noleam.fr
- *
- */
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Project : shelteradmin                                                                                             *
+ * File : dashboard.css                                                                                               *
+ *                                                                                                                    *
+ * @author: Christian Denat                                                                                           *
+ * @email: contact@noleam.fr                                                                                          *
+ *                                                                                                                    *
+ * Last updated on : 04/11/2023  15:24                                                                                *
+ *                                                                                                                    *
+ * Copyright (c) 2023 - noleam.fr                                                                                     *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
 
 @import '../vendor/choices/choices.min.css';
 
@@ -731,6 +731,10 @@ a .animation.reset {
     color: var(--dsb-btn-animation-text-color);
     border-color: var(--dsb-btn-animation-border-color);
     pointer-events: none;
+}
+
+.btn.animation.doing i {
+    color: var(--dsb-btn-animation-text-color);
 }
 
 a:not(.btn).animation.doing {
