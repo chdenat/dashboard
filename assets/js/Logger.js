@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : shelteradmin                                                                                             *
+ * Project : dashboard                                                                                                *
  * File : Logger.js                                                                                                   *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 04/11/2023  11:53                                                                                *
+ * Last updated on : 04/11/2023  12:13                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -329,7 +329,7 @@ class Logger {
                      */
 
                     // Throw specific running event
-                    Logger.event.emit(`log/running/${this.#id}`, {logger: this, json: json, return: result})
+                    Logger.event.emit(`log/running/${this.#id}`, {logger: this, json: json, status: result})
 
                     // Relaunch the reading in few seconds
                     this.#clearTimers()
@@ -347,7 +347,7 @@ class Logger {
                         json.content.pop()
                     }
                     // Throw a new specific end event
-                    Logger.event.emit(`log/stop/${this.#id}`, {logger: this, json: json, return: result})
+                    Logger.event.emit(`log/stop/${this.#id}`, {logger: this, json: json, status: result})
 
                     this.stop()
                 }
