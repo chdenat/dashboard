@@ -1,12 +1,12 @@
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Project : dashboard                                                                                                *
+ * Project : shelteradmin                                                                                             *
  * File : Logger.js                                                                                                   *
  *                                                                                                                    *
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 03/11/2023  20:08                                                                                *
+ * Last updated on : 04/11/2023  11:53                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -21,9 +21,17 @@ class Logger {
 
     static event = LoggerEvent
     static EVENT_PRIORITY = 100
+    // Some return codes
+    static OK = 'OK'
+    static KO = 'KO'
+    static ERROR = 'ERROR'
+    static ABORT = 'ABORT'
+    static STOP = 'STOP'
+
     #errors = {
-        KO: 1,
-        STOP: 2
+        KO: Logger.KO,
+        STOP: Logger.STOP,
+        ABORT: Logger.ABORT
     }
     #markers = {
         OK: '#OK#',
@@ -45,13 +53,6 @@ class Logger {
     #erase = true;
     #anim_iter = 0
     #parameters = {}
-
-    // Some return codes
-    static OK = 1
-    static KO = 0
-    static ERROR = 2
-    static ABORT = 3
-    static STOP = 4
 
     /**
      *
