@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 30/07/2023  19:28                                                                                *
+ * Last updated on : 05/11/2023  09:40                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -337,8 +337,17 @@ export class DashboardMenu {
          * Close/open all 1st level menu
          */
         let all_open = false
+        let expandButton = document.getElementById('main-menu-expand')
+        let unexpandButton = document.getElementById('main-menu-unexpand')
+
         menu_container.querySelector('#menu-container .dsb-collapse-vertical')?.addEventListener('click', (event) => {
             all_open = !all_open
+            if (all_open) {
+                dsb.ui.hide(expandButton).show(unexpandButton)
+            } else {
+                dsb.ui.hide(unexpandButton).show(expandButton)
+            }
+
             event.preventDefault()
             menu_container?.querySelectorAll(`#menu-container  #menu-wrapper a[data-bs-toggle="collapse"][aria-expanded="${!all_open}"]`).forEach((element) => {
                 let item = bootstrap.Collapse.getOrCreateInstance(menu_container.querySelector(element.getAttribute('href')))
