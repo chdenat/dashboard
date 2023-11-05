@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/07/2023  10:30                                                                                *
+ * Last updated on : 04/11/2023  12:13                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -20,9 +20,18 @@ import {Bus as LoggerEvent} from '/dashboard/assets/vendor/EventEmitter/Bus.js'
 class Logger {
 
     static event = LoggerEvent
+    static EVENT_PRIORITY = 100
+    // Some return codes
+    static OK = 'OK'
+    static KO = 'KO'
+    static ERROR = 'ERROR'
+    static ABORT = 'ABORT'
+    static STOP = 'STOP'
+
     #errors = {
-        KO: 1,
-        STOP: 2
+        KO: Logger.KO,
+        STOP: Logger.STOP,
+        ABORT: Logger.ABORT
     }
     #markers = {
         OK: '#OK#',
@@ -31,7 +40,7 @@ class Logger {
         STOP: '#STOP#',
     }
     #delays = {
-        read: 2000,
+        read: 1000,
         animate: 600 // Should be shorter than read
     }
     #id = 0
@@ -40,7 +49,7 @@ class Logger {
     #history = true
     #once = false
     #loop = 0
-    #scroll_bottom = false
+    #scrollToBottom = false
     #erase = true;
     #anim_iter = 0
     #parameters = {}
@@ -61,8 +70,8 @@ class Logger {
      *      once                 read once or loop (default = false)
      *      history              boolean, use history or not   (default = true)
      *                           if once=true, history is forced to true
-     *
-     *      scroll_to_bottom     True if we scroll at the end of the console when text longer than console height/
+     *      delay               delay between 2 readings in ms (default 1000)
+     *      scrollToBottom      True if we scroll at the end of the console when text longer than console height/
      *
      *  }
      *
@@ -89,6 +98,7 @@ class Logger {
         this.#id = parameters.id
         this.#file = parameters.file
         this.#erase = parameters.erase ?? true
+        this.#delays.read = parameters.delay ?? this.#delays.read
 
         this.#console = new DashboardConsole(parameters.console, this.#erase)
 
@@ -105,7 +115,7 @@ class Logger {
             lines: lines,
             read: 0
         }
-        this.#scroll_bottom = parameters.scroll_to_bottom ?? false
+        this.#scrollToBottom = parameters.scrollToBottom ?? false
     }
 
     /**
@@ -154,7 +164,7 @@ class Logger {
      * @returns #console
      *
      */
-    get dom_console() {
+    get consoleDOM() {
         return this.#console.console
     }
 
@@ -176,20 +186,22 @@ class Logger {
      * @returns {Promise<Logger>}
      */
     start = (show_console = true) => {
-
         // Get the number of lines
-        this.context.read_lines = this.get_lines_number()
+        this.context.read_lines = this.getFileLinesNumber()
         // We need to manage some future events
-        Logger.event.on(`log/start/${this.#id}`, this.start_log);
-        Logger.event.on(`log/running/${this.#id}`, this.update_log);
-        Logger.event.on(`log/stop/${this.#id}`, this.end_log);
-        Logger.event.on(`log/error/${this.#id}`, this.error_log);
+        Logger.event.on(`log/start/${this.#id}`, this.startLogging, {priority: Logger.EVENT_PRIORITY});
+        Logger.event.on(`log/running/${this.#id}`, this.flushLogContent, {priority: Logger.EVENT_PRIORITY});
+        Logger.event.on(`log/stop/${this.#id}`, this.stopLogging, {priority: Logger.EVENT_PRIORITY});
+        Logger.event.on(`log/error/${this.#id}`, this.errorInLogger);
 
         // Dispatch specific starting event
         Logger.event.emit(`log/start/${this.#id}`, {logger: this})
 
         if (show_console) {
             this.#console.show()
+        }
+        if (this.#erase) {
+            this.#console.clear()
         }
         dsb.ui.add_scrolling(this.#console, {cascade: false});
 
@@ -203,10 +215,10 @@ class Logger {
      * @returns {Promise<void>}
      *
      */
-    get_lines_number = async (file = this.#file) => {
+    getFileLinesNumber = async (file = this.#file) => {
         // Get log file size
         let value = 0
-        await fetch(ajax.get + '?' + new URLSearchParams({
+        return await fetch(ajax.get + '?' + new URLSearchParams({
             action: 'lines-number',
             file: file,
         })).then(response => {
@@ -216,13 +228,12 @@ class Logger {
             return response;
         }).then(response => response.json())
             .then(json => {
-                value = json.total
+                return json.total
             })
             .catch(error => {
                 return false
             })
 
-        return value
     }
 
     /**
@@ -276,21 +287,26 @@ class Logger {
                  * and update some context data
                  */
                 let found_marker = false
+                let result = null
                 if (json.content?.length > 0) {
                     json.content = json.content.map(item => item.replace('\n', ''))
 
                     // Detect end of reading
                     if (json.content.includes(this.#markers.OK)) {
                         found_marker = true
+                        result = Logger.OK
                     } else if (json.content.includes(this.#markers.ABORT)) {
                         found_marker = true
-                        this.context.error = this.#errors.KO
+                        this.context.error = this.#errors.ABORT
+                        result = Logger.ABORT
                     } else if (json.content.includes(this.#markers.KO)) {
                         found_marker = true
                         this.context.error = this.#errors.KO
+                        result = Logger.KO
                     } else if (json.content.includes(this.#markers.STOP)) {
                         found_marker = true
                         this.context.error = this.#errors.STOP
+                        result = this.STOP
                     }
 
                     // A marker has been found, let's stop
@@ -313,7 +329,7 @@ class Logger {
                      */
 
                     // Throw specific running event
-                    Logger.event.emit(`log/running/${this.#id}`, {logger: this, json: json})
+                    Logger.event.emit(`log/running/${this.#id}`, {logger: this, json: json, status: result})
 
                     // Relaunch the reading in few seconds
                     this.#clearTimers()
@@ -331,7 +347,7 @@ class Logger {
                         json.content.pop()
                     }
                     // Throw a new specific end event
-                    Logger.event.emit(`log/stop/${this.#id}`, {logger: this, json: json})
+                    Logger.event.emit(`log/stop/${this.#id}`, {logger: this, json: json, status: result})
 
                     this.stop()
                 }
@@ -377,14 +393,14 @@ class Logger {
     }
 
     /**
-     * Update log
+     * Update log information
      **
      * @param context
      * @param message
      * @param clear
      * @param animation
      */
-    update = async ({message = '', clear = false, animation = true, classes = ''}) => {
+    flush = async ({message = '', clear = false, animation = true, classes = ''}) => {
 
         // If clear has been required ...
         if (clear) {
@@ -404,12 +420,10 @@ class Logger {
     }
 
     /**
-     * Scroll to bottom if we text is longer than console height
+     * Scroll to bottom if the text is longer than console height
      */
-    scroll_to_bottom = () => {
-        let screen = this.dom_console
-        let instance = OverlayScrollbars(screen)
-        instance.scroll({x: 0, y: '100%'})
+    scrollToBottom = () => {
+        OverlayScrollbars(this.consoleDOM).scroll({x: 0, y: '100%'})
     }
 
     /**
@@ -477,7 +491,8 @@ class Logger {
      * Event launched before reading
      *
      */
-    start_log = async (data) => {
+    startLogging = async (data) => {
+        await this.flush({clear: true})
         // Keep the user focused on
         this.animate(true)
     }
@@ -487,17 +502,17 @@ class Logger {
      *
      * @param data
      */
-    update_log = async (data) => {
+    flushLogContent = async (data) => {
         if (data?.json?.read > 0) {
             // We print only if we have to
-            await this.update({
+            await this.flush({
                     message: data.json.content.join('<br>')
                 }
             )
         }
         // Scroll to bottom
-        if (this.#scroll_bottom) {
-            this.scroll_to_bottom()
+        if (this.#scrollToBottom) {
+            this.scrollToBottom()
         }
     }
 
@@ -506,11 +521,9 @@ class Logger {
      *
      * @param data
      */
-    end_log = async (data) => {
-
+    stopLogging = async (data) => {
         // We update with the last data from file
-        await this.update_log(data)
-
+        await this.flushLogContent(data)
     }
 
     /**
@@ -518,9 +531,8 @@ class Logger {
      *
      *
      */
-    error_log = async () => {
-
-        await this.update(this.context, {
+    errorInLogger = async () => {
+        await this.flush(this.context, {
                 message: '---<br>' + new Date().toLocaleTimeString() + ': A problem occurred.',
                 animation: false
             }

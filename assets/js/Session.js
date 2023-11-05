@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/07/2023  09:45                                                                                *
+ * Last updated on : 04/11/2023  11:07                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -74,20 +74,20 @@ export class Session {
 
         this.SOON_TIMER = this.END_TIMER - this.FINAL_TIMER
 
-
         /**
          * Countdowns start...
          */
 
-// The master one, used for session end
+        // The master one, used for session end
         this.endTimer = setTimeout(() => {
+                session.log(this.endTimer)
                 let session_event = new Event('session-exit')
                 session_event.session = this.name
                 document.dispatchEvent(session_event)
             },
             this.END_TIMER,
         )
-// Another one, used to warn that the session will end soon
+        // Another one, used to warn that the session will end soon
         this.endSoonTimer = setTimeout(() => {
                 let session_event = new Event('session-soon-exit')
                 session_event.session = this.name

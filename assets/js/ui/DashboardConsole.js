@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/07/2023  08:31                                                                                *
+ * Last updated on : 06/10/2023  19:33                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -26,6 +26,7 @@ class DashboardConsole {
     #last = null
     #scroller = null
     #running = true
+    #marker = 'data-next-entry'
 
     /**
      *
@@ -305,6 +306,8 @@ class DashboardConsole {
         if (classes !== '') {
             this.#last.classList.add(classes)
         }
+
+        this.#last.removeAttribute(this.#marker)
         DashboardConsole.event.emit(`console/append/${this.#id}`)
 
         return this.#prepare_next()
@@ -318,7 +321,14 @@ class DashboardConsole {
      * @returns  the last element
      */
     #prepare_next = (classes = '') => {
-        this.#last = document.createElement('console-text')
+        const alreadyDone = this.#body.querySelector(`console-text[${this.#marker}]`)
+        if (alreadyDone) {
+            this.#last = alreadyDone
+        } else {
+            this.#last = document.createElement('console-text')
+
+        }
+        this.#last.setAttribute(this.#marker, true)
         this.#body.append(this.#last)
         return this.#last
     }
