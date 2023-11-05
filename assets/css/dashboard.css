@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 05/11/2023  11:31
+ * Last updated on : 05/11/2023  12:20
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -301,6 +301,15 @@
 
     --dsb-modal-zindex: var(--bs-modal-zindex);
     --dsb-loader-zindex: calc(var(--dsb-modal-zindex) - 2);
+
+    /***********************************
+     * Row,Columns
+     */
+    --dsb-column-max-width: 768px;
+    --dsb-column: {
+        min-width: min(calc(100% / var(--dsb-column-number)), var(--dsb-column-max-width))
+    };
+
 }
 
 
