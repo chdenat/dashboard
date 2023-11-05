@@ -1,16 +1,16 @@
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Project : shelteradmin                                                                                             *
- * File : dashboard.css                                                                                               *
- *                                                                                                                    *
- * @author: Christian Denat                                                                                           *
- * @email: contact@noleam.fr                                                                                          *
- *                                                                                                                    *
- * Last updated on : 04/11/2023  15:24                                                                                *
- *                                                                                                                    *
- * Copyright (c) 2023 - noleam.fr                                                                                     *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/*
+ *
+ * Project : dashboard
+ * File : dashboard.css
+ *
+ * @author: Christian Denat
+ * @email: contact@noleam.fr
+ *
+ * Last updated on : 05/11/2023  11:31
+ *
+ * Copyright (c) 2023 - noleam.fr
+ *
+ */
 
 @import '../vendor/choices/choices.min.css';
 
@@ -2351,7 +2351,7 @@ text-i18n {
 }
 
 
-.tag.beta, .tag-patch, .tag.text-warning, .tag.warning {
+.tag.beta, .tag.patch, .tag.text-warning, .tag.warning {
     --tag-color: var(--dsb-warning-text-color);
     --tag-background: var(--dsb-warning-bg-color);
     --tag-border: var(--dsb-warning-color);
