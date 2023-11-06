@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 04/11/2023  11:07                                                                                *
+ * Last updated on : 06/11/2023  15:56                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -80,7 +80,6 @@ export class Session {
 
         // The master one, used for session end
         this.endTimer = setTimeout(() => {
-                session.log(this.endTimer)
                 let session_event = new Event('session-exit')
                 session_event.session = this.name
                 document.dispatchEvent(session_event)
