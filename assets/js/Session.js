@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 07/11/2023  10:01                                                                                *
+ * Last updated on : 07/11/2023  20:10                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -127,7 +127,9 @@ export class Session {
     closeSoon = async () => {
         this.pauseActivity()
 
-        await dsb.modal.load('end-session-soon')
+        dsb.modal.load('end-session-soon').then(() => {
+            this.countdownBeforeSessionEnds()
+        })
 
         clearInterval(this.finalTimer)
         this.finalTimer = setInterval(this.countdownBeforeSessionEnds, this.FINAL_TIMER)
@@ -180,9 +182,9 @@ export class Session {
         let show_time = document.getElementById('end-session-timer')
         if (show_time !== null) {
             if (show_time.innerHTML === '') {
-                show_time.innerHTML = (this.endCountdown - this.SOON_TIMER * 1000).toString()
+                // show_time.innerHTML = (this.endCountdown - this.SOON_TIMER * 1000).toString()
             } else {
-                show_time.innerHTML = (show_time.innerHTML - 1).toString()
+                // show_time.innerHTML = (show_time.innerHTML - 1).toString()
             }
         }
     }
