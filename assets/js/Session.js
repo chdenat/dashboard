@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 06/11/2023  15:56                                                                                *
+ * Last updated on : 07/11/2023  10:01                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -25,6 +25,7 @@ export class Session {
     // Main session timer
     endTimer = 0
     END_TIMER = 15 * MINUTE
+    endCountdown = 0
 
     //Final countdown
     finalTimer = 0
@@ -47,8 +48,8 @@ export class Session {
     init = () => {
         this.setContext().then(() => {
             if (this.context.logged) {
-                this.endTimer = this.context.lifetime * 1000
-                this.SOON_TIMER = this.endTimer - this.FINAL_TIMER
+                this.endCountdown = this.context.lifetime * 1000
+                this.SOON_TIMER = this.endCountdown - this.FINAL_TIMER
                 this.prepareModals()
                 this.continues()
                 this.trapActivity()
@@ -179,9 +180,9 @@ export class Session {
         let show_time = document.getElementById('end-session-timer')
         if (show_time !== null) {
             if (show_time.innerHTML === '') {
-                show_time.innerHTML = this.endTimer - this.SOON_TIMER * 1000
+                show_time.innerHTML = (this.endCountdown - this.SOON_TIMER * 1000).toString()
             } else {
-                show_time.innerHTML = show_time.innerHTML - 1
+                show_time.innerHTML = (show_time.innerHTML - 1).toString()
             }
         }
     }
