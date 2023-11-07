@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 06/11/2023  19:53                                                                                *
+ * Last updated on : 07/11/2023  09:25                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -926,6 +926,12 @@ export var dsb = {
 
         show_inline: (element, flex = true) => {
             if (element !== null) {
+                if (!(element instanceof HTMLElement) && element?.includes('#')) {
+                    element = document.querySelector(element)
+                    if (element === null) {
+                        return dsb.ui
+                    }
+                }
                 element.classList.remove('dsb-hide')
                 if (flex) {
                     element.classList.add('dsb-show-inline-flex')
