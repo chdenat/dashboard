@@ -6,7 +6,7 @@
  * @author: Christian Denat
  * @email: contact@noleam.fr
  *
- * Last updated on : 06/11/2023  19:43
+ * Last updated on : 11/11/2023  11:26
  *
  * Copyright (c) 2023 - noleam.fr
  *
@@ -250,7 +250,7 @@
     --dsb-input-shadow: inset rgba(0, 0, 0, 0.15) 0px 2px 8px;
     --dsb-box-shadow: 0 0 0 0 transparent;
 
-    --dsb-backdrop-index: var(--dsb-modal-zindex);
+    --dsb-backdrop-zindex: 1; /*var(--dsb-modal-zindex);*/
     --dsb-backdrop-color: var(--dsb-primary-color);
 
     --dsb-main-border-color: var(--dsb-gray-4);
@@ -992,7 +992,7 @@ a:not(.btn).animation.doing {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: var(--dsb-backdrop-index);
+    z-index: var(--dsb-backdrop-zindex);
     width: 100%;
     height: 100%;
     overflow-x: hidden;
