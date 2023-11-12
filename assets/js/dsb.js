@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 07/11/2023  09:25                                                                                *
+ * Last updated on : 11/11/2023  19:11                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -465,8 +465,8 @@ export var dsb = {
             document.addEventListener('modal/loaded/change-password', dsb.ui.manage_password)
 
         },
-        logout: () => {
-            return dsb.user.person.logout()
+        logout: async (event = null, button = null, redirection = null) => {
+            return await dsb.user.person.logout(event, button, redirection)
         },
         login: () => {
             return dsb.user.person.login()
@@ -669,7 +669,7 @@ export var dsb = {
          *
          */
         sleep: timer => {
-            new Promise(r => setTimeout(r, timer))
+            return new Promise(r => setTimeout(r, timer))
         },
 
         /**
