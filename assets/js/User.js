@@ -6,7 +6,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 27/07/2023  11:24                                                                                *
+ * Last updated on : 11/11/2023  19:11                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -44,7 +44,7 @@ export class User {
      * @since 1.6
      *
      */
-    login = () => {
+    login = async () => {
 
         const form = document.getElementById('login')
         const form_data = {
@@ -55,7 +55,7 @@ export class User {
         }
         dsb.session.context.user = form.user.value
 
-        fetch(dsb_ajax.post, {
+        await fetch(dsb_ajax.post, {
             method: 'POST',
             body: JSON.stringify(form_data),
         }).then(response => {

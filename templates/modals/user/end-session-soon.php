@@ -8,7 +8,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 13/04/2023  18:06                                                                                *
+ * Last updated on : 07/11/2023  20:10                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -24,7 +24,9 @@
     
     <div class="modal-body">
         <label class="form-label">
-            <?= _( 'You\'re being timeout in <span id="end-session-timer"></span> seconds due to inactivity.')?>
+            <!--            --><?php //= _( 'You\'re being timeout in <span id="end-session-timer"></span> seconds due to inactivity.')?>
+            <?= _('You\'re being timeout soon due to inactivity.') ?>
+
             <br>
 	        <?= _( 'Please choose to stay signed in or to logout.')?>
 
@@ -41,4 +43,3 @@
         </button>
     </div>
 </form>
-

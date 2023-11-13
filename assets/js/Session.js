@@ -6,12 +6,12 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 04/11/2023  11:07                                                                                *
+ * Last updated on : 09/11/2023  15:50                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
-import {MINUTE} from '/dashboard/assets/js/dsb.js'
+import {MINUTE, SECOND} from '/dashboard/assets/js/dsb.js'
 import {User} from '/dashboard/assets/js/User.js'
 
 export class Session {
@@ -24,11 +24,12 @@ export class Session {
 
     // Main session timer
     endTimer = 0
-    END_TIMER = 15 * MINUTE
+    END_TIMER = 0  // Real value from ajax
+    endCountdown = 0
 
     //Final countdown
     finalTimer = 0
-    FINAL_TIMER = 2 * MINUTE
+    FINAL_TIMER = 1 * MINUTE  // Pre logout odal
 
     // Timer before the final countdown
     endSoonTimer = 0
@@ -47,8 +48,9 @@ export class Session {
     init = () => {
         this.setContext().then(() => {
             if (this.context.logged) {
-                this.endTimer = this.context.lifetime * 1000
-                this.SOON_TIMER = this.endTimer - this.FINAL_TIMER
+                this.END_TIMER = this.context.lifetime * SECOND
+                this.endCountdown = this.END_TIMER
+                this.SOON_TIMER = this.endCountdown - this.FINAL_TIMER
                 this.prepareModals()
                 this.continues()
                 this.trapActivity()
@@ -80,7 +82,6 @@ export class Session {
 
         // The master one, used for session end
         this.endTimer = setTimeout(() => {
-                session.log(this.endTimer)
                 let session_event = new Event('session-exit')
                 session_event.session = this.name
                 document.dispatchEvent(session_event)
@@ -127,10 +128,16 @@ export class Session {
     closeSoon = async () => {
         this.pauseActivity()
 
-        await dsb.modal.load('end-session-soon')
+        // Add remaining seconds
+        dsb.modal.load('end-session-soon').then(() => {
+            this.countdownBeforeSessionEnds()
+        })
 
+        // Then loop to update information every seconds
         clearInterval(this.finalTimer)
-        this.finalTimer = setInterval(this.countdownBeforeSessionEnds, this.FINAL_TIMER)
+        this.finalTimer = setInterval(this.countdownBeforeSessionEnds, SECOND)
+
+        // Finally show the modal
         dsb.modal.show()
     }
 
@@ -171,19 +178,21 @@ export class Session {
     }
 
     /**
-     * Show the countdown of time befoer the end of the session
+     * Show the countdown of time before the end of the session
      *
      * @since 1.0
      *
      */
+
     countdownBeforeSessionEnds = () => {
         let show_time = document.getElementById('end-session-timer')
         if (show_time !== null) {
             if (show_time.innerHTML === '') {
-                show_time.innerHTML = this.endTimer - this.SOON_TIMER * 1000
+                this.endCountdown = this.SOON_TIMER / SECOND
             } else {
-                show_time.innerHTML = show_time.innerHTML - 1
+                Math.max(1, this.endCountdown--)
             }
+            show_time.innerHTML = this.endCountdown.toString()
         }
     }
 
