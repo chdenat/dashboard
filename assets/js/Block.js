@@ -6,16 +6,16 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 30/07/2023  19:52                                                                                *
+ * Last updated on : 30/11/2023  18:43                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-import {Animation} from '/dashboard/assets/js/ui/Animation.js'
+import {Animation}         from '/dashboard/assets/js/ui/Animation.js'
 import {DashboardUI as UI} from '/dashboard/assets/js/ui/DashboardUI.js'
 import {Bus as BlockEvent} from '/dashboard/assets/vendor/EventEmitter/Bus.js'
-import {nanoid} from '/dashboard/assets/vendor/nanoid.js'
+import {nanoid}            from '/dashboard/assets/vendor/nanoid.js'
 
 let blocksList = [];
 
@@ -409,8 +409,7 @@ class Block {
      *
      * @param parent root (document by default)
      */
-    static
-    importChildren = async function (parent = document) {
+    static importChildren = async function (parent = document) {
         let blocks = Block.getFirstLevelEmbeddedBlocks(parent)
         if (blocks.length > 0) {
             let children = []
@@ -429,8 +428,7 @@ class Block {
         }
     }
 
-    static
-    addBaseToTemplate = (block) => {
+    static addBaseToTemplate = (block) => {
         if (block.dataset?.templateId === '#content#') {
             // In case it is  the content block, we push the baseUri or home if nothing
             const base = (block.dataset.template === '') ? (block.baseURI ? block.baseURI : Block.getHome()) : block.dataset.template
@@ -439,8 +437,7 @@ class Block {
         return block
     }
 
-    static
-    importPageController = async (template) => {
+    static    importPageController = async (template) => {
         let parts = template.file.split('/')
         if (parts[parts.length - 1] === 'index') {
             parts.pop()
@@ -468,8 +465,7 @@ class Block {
      * @since 1.6
      *
      */
-    static
-    getFirstLevelEmbeddedBlocks = (node = document, tag = Block.#TAG) => {
+    static     getFirstLevelEmbeddedBlocks = (node = document, tag = Block.#TAG) => {
         const all = node.querySelectorAll(`:scope ${tag}`)
         const parents = node.querySelectorAll(`:scope ${tag} ${tag}`)
         return Array.from(all).filter(x => !Array.from(parents).includes(x))
@@ -480,8 +476,7 @@ class Block {
      *
      * @param template
      */
-    static
-    addBlockToList = (block = this) => {
+    static addBlockToList = (block = this) => {
         blocksList[block.ID] = block
     }
 
@@ -490,8 +485,7 @@ class Block {
      *
      * @param key  key could be a template ID or a template object
      */
-    static
-    removeBlockFromList = (key = this) => {
+    static removeBlockFromList = (key = this) => {
         let id = key
         if (key instanceof Block) {
             id = key.ID
@@ -509,13 +503,11 @@ class Block {
      * @param key
      * @returns {*}
      */
-    static
-    getBlock = (key) => {
+    static getBlock = (key) => {
         return blocksList[key]
     }
 
-    static
-    async reloadPage(url) {
+    static async reloadPage(url) {
         let t = new Block(document.querySelector('[data-template-id="#content#"]'))
         t.load(true).then(() => {
             UI.setBreadcrumbs(t)
