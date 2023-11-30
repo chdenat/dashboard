@@ -7,7 +7,7 @@
  * @author: Christian Denat                                                                                           *
  * @email: contact@noleam.fr                                                                                          *
  *                                                                                                                    *
- * Last updated on : 16/07/2023  10:30                                                                                *
+ * Last updated on : 30/11/2023  18:42                                                                                *
  *                                                                                                                    *
  * Copyright (c) 2023 - noleam.fr                                                                                     *
  *                                                                                                                    *
@@ -20,8 +20,7 @@ use dashboard\template\Template;
 use JsonException;
 
 
-class AssetsManager
-{
+class AssetsManager {
 
     /**
      * @var null|AssetsManager
@@ -56,15 +55,13 @@ class AssetsManager
     /**
      * Constructor
      */
-    private function __construct()
-    {
+    private function __construct() {
         $this->css_files = [];
         $this->js_footer = [];
         $this->js_header = [];
     }
 
-    public static function add_exported_js($data): void
-    {
+    public static function add_exported_js($data): void {
 
         ob_start();
         if (!empty($data)) { ?>
@@ -81,33 +78,41 @@ class AssetsManager
         echo ob_get_clean();
     }
 
-    public static function add_import_map(): void
-    {
+    public static function add_import_map(): void {
+
+        /**
+         * @since 1.7.0
+         * Due to bad support on firefox ad webkit,
+         *
+         * Do not useimportmap
+         *
+         */
+        return;
+
+        // Starts here
         ob_start();
         ?>
 
-        <!--        <script async src="/dashboard/assets/vendor/es-module-shims.js"></script>-->
-        <!--        <script type="importmap">-->
-        <!--            --><?php
-//            $json = [];
-//            foreach ([D_ASSETS_DIR, C_ASSETS_DIR] as $dir) {
-//                if (file_exists($dir . 'import-map.json')) {
-//                    $import = json_decode(file_get_contents($dir . 'import-map.json'), true);
-//                    foreach ($import['imports'] as $key => $value) {
-//                        $json['imports'][$key] = $value;
-//                    }
-//                }
-//            }
-//            echo json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
-//
-//
-        ?>
+        <script type="importmap">-->
+            <?php
+            $json = [];
+            foreach ([D_ASSETS_DIR, C_ASSETS_DIR] as $dir) {
+                if (file_exists($dir . 'import-map.json')) {
+                    $import = json_decode(file_get_contents($dir . 'import-map.json'), true);
+                    foreach ($import['imports'] as $key => $value) {
+                        $json['imports'][$key] = $value;
+                    }
+                }
+            }
+            echo json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+            ?>
+
 
 
         </script>
 
+        <?php
 
-        <?php echo ob_get_clean();
     }
 
     /**
@@ -120,16 +125,15 @@ class AssetsManager
      *  - directly here CSS has benn already printed (hooked)
      *
      * @param string $handle asset identification
-     * @param string $file CSS file path
-     * @param array $deps list of depencies (handles)
+     * @param string $file   CSS file path
+     * @param array  $deps   list of depencies (handles)
      *
      * @return void
      * @access  public
      *
      * @since   1.0
      */
-    public function add_to_css_list(string $handle, string $file, array $deps = [], $type = PAGE): void
-    {
+    public function add_to_css_list(string $handle, string $file, array $deps = [], $type = PAGE): void {
         /**
          * CSS could be already hooked by another register call.
          * In this case we print the tag directly.
@@ -166,8 +170,7 @@ class AssetsManager
      * @since  1.0
      *
      */
-    private function print_css_tag_direct(string $handle): void
-    {
+    private function print_css_tag_direct(string $handle): void {
 
         if (!$this->from_hook && $this->css_files[$handle]->is_registered() && !$this->css_files[$handle]->is_printed()) {
             echo $this->print_css_tag($handle, $this->css_files[$handle]);
@@ -180,15 +183,14 @@ class AssetsManager
      * Used to print a CSS tag
      *
      * @param string $handle
-     * @param Asset $asset
+     * @param Asset  $asset
      *
      * @return bool|string
      * @access private
      *
      * @since  1.0
      */
-    private function print_css_tag(string $handle, Asset $asset): bool|string
-    {
+    private function print_css_tag(string $handle, Asset $asset): bool|string {
         ob_start();
 
         switch ($asset->get_type()) {
@@ -199,7 +201,8 @@ class AssetsManager
                       media="screen"/>
                 <?php
                 break;
-            case Asset::INLINE: ?>
+            case
+            Asset::INLINE: ?>
                 <style id="<?= $handle ?>-css"><?= $asset->get_content() ?></style>
                 <?php
                 break;
@@ -219,8 +222,8 @@ class AssetsManager
      *
      * @since  1.0
      */
-    private function _beautify_url(string $url): ?string
-    {
+    private
+    function _beautify_url(string $url): ?string {
         return (string)preg_replace('/([^:])(\/{2,})/', '$1/', $url);
     }
 
@@ -233,9 +236,9 @@ class AssetsManager
      *  - on sortedpective hook, here template/head/end
      *  - directly here CSS has benn already printed (hooked)
      *
-     * @param string $handle asset identification
+     * @param string $handle  asset identification
      * @param string $content CSS content
-     * @param array $deps dependencies
+     * @param array  $deps    dependencies
      *
      * @return void
      * @access public
@@ -243,8 +246,8 @@ class AssetsManager
      * @throws JsonException
      * @since  1.0
      */
-    public function add_inline_css(string $handle, string $content, array $deps): void
-    {
+    public
+    function add_inline_css(string $handle, string $content, array $deps): void {
         /**
          * CSS could be already hooked by another register call.
          * In this case we print the tag directly.
@@ -276,8 +279,8 @@ class AssetsManager
      * @since   1.0
      *
      */
-    public function print_all_css_assets(): string|bool
-    {
+    public
+    function print_all_css_assets(): string|bool {
 
         $this->from_hook = true;
         Hooks::instance()->do_action('assets/register-css');
@@ -304,8 +307,8 @@ class AssetsManager
      * @since  1.0
      *
      */
-    public static function instance(): AssetsManager
-    {
+    public
+    static function instance(): AssetsManager {
         if (is_null(self::$instance)) {
             self::$instance = new self();
         }
@@ -328,8 +331,8 @@ class AssetsManager
      *
      * @since  1.0
      */
-    private function sort_by_dependencies(array $assets): array
-    {
+    private
+    function sort_by_dependencies(array $assets): array {
 
         // Bails early if empty
         if (empty($assets)) {
@@ -406,8 +409,8 @@ class AssetsManager
      * @since   1.0
      *
      */
-    public function print_css_asset(string $file): void
-    {
+    public
+    function print_css_asset(string $file): void {
         ob_start();
         ?>
         <link rel="stylesheet" type="text/css" href="<?= $this->_beautify_url($file) ?>" media="screen"/>
@@ -419,20 +422,20 @@ class AssetsManager
      * Register JS file
      *
      * @param string $handle asset identification
-     * @param string $file JS file path
-     * @param array $deps Dependencies
-     * @param bool $footer default : true
-     * @param int $type (FILE|MODULE|PHP2JS|INLINE|INLINE_MODULE default FILE (ie TEXT/JAVASCRIP)
+     * @param string $file   JS file path
+     * @param array  $deps   Dependencies
+     * @param bool   $footer default : true
+     * @param int    $type   (FILE|MODULE|PHP2JS|INLINE|INLINE_MODULE default FILE (ie TEXT/JAVASCRIP)
      *
      * @return void
      * @access public
      *
      * @since  1.0
      */
-    public function add_to_js_list(
+    public
+    function add_to_js_list(
         string $handle, string $file, array $deps, bool $footer = true, int $type = Asset::FILE
-    ): void
-    {
+    ): void {
         $this->_add_to_js_list(new Asset([
             'handle' => $handle,
             'ext' => Asset::JS,
@@ -457,8 +460,8 @@ class AssetsManager
      *
      * @since  1.0
      */
-    private function _add_to_js_list(Asset $asset): void
-    {
+    private
+    function _add_to_js_list(Asset $asset): void {
         if ($asset->in_footer()) {
             if (!isset($this->js_footer[$asset->handle])) {
                 $this->js_footer[$asset->handle] = $asset;
@@ -484,15 +487,15 @@ class AssetsManager
      * Used to print the script tag
      *
      * @param string $handle
-     * @param Asset $asset
+     * @param Asset  $asset
      *
      * @return false|string
      * @access  private
      *
      * @since   1.0
      */
-    private function print_js_tag(string $handle, Asset $asset): bool|string
-    {
+    private
+    function print_js_tag(string $handle, Asset $asset): bool|string {
         ob_start();
         switch ($asset->get_type()) {
             case Asset::FILE:
@@ -529,27 +532,27 @@ class AssetsManager
     /**
      * Register JS file inline
      *
-     * @param string $handle base asset identification
-     * @param string $content JS content
-     * @param array $deps dependencies
-     * @param bool $before insert iline script after(false) or before(true) the assets,
+     * @param string $handle     base asset identification
+     * @param string $content    JS content
+     * @param array  $deps       dependencies
+     * @param bool   $before     insert iline script after(false) or before(true) the assets,
      *                           if handle already
      *                           exists
      *                           default : false
-     * @param bool $footer default : true
-     * @param array $php2js PHP array that we'll pass to JS object.
+     * @param bool   $footer     default : true
+     * @param array  $php2js     PHP array that we'll pass to JS object.
      *
      * @return void
      * @access public
      *
      * @since  1.0
      */
-    public function add_inline_js(
+    public
+    function add_inline_js(
         string $handle, string $content = '', array $deps = [],
         bool   $before = false, bool $footer = true,
         array  $php2js = []
-    ): void
-    {
+    ): void {
         /**
          * inline JS could be enqueued before or after any existing $handle
          *
@@ -602,7 +605,7 @@ class AssetsManager
      * Deregister a JS asset
      *
      * @param string $handle asset identification
-     * @param bool $footer from footer (true) or header list
+     * @param bool   $footer from footer (true) or header list
      *
      * @return null|Asset
      * @access public
@@ -610,8 +613,8 @@ class AssetsManager
      * @since  1.0
      *
      */
-    public function remove_from_js_list(string $handle, bool $footer = true): ?Asset
-    {
+    public
+    function remove_from_js_list(string $handle, bool $footer = true): ?Asset {
         $asset = null;
         if ($footer) {
             if (array_key_exists($handle, $this->js_footer)) {
@@ -631,18 +634,18 @@ class AssetsManager
     /**
      * Passes PHP arrays to JS objects
      *
-     * @param array $var PHP array passed to JS objects
+     * @param array $var     PHP array passed to JS objects
      *
      *                     Array must be in the form ['<object_name>' = [...],...]
-     * @param bool $add_tag if true,, add script tag
+     * @param bool  $add_tag if true,, add script tag
      *
      * @return string
      * @access public
      *
      * @since  1.0
      */
-    public function php2js(array $var, bool $add_tag = false): string
-    {
+    public
+    function php2js(array $var, bool $add_tag = false): string {
         $text = '';
         ob_start();
 
@@ -678,8 +681,8 @@ class AssetsManager
      * @since   1.0
      *
      */
-    public function print_js_asset(string $file, $type = "text/javascript"): void
-    {
+    public
+    function print_js_asset(string $file, $type = "text/javascript"): void {
         ob_start();
         ?>
         <script type="<?= $type ?>" src="<?= $file ?>" charset="UTF-8"></script>
@@ -687,8 +690,8 @@ class AssetsManager
         echo ob_get_clean();
     }
 
-    public function print_js_import(string $module, string $file): void
-    {
+    public
+    function print_js_import(string $module, string $file): void {
         ob_start();
         ?>
         <script type="module" charset="UTF-8">
@@ -710,8 +713,8 @@ class AssetsManager
      * @since  1.0
      *
      */
-    public function print_all_js_assets_header(): string|bool
-    {
+    public
+    function print_all_js_assets_header(): string|bool {
         return $this->print_all_js_assets(false);
     }
 
@@ -726,8 +729,8 @@ class AssetsManager
      * @since  1.0
      *
      */
-    public function print_all_js_assets(bool $footer = true): string|bool
-    {
+    public
+    function print_all_js_assets(bool $footer = true): string|bool {
 
         $this->from_hook = true;
         Hooks::instance()->do_action('assets/register-js');
@@ -759,8 +762,8 @@ class AssetsManager
      * @since  1.0
      *
      */
-    public function print_all_js_assets_footer(): string|bool
-    {
+    public
+    function print_all_js_assets_footer(): string|bool {
         return $this->print_all_js_assets();
     }
 
@@ -773,15 +776,15 @@ class AssetsManager
      * If non assets are existing, we return false.
      *
      * @param string $template for which we'll try to locate
-     * @param string $type template type  BLOCK|PAGE (PAGE by default)
+     * @param string $type     template type  BLOCK|PAGE (PAGE by default)
      *
      * @return bool|array   the array with the assets urls or false
      * @access  public
      *
      * @since   1.0
      */
-    public function locate_template_assets(string $template, string $type = PAGE): bool|array
-    {
+    public
+    function locate_template_assets(string $template, string $type = PAGE): bool|array {
 
         $assets_urls = false;
         $type .= 's/';
